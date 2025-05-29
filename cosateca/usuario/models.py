@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from almacen.models import Almacen
+
 # Create your models here.
 
 
@@ -21,19 +23,40 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
     
+    
+class Gestor(Usuario):    
+    almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE, related_name='gestores', blank=True, null=True)
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.username})"
+    
 class Preferencia(models.Model):
      ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
      ENUM_FRECUENCIA_USO = [('Diario', 'Diario'), ('Semanal', 'Semanal'), ('Mensual', 'Mensual'), ('Ocasiones puntuales', 'Ocasiones puntuales')]
      ENUM_EXPERIENCIA = [('Principiante', 'Principiante'), ('Intermedio', 'Intermedio'), ('Avanzado', 'Avanzado')]
      ENUM_FRANJA_HORARIA = [('Mañana', 'Mañana'), ('Tarde', 'Tarde'), ('Fines de semana', 'Fines de semana'), ('Sin preferencia', 'Sin preferencia')]
-     tarea_tipo = models.CharField( blank=False, null=False)
-     frecuencia_uso = models.CharField( blank=False, null=False)
-     experiencia = models.CharField(blank=False, null=False)
-     franja_horaria = models.CharField( blank=False, null=False)
+     tarea_tipo = models.CharField(choices=ENUM_TAREA_TIPO, blank=False, null=False)
+     frecuencia_uso = models.CharField(choices=ENUM_FRECUENCIA_USO ,blank=False, null=False)
+     experiencia = models.CharField(choices=ENUM_EXPERIENCIA,blank=False, null=False)
+     franja_horaria = models.CharField(choices=ENUM_FRANJA_HORARIA, blank=False, null=False)
 
      usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='preferencia')
+     
+     def __str__(self):
+        return f"Preferencia de: {self.usuario.username}"
 
 
+class Amonestacion(models.Model):
+    ENUM_SEVERIDAD = [('Leve', 'Leve'), ('Media', 'Media'), ('Grave', 'Grave')]
+    
+    motivo = models.TextField(max_length=500, blank=False, null=False)
+    severidad = models.CharField(choices=ENUM_SEVERIDAD, blank=False, null=False)
+    fecha = models.DateField(auto_now_add=True)
+    
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='amonestaciones_recibidas', blank=True, null=True)
+    gestor = models.ForeignKey(Gestor, on_delete=models.CASCADE, related_name='amonestaciones_creadas', blank=True, null=True)
+    
+    def __str__(self):
+        return f"Amonestación de: {self.gestor.username} hacia: {self.usuario.username}, el día: {self.fecha}"
     
     
 
