@@ -20,14 +20,33 @@ class Usuario(AbstractUser):
     dni = models.CharField(blank=False, null=False, unique=True)
     estado= models.CharField(choices=ESTADOS, blank=False, null=False, default='A')
 
+    REQUIRED_FIELDS = [
+        'email',
+        'first_name',
+        'last_name',
+        'fecha_nacimiento',
+        'sexo',
+        'telefono',
+        'dni',
+        
+    ]
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
+    
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
     
     
 class Gestor(Usuario):    
     almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE, related_name='gestores', blank=True, null=True)
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
+    
+    class Meta:
+        verbose_name = 'Gestor'
+        verbose_name_plural = 'Gestores'
     
 class Preferencia(models.Model):
      ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
@@ -43,6 +62,10 @@ class Preferencia(models.Model):
      
      def __str__(self):
         return f"Preferencia de: {self.usuario.username}"
+     
+     class Meta:
+        verbose_name = 'Preferencia'
+        verbose_name_plural = 'Preferencias'
 
 
 class Amonestacion(models.Model):
@@ -57,6 +80,10 @@ class Amonestacion(models.Model):
     
     def __str__(self):
         return f"Amonestación de: {self.gestor.username} hacia: {self.usuario.username}, el día: {self.fecha}"
+    
+    class Meta:
+        verbose_name = 'Amonestación'
+        verbose_name_plural = 'Amonestaciones'
     
     
 
