@@ -1,0 +1,49 @@
+{# home.html #}
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<section class="row header_inicio justify-content-between pe-5 ps-5 pb-5 pt-2">
+    <div class="col-4 ">
+        <div class="img_wrapper">
+            <img src="../static/img/cosateca_imagotipo.png" alt="image_inicio" class="imagotipo">
+        </div>
+    </div>
+    <div class="col-4 d-flex justify-content-end align-items-start botonera_header_inicio">
+        <a href="" class="btn boton_header_inicio">Registrarse</a>
+        <a href="" class="btn boton_header_inicio">Iniciar sesión</a>
+    </div>
+</section>
+
+
+<section class="row inicio mt-5">
+
+    <div class="col-6  d-flex flex-column align-items-start contenedor_texto_inicio">
+        <h1 class="texto_inicio">Bienvenidos a la <b>cosateca</b></h1>
+
+        <p>Comparte objetos, reduce tu huella de carbono</p>
+
+        <div class="botonera_inicio w-100">
+            <a href="" class="btn boton_inicio me-4">Comenzar</a>
+            <a href="" class="btn boton_inicio">Leer más</a>
+        </div>
+
+    </div>
+
+
+
+    <div class="col-5 d-flex justify-content-center">
+        <img src="../static/img/cosateca_inicio.png" alt="image_inicio" class="w-100">
+    </div>
+
+
+
+
+
+</section>
+
+
+
+{% endblock %}
