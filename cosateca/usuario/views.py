@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm
+from .forms import RegistroForm, InicioSesionForm
 from .models import Usuario
+from django.contrib.auth import login, authenticate, logout
+
 
 
 # Create your views here.
@@ -42,5 +44,25 @@ def registro(request):
         form = RegistroForm()
 
     return render(request, 'registro.html', {'form': form})
+
+
+
+def inicio_sesion(request):
+    if request.method == 'POST':
+        form = InicioSesionForm(request.POST)
+        if form.is_valid():
+            nombre_usuario = form.cleaned_data['nombre_usuario']
+            contraseña = form.cleaned_data['contraseña']
+            usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
+            
+            if usuario_autenticado is not None:
+                login(request, usuario_autenticado)
+                return redirect('/')
+        else:
+            messages.error(request, "Usuario o contraseña incorrectos.")
+    else:
+        form = InicioSesionForm()
+
+    return render(request, 'inicio_sesion.html', {'form': form})
 
 

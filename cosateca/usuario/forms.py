@@ -64,3 +64,10 @@ class RegistroForm(forms.Form):
         if len(telefono) < 9 or not telefono.isdigit():
             raise forms.ValidationError("El número de teléfono debe tener al menos 9 dígitos y solo contener números.")
         return telefono
+    
+    
+    
+    
+class InicioSesionForm(forms.Form):
+    nombre_usuario = forms.CharField(required=True, label='', widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario', 'class':'form-control input_formulario_inicio_sesion'}))
+    contraseña = forms.CharField(required=True, label='', widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña', 'class':'form-control input_formulario_inicio_sesion'}))

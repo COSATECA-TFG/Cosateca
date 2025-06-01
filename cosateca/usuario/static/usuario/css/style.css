@@ -1,14 +1,15 @@
+/* Registro */
 .formulario_registro{
     background-color: white;
     border-radius: 0.625rem !important;
-    border: 2px solid rgb(216, 216, 216) ; /* Cambia el color y grosor a tu gusto */
+    border: 2px solid rgb(216, 216, 216) ; 
     max-width: 70%;
     margin: 1rem auto;
 
 }
 
 
-.input_formulario{
+.input_formulario, .input_formulario_inicio_sesion{
     width: 100% !important;
     padding-top:2% !important;
     padding-bottom:2% !important;
@@ -26,7 +27,7 @@
 
 }
 
-.imagotipo_registro{
+.imagotipo_registro, .imagotipo_login{
     width: 15%; 
     height: auto;
 }
@@ -64,7 +65,7 @@ section > form > div:first-child{
 
 }
 
-.boton_registro{
+.boton_registro, .boton_inicio_sesion{
     background-color: transparent !important;
     border-color: rgb(216, 216, 216)  !important;
     border-width: 3px !important;
@@ -80,7 +81,7 @@ section > form > div:first-child{
 
 }
 
-.botonera_registro a:first-child{
+.botonera_registro a:first-child, .botonera_inicio_sesión a:first-child{
     background-image: url('../../img/icono_google.png') !important;
     background-size: 8%;
     background-repeat: no-repeat;
@@ -89,7 +90,7 @@ section > form > div:first-child{
 
 }
 
-.botonera_registro a:last-child{
+.botonera_registro a:last-child, .botonera_inicio_sesión a:last-child{
     background-image: url('../../img/icono_linkedin.png') !important;
     background-size: 8%;
     background-repeat: no-repeat;
@@ -106,4 +107,43 @@ section > form > div:first-child{
     padding-right: 5% !important;
     
 }
+
+/* Inicio de sesión */
+
+
+.formulario_inicio_sesion{
+    background-color: white;
+    border-radius: 0.625rem !important;
+    border: 2px solid rgb(216, 216, 216); 
+    max-width: 50%;
+    margin: 1rem auto;
+    margin-top: 6%;
+}
+
+.botonera_inicio_sesión a:first-child{
+    width: 35% !important;
+    
+
+}
+
+.botonera_inicio_sesión a:last-child{
+    width: 36% !important;
+}
+
+
+.boton_inicio_sesion{
+    padding-left: 6% !important;
+
+}
+
+.input_formulario_inicio_sesion{
+    padding-top: 4% !important;
+    padding-bottom: 4% !important;
+}
+
+.imagotipo_login{
+    width: 30% !important;
+    
+}
+
 
