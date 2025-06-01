@@ -1,0 +1,109 @@
+.formulario_registro{
+    background-color: white;
+    border-radius: 0.625rem !important;
+    border: 2px solid rgb(216, 216, 216) ; /* Cambia el color y grosor a tu gusto */
+    max-width: 70%;
+    margin: 1rem auto;
+
+}
+
+
+.input_formulario{
+    width: 100% !important;
+    padding-top:2% !important;
+    padding-bottom:2% !important;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.input_formulario::placeholder{
+    color: gray !important;
+    opacity: 0.35 !important;
+}
+#select_sexo:invalid {
+    color: gray;
+    opacity: 0.6 !important;
+
+}
+
+.imagotipo_registro{
+    width: 15%; 
+    height: auto;
+}
+
+section{
+    margin-top:2%;
+    margin-left:5% ;
+    margin-right:5% ;
+
+
+    
+}
+
+section > form > div:first-child{
+    width:100% !important;
+    margin-bottom: 1% ;
+}
+
+
+.contenedor_separacion_vertical{
+    width: 4.3333333% !important;
+}
+
+.separacion-vertical {
+    padding-bottom: 20%;
+    border-left: 2px solid rgb(216, 216, 216);
+    height: 100%;
+    min-height: 250px; /* Ajusta según tu diseño */
+}
+
+.separacion_horizontal_registro {
+    border-top: 2px solid rgb(216, 216, 216) !important;
+    width: 70% !important;
+    margin: 2rem auto !important;
+
+}
+
+.boton_registro{
+    background-color: transparent !important;
+    border-color: rgb(216, 216, 216)  !important;
+    border-width: 3px !important;
+    color: #244E47 !important;
+    font-size: 1.375rem !important;
+    width: 25% !important;
+    height: 3.125rem !important;
+    border-radius: 0.625rem !important;
+    margin-bottom: 2% !important;
+    padding-left: 4% !important;
+    display: flex !important;
+    align-items: center !important;
+
+}
+
+.botonera_registro a:first-child{
+    background-image: url('../../img/icono_google.png') !important;
+    background-size: 8%;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    font-size: 18px !important;
+
+}
+
+.botonera_registro a:last-child{
+    background-image: url('../../img/icono_linkedin.png') !important;
+    background-size: 8%;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    font-size: 18px !important;
+}
+
+.boton_envio_formulario{
+    background-color: #6CBC9B !important;
+    border: none !important;
+    padding-top: 1% !important;
+    padding-bottom: 1% !important;
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+    
+}
+
