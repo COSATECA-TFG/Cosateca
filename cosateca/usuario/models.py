@@ -16,7 +16,7 @@ class Usuario(AbstractUser):
     fecha_nacimiento = models.DateField(blank=False, null=False)
     sexo = models.CharField( choices=SEXOS, blank=False, null=False)
     email = models.EmailField (blank=False, null=False, unique=True)
-    telefono = models.CharField(blank=False, null=False, unique=True)
+    telefono = models.CharField(blank=False, null=False, unique=True, max_length=9)
     dni = models.CharField(blank=False, null=False, unique=True)
     estado= models.CharField(choices=ESTADOS, blank=False, null=False, default='A')
 
