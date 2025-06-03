@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from usuario.models import Usuario, Gestor, Preferencia
-from almacen.models import Almacen, Localizacion
+from usuario.models import Usuario, Gestor, Preferencia, Amonestacion
+from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, ObjetoValoracionDenuncia
 from django.utils import timezone
 from datetime import date
 
@@ -78,6 +78,8 @@ class Command(BaseCommand):
             }
             
         ]
+        
+
 
         for data in usuarios:
             if not Usuario.objects.filter(username=data['username']).exists():
@@ -137,6 +139,35 @@ class Command(BaseCommand):
             franja_horaria='Tarde'
         )
         
+        
+        amonestacion1 = Amonestacion(
+            motivo= "Mal comportamiento",
+            severidad='Leve',
+        )
+        
+        
+        horario1 = Horario(
+            dia_semana='Lunes',
+            hora_inicio=timezone.now().replace(hour=9, minute=0, second=0, microsecond=0),
+            hora_fin=timezone.now().replace(hour=17, minute=0, second=0, microsecond=0),
+        )
+        
+        
+        valoracion_almacen1 = AlmacenValoracion(
+            estrellas=4,
+            comentario="Buen servicio y atención al cliente",
+        )
+        
+        
+        valoracion_denuncia1 = ObjetoValoracionDenuncia(
+            categoria="Opinión falsa",
+            contexto="El usuario ha publicado una opinión falsa sobre el servicio.",
+        )
+        
+        
+        
+        
+        
 
 
         
@@ -157,6 +188,25 @@ class Command(BaseCommand):
         gestor1.save()
         gestor2.save()
         
+        
+        #Relacion amonestacion
+        amonestacion1.usuario = usuario1
+        amonestacion1.gestor = gestor1 
+        amonestacion1.save()
         self.stdout.write(self.style.SUCCESS("¡Población exitosa!"))
+        
+        
+        #Relaciones horarios
+        horario1.almacen = almacen
+        horario1.save()
 
+        # Relaciones valoracion almacen
+        valoracion_almacen1.almacen = almacen
+        valoracion_almacen1.usuario = usuario1
+        valoracion_almacen1.save()
+        
+        # Relaciones valoracion denuncia
+        valoracion_denuncia1.valoracion = valoracion_almacen1
+        valoracion_denuncia1.usuario = usuario1
+        valoracion_denuncia1.save()
 
