@@ -108,6 +108,10 @@ section > form > div:first-child{
     
 }
 
+.boton_envio_formulario:hover {
+  opacity: 0.9;
+}
+
 /* Inicio de sesión */
 
 
@@ -146,4 +150,45 @@ section > form > div:first-child{
     
 }
 
+/* Cuestionario */
 
+.item-radio {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem; 
+}
+
+.item-radio input[type="radio"] {
+  margin-right: 0.5rem;
+
+}
+
+.item-radio label {
+  color: #244E47;
+  font-size: 1rem;
+}
+
+.titulo_cuestionario {
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px;
+  color: #244E47;
+  margin-top: 4%;
+  margin-bottom: 4%; 
+}
+
+.preguntas_cuestionario {
+  margin-left: 8%;      
+  margin-right: 0;
+  font-size: 1.25rem;   
+}
+
+.preguntas_cuestionario label,
+.preguntas_cuestionario strong {
+  font-size: 1.25rem;   
+}
+
+.preguntas_cuestionario input[type="radio"] {
+  transform: scale(1.2);
+  margin-right: 0.7rem;
+}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Cuestionario de preferencias{% endblock %}
+{% block content %}
+
+<div class="container formulario_registro">
+  <h2 class="titulo_cuestionario">Cuestionario de preferencias</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class ="preguntas_cuestionario">
+
+        <div class="mb-4">
+        <label class="form-label" for="select_tipo">
+            <strong>¿Qué tipo de productos estás buscando?</strong>
+        </label>
+        {% for radio in form.tarea_tipo %}
+            <div class="item-radio">
+            {{ radio.tag }}
+            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="mb-4">
+        <label class="form-label" for="select_frecuencia">
+            <strong>¿Con qué frecuencia planeas usar los productos?</strong>
+        </label>
+        {% for radio in form.frecuencia_uso %}
+            <div class="item-radio">
+            {{ radio.tag }}
+            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="mb-4">
+        <label class="form-label" for="select_experiencia">
+            <strong>¿Cuál es tu nivel de experiencia usando herramientas?</strong>
+        </label>
+        {% for radio in form.experiencia %}
+            <div class="item-radio">
+            {{ radio.tag }}
+            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="mb-4">
+        <label class="form-label" for="select_franja">
+            <strong>¿En qué franja prefieres realizar las reservas?</strong>
+        </label>
+        {% for radio in form.franja_horaria %}
+            <div class="item-radio">
+            {{ radio.tag }}
+            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+        {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5 mb-5">
+      <button type="submit" class="btn btn-primary boton_envio_formulario">
+        Guardar preferencias
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
