@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm, InicioSesionForm
-from .models import Usuario
+from .forms import RegistroForm, InicioSesionForm, CuestionarioForm
+from django.contrib import messages
+from .models import Usuario, Preferencia
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -37,8 +39,9 @@ def registro(request):
             
             nuevo_usuario.set_password(contraseña)
             nuevo_usuario.save()
+            request.session['usuario_id'] = nuevo_usuario.id
             
-            return redirect('/')
+            return redirect('cuestionario_preferencias')
             
     else:
         form = RegistroForm()
@@ -56,13 +59,54 @@ def inicio_sesion(request):
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
             
             if usuario_autenticado is not None:
-                login(request, usuario_autenticado)
-                return redirect('/')
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos.")
+                try:
+                    usuario_autenticado.preferencia
+                    login(request, usuario_autenticado)
+                    return redirect('menu')
+                except Preferencia.DoesNotExist:
+                    request.session['usuario_id'] = usuario_autenticado.id
+                    return redirect('cuestionario_preferencias')        
+
     else:
         form = InicioSesionForm()
 
     return render(request, 'inicio_sesion.html', {'form': form})
 
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('/')
+
+def cuestionario_preferencias(request):
+    if request.method == 'POST':
+        form = CuestionarioForm(request.POST)
+        if form.is_valid():
+            usuario_id = request.session.get('usuario_id')
+            if usuario_id:
+                usuario = Usuario.objects.get(id=usuario_id)
+                tarea_tipo = form.cleaned_data['tarea_tipo']
+                frecuencia_uso = form.cleaned_data['frecuencia_uso']
+                experiencia = form.cleaned_data['experiencia']
+                franja_horaria = form.cleaned_data['franja_horaria']
+                nueva_preferencia = Preferencia(
+                    tarea_tipo=tarea_tipo,
+                    frecuencia_uso=frecuencia_uso,
+                    experiencia=experiencia,
+                    franja_horaria=franja_horaria,
+                    usuario=usuario
+                )
+                nueva_preferencia.save()
+                login(request, usuario)
+                request.session.pop('usuario_id', None)
+                return redirect('menu')
+
+    else:
+        form = CuestionarioForm()
+
+    return render(request, 'cuestionario_preferencias.html', {'form': form})
+    
+
+@login_required
+def menu(request):
+            return render(request, 'menu.html')
+        
 

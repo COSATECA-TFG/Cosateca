@@ -71,3 +71,11 @@ class RegistroForm(forms.Form):
 class InicioSesionForm(forms.Form):
     nombre_usuario = forms.CharField(required=True, label='', widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario', 'class':'form-control input_formulario_inicio_sesion'}))
     contraseña = forms.CharField(required=True, label='', widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña', 'class':'form-control input_formulario_inicio_sesion'}))
+
+
+class CuestionarioForm(forms.Form):
+    tarea_tipo = forms.ChoiceField(required=True, choices=[('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')], label='¿Qué tipo de productos estás buscando?', widget=forms.RadioSelect(attrs={'id': 'select_tipo',}))
+    frecuencia_uso = forms.ChoiceField(required=True, choices=[('Diario', 'Diario'), ('Semanal', 'Semanal'), ('Mensual', 'Mensual'), ('Ocasiones puntuales', 'Ocasiones puntuales')], label='¿Con qué frecuencia planeas usar los productos?', widget=forms.RadioSelect(attrs={'id': 'select_frecuencia',}))
+    experiencia = forms.ChoiceField(required=True, choices=[('Principiante', 'Principiante'), ('Intermedio', 'Intermedio'), ('Avanzado', 'Avanzado')], label='¿Cuál es tu nivel de experiencia usando herramientas?', widget=forms.RadioSelect(attrs={'id': 'select_experiencia',}))
+    franja_horaria = forms.ChoiceField(required=True, choices=[('Mañana', 'Mañana'), ('Tarde', 'Tarde'), ('Fines de semana', 'Fines de semana'), ('Sin preferencia', 'Sin preferencia')], label='¿En qué franja prefieres realizar las reservas?', widget=forms.RadioSelect(attrs={'id': 'select_franja',}))
+    
