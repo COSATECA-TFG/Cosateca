@@ -1,0 +1,87 @@
+/*Historial de reservas*/
+
+
+#sidebar-filtros {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+#sidebar-filtros .list-group-item {
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  color: #2f4f4f;   
+  background-color: #f8f9fa;
+  transition: background-color 0.2s;
+}
+
+#sidebar-filtros .list-group-item:hover {
+  background-color: #e9ecef;
+}
+
+#sidebar-filtros .list-group-item.activeFiltro {
+  background-color: #84b99e; 
+  color: white;
+  font-weight: 600;
+}
+
+.reserva-card {
+  border: 1px solid #e3e3e3;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.reserva-card .objeto-imagen {
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.reserva-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2f4f4f;
+}
+
+.reserva-card .card-text {
+  font-size: 0.9rem;
+}
+
+
+.badge-estado-curso {
+  background-color: #6aa84f; 
+  color: white;
+  font-weight: 500;
+  padding: 0.45em 0.8em;
+  font-size: 0.875rem;
+}
+
+.badge-estado-finalizada {
+  background-color: #345f36; 
+  color: white;
+  font-weight: 500;
+  padding: 0.45em 0.8em;
+  font-size: 0.875rem;
+}
+
+.badge-estado-cancelada {
+  background-color: #d9534f; 
+  color: white;
+  font-weight: 500;
+  padding: 0.45em 0.8em;
+  font-size: 0.875rem;
+}
+
+.acciones-reserva .btn-link {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.acciones-reserva .btn-link:hover {
+  color: #343a40;
+}
+
+.acciones-reserva .editar-icono {
+  margin-right: 0.5rem;
+}
+
+

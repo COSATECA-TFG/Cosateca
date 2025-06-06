@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+
+  {% include "header.html" %}
+
+  <div class="container ms-5 me-5 mt-4">
+    <div class="row">
+
+      <div class="col-md-3">
+        <div class="list-group" id="sidebar-filtros">
+
+          <a href="{% url 'mis_reservas' %}?filtro=activas"
+             class="list-group-item list-group-item-action
+                    {% if request.GET.filtro == 'activas' %}activeFiltro{% endif %}">
+            Activas
+          </a>
+          <a href="{% url 'mis_reservas' %}?filtro=todas"
+             class="list-group-item list-group-item-action
+                    {% if request.GET.filtro == '' or request.GET.filtro == 'todas' %}activeFiltro{% endif %}">
+            Todas
+          </a>
+          <a href="{% url 'mis_reservas' %}?filtro=finalizadas"
+             class="list-group-item list-group-item-action
+                    {% if request.GET.filtro == 'finalizadas' %}activeFiltro{% endif %}">
+            Finalizadas
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-9">
+        {% if reservas %}
+          {% for reserva in reservas %}
+            <div class="card mb-3 reserva-card">
+              <div class="card-body">
+                <div class="row align-items-center">
+
+                  <div class="col-2">
+                    <img src="{{ reserva.objeto.imagen }}"
+                         alt="Imagen {{ reserva.objeto.nombre }}"
+                         class="img-fluid objeto-imagen">
+                  </div>
+
+                  <div class="col-5">
+                    <h5 class="card-title mb-1">{{ reserva.objeto.nombre }}</h5>
+                    <p class="card-text text-muted mb-0">
+                      {{ reserva.fecha_inicio|date:"d M" }} – 
+                      {{ reserva.fecha_fin|date:"d M Y" }}
+                    </p>
+                  </div>
+
+                  <div class="col-3 text-end">
+                    {% if reserva.cancelada%}
+                      <span class="badge rounded-pill badge-estado-cancelada">
+                        Cancelada
+                      </span>
+                    {% else %}
+                      {% if reserva.fecha_inicio > timezone.now.date %}
+                        <span class="badge rounded-pill badge-estado-curso">
+                          Programada
+                        </span>
+                      {% elif timezone.now.date >=  reserva.fecha_inicio and reserva.fecha_fin >= timezone.now.date %}
+                        <span class="badge rounded-pill badge-estado-finalizada">
+                          En curso
+                        </span>
+                      {% elif timezone.now.date > reserva.fecha_fin and reserva.fecha_entrega%}
+                        <span class="badge rounded-pill badge-estado-cancelada">
+                          Finalizada
+                        </span>
+                      {% elif timezone.now.date > reserva.fecha_fin and not reserva.fecha_entrega%}
+                        <span class="badge rounded-pill badge-estado-cancelada">
+                          Retrasada
+                        </span>
+                      
+                      {% endif %}
+                    {% endif %}
+
+                    <p class="card-text mt-2 text-muted mb-0">
+                      {{ reserva.objeto.huella_carbono }} kg CO₂
+                    </p>
+                  </div>
+
+                  <div class="col-2 text-end acciones-reserva">
+                    <a href="/" class="btn btn-link p-0 me-2 editar-icono">
+                      <i class="bi bi-pencil-fill"></i>
+                    </a>
+
+                    <a href="/" class="btn btn-link  p-0 eliminar-icono">
+                      <i class="bi bi-trash-fill"></i>
+                    </a>
+                  </div>
+
+
+                  
+
+                </div> 
+              </div> 
+            </div> 
+          {% endfor %}
+
+        {% else %}
+          <div class="alert alert-info">
+            No hay reservas disponibles.
+          </div>
+        {% endif %}
+      </div>
+
+    </div> 
+  </div> 
+
+{% endblock %}
