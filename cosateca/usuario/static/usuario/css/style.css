@@ -192,3 +192,30 @@ section > form > div:first-child{
   transform: scale(1.2);
   margin-right: 0.7rem;
 }
+
+/* Menu */
+
+.cuadro-placeholder {
+  width: 100%;
+  padding-top: 75%;
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  position: relative;
+}
+
+.cuadro-placeholder-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.titulos_menu {
+  text-decoration: none;
+  color: #244E47;
+  font-weight: bold;
+  font-size: 2rem; 
+  display: block;
+}

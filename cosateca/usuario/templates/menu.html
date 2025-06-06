@@ -1,10 +1,72 @@
 {% extends "base.html" %}
 {% block title %}Menú{% endblock %}
+
 {% block content %}
 
-{% include "header.html"%}
+  {% include "header.html" %}
 
-<section class="mt-5">
-    <h2>Bienvenido, {{ user.username }}!</h2>
-</section>
+  <section class="mt-2">
+    <a href="/recomendaciones_personalizadas" class = "titulos_menu">Recomendaciones para ti ></a>
+    <div class="row gy-4">
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-3">
+    <a href="/top_valoraciones" class = "titulos_menu">Top valoraciones ></a>
+    <div class="row gy-4">
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="cuadro-placeholder">
+          <div class="cuadro-placeholder-inner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-3 mb-3">
+    <a href="/almacenes" class = "titulos_menu">Almacenes disponibles ></a>
+  </section>
+
 {% endblock %}
