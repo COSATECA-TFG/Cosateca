@@ -15,7 +15,7 @@ body {
 }
 
 .img_wrapper{
-    width: 70%;
+    width: 40%;
     height: 100%;
 }
 
@@ -69,4 +69,17 @@ body {
 
 .imagen_inicio{
     width: 85%;
+}
+
+
+/* HEADER */
+
+.menu_header {
+    margin-top: 0.25% !important; 
+
+}
+
+.user_icon {
+  width: 8% !important;
+  height: 10% !important;
 }
