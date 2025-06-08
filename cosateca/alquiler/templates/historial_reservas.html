@@ -5,108 +5,163 @@
 
   {% include "header.html" %}
 
-  <div class="container ms-5 me-5 mt-4">
-    <div class="row">
-
-      <div class="col-md-3">
-        <div class="list-group" id="sidebar-filtros">
-
-          <a href="{% url 'mis_reservas' %}?filtro=activas"
-             class="list-group-item list-group-item-action
-                    {% if request.GET.filtro == 'activas' %}activeFiltro{% endif %}">
-            Activas
-          </a>
-          <a href="{% url 'mis_reservas' %}?filtro=todas"
-             class="list-group-item list-group-item-action
-                    {% if request.GET.filtro == '' or request.GET.filtro == 'todas' %}activeFiltro{% endif %}">
-            Todas
-          </a>
-          <a href="{% url 'mis_reservas' %}?filtro=finalizadas"
-             class="list-group-item list-group-item-action
-                    {% if request.GET.filtro == 'finalizadas' %}activeFiltro{% endif %}">
-            Finalizadas
-          </a>
-        </div>
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
       </div>
+    {% endfor %}
+  </div>
+{% endif %}
 
-      <div class="col-md-9">
-        {% if reservas %}
-          {% for reserva in reservas %}
-            <div class="card mb-3 reserva-card">
-              <div class="card-body">
-                <div class="row align-items-center">
 
-                  <div class="col-2">
-                    <img src="{{ reserva.objeto.imagen }}"
-                         alt="Imagen {{ reserva.objeto.nombre }}"
-                         class="img-fluid objeto-imagen">
-                  </div>
+  <div class="pagina-reservas mt-5">
 
-                  <div class="col-5">
-                    <h5 class="card-title mb-1">{{ reserva.objeto.nombre }}</h5>
-                    <p class="card-text text-muted mb-0">
-                      {{ reserva.fecha_inicio|date:"d M" }} – 
-                      {{ reserva.fecha_fin|date:"d M Y" }}
-                    </p>
-                  </div>
+    <div class="filtros-reserva ms-5">
+      <div class="list-group" id="sidebar-filtros">
+        <a href="{% url 'mis_reservas' %}?filtro=todas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'todas' %}activeFiltro{% endif %}">
+          Todas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=programadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'programadas' %}activeFiltro{% endif %}">
+          Programadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=en_curso"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'en_curso' %}activeFiltro{% endif %}">
+          En curso
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=retrasadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'retrasadas' %}activeFiltro{% endif %}">
+          Retrasadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=canceladas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'canceladas' %}activeFiltro{% endif %}">
+          Canceladas
+        <a href="{% url 'mis_reservas' %}?filtro=finalizadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'finalizadas' %}activeFiltro{% endif %}">
+          Finalizadas
+        </a>
+      </div>
+    </div>
 
-                  <div class="col-3 text-end">
-                    {% if reserva.cancelada%}
-                      <span class="badge rounded-pill badge-estado-cancelada">
-                        Cancelada
+    <div class="contenido-reserva">
+      {% if reservas %}
+        {% for reserva in reservas %}
+          <div class="card mb-3 reserva-card">
+            <div class="card-body">
+              <div class="row align-items-center">
+
+                <div class="col-2">
+                  <img src="{{ reserva.objeto.imagen }}"
+                       alt="Imagen {{ reserva.objeto.nombre }}"
+                       class="img-fluid objeto-imagen">
+                </div>
+
+                <div class="col-4">
+                  <h5 class="card-title mb-1">{{ reserva.objeto.nombre }}</h5>
+                  <p class="card-text text-muted mb-0">
+                    {{ reserva.fecha_inicio|date:"d M" }} – 
+                    {{ reserva.fecha_fin|date:"d M Y" }}
+                  </p>
+                </div>
+
+                <div class="col-2 text-center">
+                  <img src="../static/img/huella_carbono.png" alt="Huella de Carbono" class="huella-carbono-img">
+                  <p class="card-text mt-2 text-muted mb-0">
+                    {{ reserva.objeto.huella_carbono }} kg CO₂
+                  </p>
+                </div>
+
+                <div class="col-2">
+                  {% if reserva.cancelada %}
+                    <span class="badge rounded-pill badge-estado-cancelada">
+                      Cancelada
+                    </span>
+                  {% else %}
+                    {% if reserva.fecha_inicio > timezone.now.date %}
+                      <span class="badge rounded-pill badge-estado-programada">
+                        Programada
                       </span>
-                    {% else %}
-                      {% if reserva.fecha_inicio > timezone.now.date %}
-                        <span class="badge rounded-pill badge-estado-curso">
-                          Programada
-                        </span>
-                      {% elif timezone.now.date >=  reserva.fecha_inicio and reserva.fecha_fin >= timezone.now.date %}
-                        <span class="badge rounded-pill badge-estado-finalizada">
-                          En curso
-                        </span>
-                      {% elif timezone.now.date > reserva.fecha_fin and reserva.fecha_entrega%}
-                        <span class="badge rounded-pill badge-estado-cancelada">
-                          Finalizada
-                        </span>
-                      {% elif timezone.now.date > reserva.fecha_fin and not reserva.fecha_entrega%}
-                        <span class="badge rounded-pill badge-estado-cancelada">
-                          Retrasada
-                        </span>
-                      
-                      {% endif %}
+                    {% elif timezone.now.date >= reserva.fecha_inicio and reserva.fecha_fin >= timezone.now.date %}
+                      <span class="badge rounded-pill badge-estado-curso">
+                        En curso
+                      </span>
+                    {% elif timezone.now.date > reserva.fecha_fin and reserva.fecha_entrega %}
+                      <span class="badge rounded-pill badge-estado-finalizada">
+                        Finalizada
+                      </span>
+                    {% elif timezone.now.date > reserva.fecha_fin and not reserva.fecha_entrega %}
+                      <span class="badge rounded-pill badge-estado-retrasada">
+                        Retrasada
+                      </span>
                     {% endif %}
+                  {% endif %}
+                </div>
 
-                    <p class="card-text mt-2 text-muted mb-0">
-                      {{ reserva.objeto.huella_carbono }} kg CO₂
-                    </p>
-                  </div>
-
-                  <div class="col-2 text-end acciones-reserva">
-                    <a href="/" class="btn btn-link p-0 me-2 editar-icono">
+                {% if not reserva.fecha_entrega and not reserva.cancelada %}                  
+                  <div class="col-2 d-flex flex-column acciones-reserva">
+                    <a href="/" class="btn btn-link p-0 mb-2 editar-icono">
                       <i class="bi bi-pencil-fill"></i>
                     </a>
-
-                    <a href="/" class="btn btn-link  p-0 eliminar-icono">
+                    <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-link p-0 eliminar-icono">
                       <i class="bi bi-trash-fill"></i>
                     </a>
                   </div>
+                {% endif %}
 
-
-                  
-
-                </div> 
               </div> 
             </div> 
-          {% endfor %}
+          </div> 
+        {% endfor %}
 
-        {% else %}
-          <div class="alert alert-info">
-            No hay reservas disponibles.
-          </div>
-        {% endif %}
+      {% else %}
+        <div class="alert alert-info no-reservas-bg">
+          No hay reservas disponibles.
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+<div class="modal fade" id="modalConfirmarCancelacion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center p-4 modal-corporativo">
+      <h5 class="modal-title mb-4" id="modalLabel"><strong>¿Quieres cancelar la reserva?</strong></h5>
+      <div class="d-flex justify-content-center gap-3">
+        <form method="POST" id="formCancelarReserva">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success" style="font-size:1.2rem;">Confirmar</button>
+        </form>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="font-size:1.2rem;">Cancelar</button>
       </div>
+    </div>
+  </div>
+</div>
 
-    </div> 
-  </div> 
+<script>
+  let formCancelar = document.getElementById("formCancelarReserva");
+  let enlacesCancelar = document.querySelectorAll(".eliminar-icono");
+
+  enlacesCancelar.forEach(enlace => {
+    enlace.addEventListener("click", function(event) {
+      event.preventDefault();
+      const url = this.getAttribute("href");
+      formCancelar.setAttribute("action", url);
+      let modal = new bootstrap.Modal(document.getElementById('modalConfirmarCancelacion'));
+      modal.show();
+    });
+  });
+</script>
+
+
 
 {% endblock %}

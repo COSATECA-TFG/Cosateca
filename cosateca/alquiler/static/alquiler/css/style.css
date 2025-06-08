@@ -1,9 +1,25 @@
-/*Historial de reservas*/
+.pagina-reservas {
+  position: relative;
+  min-height: 100vh;
+}
 
+.filtros-reserva {
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  width: 300px;
+}
+
+.contenido-reserva {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  padding: 0 2rem;
+}
 
 #sidebar-filtros {
-  border-radius: 0.5rem;
-  overflow: hidden;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216); 
 }
 
 #sidebar-filtros .list-group-item {
@@ -11,7 +27,7 @@
   padding: 0.75rem 1rem;
   border: none;
   color: #2f4f4f;   
-  background-color: #f8f9fa;
+  background-color: white;
   transition: background-color 0.2s;
 }
 
@@ -26,62 +42,101 @@
 }
 
 .reserva-card {
-  border: 1px solid #e3e3e3;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216); 
+  min-height: 160px;           
+  padding-top: 1.5rem;        
+  padding-bottom: 1.5rem;      
 }
 
 .reserva-card .objeto-imagen {
-  max-height: 80px;
+  max-height: 140px;  
+  max-width: 100%;        
   object-fit: contain;
 }
 
 .reserva-card .card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.5rem;           
+  font-weight: 700;
   color: #2f4f4f;
 }
 
 .reserva-card .card-text {
-  font-size: 0.9rem;
+  font-size: 1.15rem;         
 }
 
-
 .badge-estado-curso {
-  background-color: #6aa84f; 
+  background-color: #7AC29A;
   color: white;
-  font-weight: 500;
-  padding: 0.45em 0.8em;
-  font-size: 0.875rem;
 }
 
 .badge-estado-finalizada {
-  background-color: #345f36; 
+  background-color: #2F5D37;
   color: white;
-  font-weight: 500;
-  padding: 0.45em 0.8em;
-  font-size: 0.875rem;
 }
 
 .badge-estado-cancelada {
-  background-color: #d9534f; 
+  background-color: #E87F7F; 
   color: white;
-  font-weight: 500;
-  padding: 0.45em 0.8em;
-  font-size: 0.875rem;
+}
+
+.badge-estado-programada {
+  background-color: #FFD166; 
+  color: white;
+}
+
+.badge-estado-retrasada {
+  background-color: #F2994A; 
+  color: white;
+}
+
+.badge-estado-programada,
+.badge-estado-retrasada,
+.badge-estado-curso,
+.badge-estado-finalizada,
+.badge-estado-cancelada {
+  font-size: 1.05rem !important;
+  padding: 0.6em 1.1em !important;
 }
 
 .acciones-reserva .btn-link {
-  color: #6c757d;
-  font-size: 1.1rem;
+  color: #244E47 !important;
+  font-size: 1.5rem;
 }
 
 .acciones-reserva .btn-link:hover {
   color: #343a40;
 }
 
-.acciones-reserva .editar-icono {
-  margin-right: 0.5rem;
+.huella-carbono-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
+.no-reservas-bg {
+  background-color: #84b99e !important;
+  color: white !important;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) !important; 
+}
 
+/* Puedes poner esto en tu style.css o dentro de un <style> en la plantilla */
+.modal-corporativo {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-corporativo .modal-title {
+  font-size: 2.2rem;
+  color: #2f4f4f;
+}
+
+.modal-corporativo .modal-body,
+.modal-corporativo .modal-content {
+  font-size: 1.35rem;
+  color: #2f4f4f;
+  background: #fff;
+}
