@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import RegistroForm, InicioSesionForm, CuestionarioForm
 from django.contrib import messages
 from .models import Usuario, Preferencia
+from objeto.models import Objeto
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
@@ -107,6 +108,12 @@ def cuestionario_preferencias(request):
 
 @login_required
 def menu(request):
-            return render(request, 'menu.html')
+    return render(request, 'menu.html')
+
+@login_required
+def catalogo(request):
+    herramientas = Objeto.objects.all()
+
+    return render(request, 'catalogo.html', {'herramientas': herramientas})
         
 

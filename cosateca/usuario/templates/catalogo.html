@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Catálogo{% endblock %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+<section class="catalogo">
+    <div class="row">
+
+        <div class="col-3 filtrado_ordenacion">
+            <div class="text-center mb-3 mt-2">
+                <span class="titulo_filtrado_ordenacion"> <b>FILTROS</b> </span>
+                <div class="row botonera_filtros d-flex align-items-center flex-column">
+                    <a href="" class="btn">Categoría</a>
+                    <a href="" class="btn">Condición</a>
+                    <a href="" class="btn">Localización</a>
+                </div>
+            </div>
+            <div class="text-center mt-3 mb-2">
+                <span class="titulo_filtrado_ordenacion"> <b>ORDENAR POR</b> </span>
+                <div class="row botonera_filtros d-flex align-items-center flex-column">
+                    <a href="" class="btn">Condición</a>
+                    <a href="" class="btn">Valoraciones</a>
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="col-9">
+            <form action="get" class="">
+                <input type="text" class="form-control mb-3 input-buscar" placeholder="Buscar">
+            </form>
+
+            <div class="container mt-4">
+                <div class="row">
+                    {% for h in herramientas %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100">
+                            <!-- Imagen del elemento (opcional) -->
+                            {% if h.imagen %}
+                            <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ h.nombre }}</h5>
+                                <p class="card-text">{{ h.descripcion }}</p>
+                                <!-- Puedes añadir más campos aquí -->
+                            </div>
+                                 <a href="" class="stretched-link"></a>                         
+                        </div>
+                    </div>
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div>
+                <div class="row">
+                    {% endif %}
+                    {% empty %}
+                    <div class="col-12">
+                        <p>No hay elementos disponibles.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+</section>
+
+
+{% endblock %}
