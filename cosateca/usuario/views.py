@@ -3,6 +3,7 @@ from .forms import RegistroForm, InicioSesionForm, CuestionarioForm
 from django.contrib import messages
 from .models import Usuario, Preferencia
 from objeto.models import Objeto
+from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
@@ -113,7 +114,26 @@ def menu(request):
 @login_required
 def catalogo(request):
     herramientas = Objeto.objects.all()
+    almacenes = Almacen.objects.all()
+    categoria = request.GET.get('categoria', '')
+    if categoria:
+        herramientas = herramientas.filter(categoria__icontains=categoria)
 
-    return render(request, 'catalogo.html', {'herramientas': herramientas})
+    condicion = request.GET.get('condicion', '')
+    if condicion:
+        herramientas = herramientas.filter(condicion__icontains=condicion)
+
+    localizacion = request.GET.get('almacen', '')
+    if localizacion:
+        herramientas = herramientas.filter(almacen__nombre__icontains=localizacion)
+
+    orden_condicion = request.GET.get('orden_condicion', '')
+    if orden_condicion: #Si queremos meter mas tipos de ordenacion seguramente tengamos que meter js en el template para cambiar el valor de la url y cambiar aqui el if
+        herramientas = herramientas.order_by('condicion')
+    if request.method == 'GET':
+        nombre = request.GET.get('nombre_herramienta', '')
+        if nombre:
+            herramientas = herramientas.filter(nombre__icontains=nombre)
+    return render(request, 'catalogo.html', {'herramientas': herramientas, 'almacenes':almacenes})
         
 

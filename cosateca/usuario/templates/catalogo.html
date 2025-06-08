@@ -12,16 +12,49 @@
             <div class="text-center mb-3 mt-2">
                 <span class="titulo_filtrado_ordenacion"> <b>FILTROS</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
-                    <a href="" class="btn">Categoría</a>
-                    <a href="" class="btn">Condición</a>
-                    <a href="" class="btn">Localización</a>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Categoría
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?categoria=Bricolaje">Bricolaje</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Jardín">Jardín</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Cocina">Cocina</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Electrónica">Electrónica</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Herramientas">Herramientas</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Limpieza">Limpieza</a></li>
+                            <li><a class="dropdown-item" href="?categoria=Otros">Otros</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?condicion=Nuevo">Nuevo</a></li>
+                            <li><a class="dropdown-item" href="?condicion=Bueno">Bueno</a></li>
+                            <li><a class="dropdown-item" href="?condicion=Desgastado">Desgastado</a></li>
+                            <li><a class="dropdown-item" href="?condicion=Perdido">Perdido</a></li>
+
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Localización
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            {% for a in almacenes %}
+                                <li><a class="dropdown-item" href="?almacen={{a.nombre}}">{{a.nombre}}</a></li>
+                            {%endfor%}
+
+                        </ul>
+                    </div> 
                 </div>
             </div>
             <div class="text-center mt-3 mb-2">
                 <span class="titulo_filtrado_ordenacion"> <b>ORDENAR POR</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
-                    <a href="" class="btn">Condición</a>
-                    <a href="" class="btn">Valoraciones</a>
+                    <a href="?orden_condicion=y" class="btn">Condición</a>
+                    <a href="?orden_valoracion=y" class="btn">Valoraciones</a>
                 </div>
 
 
@@ -30,8 +63,9 @@
         </div>
 
         <div class="col-9">
-            <form action="get" class="">
-                <input type="text" class="form-control mb-3 input-buscar" placeholder="Buscar">
+            <form method="get">
+                <input type="text" name="nombre_herramienta" class="form-control mb-3 input-buscar"
+                    placeholder="Buscar">
             </form>
 
             <div class="container mt-4">
@@ -48,7 +82,7 @@
                                 <p class="card-text">{{ h.descripcion }}</p>
                                 <!-- Puedes añadir más campos aquí -->
                             </div>
-                                 <a href="" class="stretched-link"></a>                         
+                            <a href="" class="stretched-link"></a>
                         </div>
                     </div>
                     {% if forloop.counter|divisibleby:4 and not forloop.last %}
