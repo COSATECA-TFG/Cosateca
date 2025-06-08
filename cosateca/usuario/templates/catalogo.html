@@ -53,8 +53,24 @@
             <div class="text-center mt-3 mb-2">
                 <span class="titulo_filtrado_ordenacion"> <b>ORDENAR POR</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
-                    <a href="?orden_condicion=y" class="btn">Condición</a>
-                    <a href="?orden_valoracion=y" class="btn">Valoraciones</a>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?orden_condicion=Mayor">Mejor condición</a></li>
+                            <li><a class="dropdown-item" href="?orden_condicion=Menor">Menor condición</a></li>
+
+                    </div>
+                                        <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Valoración
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            <li><a class="dropdown-item" href="?orden_valoracion=Mayor">Mayor valoración</a></li>
+                            <li><a class="dropdown-item" href="?orden_valoracion=Menor">Menor valoración</a></li>
+
+                    </div>
                 </div>
 
 

@@ -79,7 +79,7 @@ class Command(BaseCommand):
             }
             
         ]
-        
+
 
 
         for data in usuarios:
@@ -176,7 +176,7 @@ class Command(BaseCommand):
         'categoria': 'Bricolaje',
         'condicion': 'Bueno',
         'huella_carbono': 12.50,
-        'imagen': '',  # Puedes dejarlo vacío o poner la ruta si tienes imágenes
+        'imagen': '',  
     },
     {
         'nombre': 'Cortacésped',
