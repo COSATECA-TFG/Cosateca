@@ -107,9 +107,12 @@
                   {% endif %}
                 </div>
 
-                {% if not reserva.fecha_entrega and not reserva.cancelada %}                  
+                {% if reserva.fecha_inicio > timezone.now.date %}                  
                   <div class="col-2 d-flex flex-column acciones-reserva">
-                    <a href="/" class="btn btn-link p-0 mb-2 editar-icono">
+                    <a href="{% url 'editar_reserva' reserva.id %}" 
+                       class="btn btn-link p-0 mb-2 editar-icono" 
+                       data-objeto-id="{{ reserva.objeto.id }}" 
+                       data-reserva-id="{{ reserva.id }}">
                       <i class="bi bi-pencil-fill"></i>
                     </a>
                     <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-link p-0 eliminar-icono">
@@ -147,6 +150,24 @@
   </div>
 </div>
 
+<div class="modal fade" id="modalEditarReserva" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center p-4 modal-corporativo">
+      <h5 class="modal-title mb-4" id="modalEditarLabel"><strong>Editar Reserva</strong></h5>
+      <form method="POST" id="formEditarReserva">
+        {% csrf_token %}
+        <div id="calendar" class="mb-3"></div> 
+        <input type="hidden" id="fechaInicio" name="fecha_inicio">
+        <input type="hidden" id="fechaFin" name="fecha_fin">
+        <div class="d-flex justify-content-center gap-3 mt-3">
+          <button type="submit" class="btn btn-success" style="font-size:1.2rem;">Confirmar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="font-size:1.2rem;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   let formCancelar = document.getElementById("formCancelarReserva");
   let enlacesCancelar = document.querySelectorAll(".eliminar-icono");
@@ -161,6 +182,137 @@
     });
   });
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const formEditar   = document.getElementById("formEditarReserva");
+  const editarBtns   = document.querySelectorAll(".editar-icono");
+  let calendar, reservData = [], selectedStart = null, selectedEnd = null;
+
+  function formatDateLocal(d) {
+    const y    = d.getFullYear();
+    const m    = String(d.getMonth()+1).padStart(2,'0');
+    const day  = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  editarBtns.forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      formEditar.action = btn.href;
+      const objetoId  = btn.dataset.objetoId;
+      const reservaId = btn.dataset.reservaId;
+      const modal     = new bootstrap.Modal(document.getElementById('modalEditarReserva'));
+      modal.show();
+
+      setTimeout(() => {
+        fetch(`/reservas_ocupadas/${objetoId}/?reserva_id=${reservaId}`)
+          .then(r => r.json())
+          .then(data => {
+            reservData = data.reservas;
+            initCalendar();
+          });
+      }, 200);
+    });
+  });
+
+  function initCalendar() {
+    const el = document.getElementById('calendar');
+    el.innerHTML = "";
+    selectedStart = null;
+    selectedEnd   = null;
+
+    calendar = new FullCalendar.Calendar(el, {
+      initialView: 'dayGridMonth',
+      locale:      'es',
+      height:      'auto',
+      selectable:  true,
+      showNonCurrentDates: false,
+
+      events:         reservData,
+      eventDisplay:   'background',
+      eventColor:     '#ccc',
+      buttonText: {
+        today: 'Hoy', // Cambiar el texto del botón "Today"
+      },
+
+      selectAllow: info => {
+        const s = info.start,
+              e = new Date(info.end.getTime() - 1);
+        return !reservData.some(ev => {
+          const es = new Date(ev.start),
+                ee = new Date(ev.end);
+          ee.setDate(ee.getDate() - 1); 
+          return s < ee && e >= es;
+        });
+      },
+
+      select: info => {
+        const s = info.start,
+              e = new Date(info.end.getTime() - 1);
+        handleRange(s, e);
+      },
+
+      dateClick: info => {
+        if (!selectedStart || selectedEnd) {
+          selectedStart = info.date;
+          selectedEnd   = null;
+          clearPrevRange();
+        } else {
+          selectedEnd = info.date;
+          if (selectedEnd < selectedStart) {
+            [selectedStart, selectedEnd] = [selectedEnd, selectedStart];
+          }
+          handleRange(selectedStart, selectedEnd);
+        }
+      }
+    });
+
+    calendar.render();
+  }
+
+  function clearPrevRange() {
+    const ev = calendar.getEventById('rangeEvent');
+    if (ev) ev.remove();
+  }
+
+  function handleRange(startDate, endDate) {
+    const overlap = reservData.some(ev => {
+      const es = new Date(ev.start),
+            ee = new Date(ev.end);
+      ee.setDate(ee.getDate() - 1); 
+      return startDate < ee && endDate >= es;
+    });
+    if (overlap) {
+      calendar.unselect();
+      return;
+    }
+
+    clearPrevRange();
+
+    const endExcl = new Date(endDate);
+    endExcl.setDate(endExcl.getDate() + 1);
+
+    const startStr   = formatDateLocal(startDate);
+    const endExclStr = formatDateLocal(endExcl);
+
+    calendar.addEvent({
+      id:      'rangeEvent',
+      start:   startStr,
+      end:     endExclStr,
+      display: 'background',
+      color:   '#28a745'
+    });
+
+    document.getElementById('fechaInicio').value = startStr;
+    document.getElementById('fechaFin').value    = formatDateLocal(endDate);
+  }
+});
+</script>
+
+
+
+
 
 
 

@@ -2,8 +2,8 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from .models import Alquiler
 from django.utils import timezone
-
-# Create your views here.
+from django.http import JsonResponse
+from datetime import timedelta
 
 @login_required
 def historial_reservas(request):
@@ -45,4 +45,58 @@ def cancelar_reserva(request, reserva_id):
 
     return redirect('mis_reservas')
 
+from django.http import JsonResponse
 
+@login_required
+def editar_reserva(request, reserva_id):
+    if request.method == 'POST':
+        try:
+            reserva = Alquiler.objects.get(id=reserva_id, usuario=request.user)
+            nueva_fecha_inicio = request.POST.get('fecha_inicio')
+            nueva_fecha_fin = request.POST.get('fecha_fin')
+
+            if nueva_fecha_inicio and nueva_fecha_fin:
+                reserva.fecha_inicio = nueva_fecha_inicio
+                reserva.fecha_fin = nueva_fecha_fin
+                reserva.save()
+                messages.success(request, "Reserva actualizada exitosamente.")
+            else:
+                messages.error(request, "Por favor, selecciona fechas válidas.")
+        except Alquiler.DoesNotExist:
+            messages.error(request, "Reserva no encontrada.")
+
+    return redirect('mis_reservas')
+
+
+@login_required
+def reservas_ocupadas(request, objeto_id):
+    reserva_id = request.GET.get('reserva_id')
+    hoy = timezone.now().date()
+
+    if reserva_id and reserva_id.isdigit(): 
+        reservas = Alquiler.objects.filter(objeto_id=objeto_id).exclude(id=int(reserva_id))
+    else:
+        reservas = Alquiler.objects.filter(objeto_id=objeto_id)
+
+    eventos_pasados = [{
+        "start": "2000-01-01",
+        "end": hoy.strftime('%Y-%m-%d'),
+        "display": "background",
+        "overlap": False,
+        "color": "#d3d3d3"
+    }]
+
+    eventos_reservas = [
+        {
+            "start": reserva.fecha_inicio.strftime('%Y-%m-%d'),
+            "end": (reserva.fecha_fin + timedelta(days=1)).strftime('%Y-%m-%d'),
+            "display": "background",
+            "overlap": False,
+            "color": "#c72222"
+        }
+        for reserva in reservas
+    ]
+
+    eventos = eventos_pasados + eventos_reservas
+
+    return JsonResponse({"reservas": eventos})

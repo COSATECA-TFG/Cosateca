@@ -121,7 +121,6 @@
   border: 2px solid rgb(216, 216, 216) !important; 
 }
 
-/* Puedes poner esto en tu style.css o dentro de un <style> en la plantilla */
 .modal-corporativo {
   min-height: 350px;
   display: flex;
@@ -140,3 +139,63 @@
   color: #2f4f4f;
   background: #fff;
 }
+
+  #calendar {
+    min-height: 350px;
+    margin-bottom: 1rem;
+  }
+
+  .fc {
+    font-size: 1rem;
+  }
+
+  .fc-toolbar-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+
+  .fc-daygrid-day.fc-day-today {
+    background-color: #e8f5e9 !important;
+  }
+
+  .fc-highlight {
+    background-color: #a5d6a7 !important;
+  }
+
+  .fc-daygrid-event {
+    background-color: #b0bec5;
+    border: none;
+  }
+
+  .modal-corporativo .btn {
+    width: 140px;
+  }
+
+.fc-daygrid-day-number {
+  color: black; 
+  text-decoration: none; 
+  font-weight: normal; 
+}
+
+  .fc .fc-col-header-cell,
+  .fc .fc-col-header-cell-cushion,
+  .fc .fc-col-header-cell a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+
+  .fc .fc-button {
+    background: none !important;     
+    border: none !important;          
+    color: #000 !important;           
+    text-decoration: none !important; 
+    box-shadow: none !important;     
+  }
+
+  .fc .fc-button svg {
+    fill: #000 !important;
+  }
+
+  .fc .fc-button:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
