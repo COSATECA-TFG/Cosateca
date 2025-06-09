@@ -9,8 +9,13 @@
 <div class="row">
 <section class="col-3 titulo-imagen">
   <div class="ms-5">
-    <div class="imagen_detalle_objeto">
+    <div class="imagen_detalle_objeto position-relative">
       <img src="{{objeto.imagen}}" alt="imagen de {{objeto.nombre}}" class="">
+      <span class="texto_imagen">
+        <img src="../static/img/huella_carbono.png" alt="icono" style="width: 1.5em; vertical-align: middle;">
+        {{objeto.huella_carbono}} Kg CO2
+
+      </span>
     </div>
 
     <div class="d-flex justify-content-center align-items-center mt-3">

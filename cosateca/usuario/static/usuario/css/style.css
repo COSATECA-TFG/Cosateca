@@ -325,3 +325,13 @@ section > form > div:first-child{
   color: #244E47;
 
 }
+
+.texto_imagen{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #244E47;
+  padding: 10px;
+  text-align: end;
+}
