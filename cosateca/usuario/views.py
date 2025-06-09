@@ -6,7 +6,7 @@ from objeto.models import Objeto
 from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Case, When, IntegerField, Value
+from django.db.models import Case, When, IntegerField, Value, Avg
 
 
 
@@ -156,5 +156,21 @@ def catalogo(request):
         if nombre:
             herramientas = herramientas.filter(nombre__icontains=nombre)
     return render(request, 'catalogo.html', {'herramientas': herramientas, 'almacenes':almacenes})
+
+
+
+def detalle_objeto(request, objeto_id):
+    objeto = Objeto.objects.get(id=objeto_id)
+
+    estrellas = objeto.valoraciones_recibidas_objeto.aggregate(
+        media_estrellas = Avg('estrellas')
+    ) ['media_estrellas'] or 0
+
+
+
+
+
+
+    return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas})
         
 

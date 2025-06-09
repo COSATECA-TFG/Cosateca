@@ -71,7 +71,18 @@ class RegistroForm(forms.Form):
 class InicioSesionForm(forms.Form):
     nombre_usuario = forms.CharField(required=True, label='', widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario', 'class':'form-control input_formulario_inicio_sesion'}))
     contraseña = forms.CharField(required=True, label='', widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña', 'class':'form-control input_formulario_inicio_sesion'}))
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        nombre_usuario = cleaned_data.get("nombre_usuario")
+        usuario_encontrado = Usuario.objects.filter(username=nombre_usuario).first()
 
+        contraseña = cleaned_data.get("contraseña")
+
+        if not usuario_encontrado or not usuario_encontrado.check_password(contraseña):
+            raise forms.ValidationError("Nombre de usuario o contraseña incorrectos.")
+
+        return cleaned_data
 
 class CuestionarioForm(forms.Form):
     tarea_tipo = forms.ChoiceField(required=True, choices=[('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')], label='¿Qué tipo de productos estás buscando?', widget=forms.RadioSelect(attrs={'id': 'select_tipo',}))

@@ -93,12 +93,12 @@
                             {% if h.imagen %}
                             <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
                             {% endif %}
-                            <div class="card-body">
+                            <div class="card-body text-center">
                                 <h5 class="card-title">{{ h.nombre }}</h5>
-                                <p class="card-text">{{ h.descripcion }}</p>
+                                <p class="card-text">{{ h.huella_carbono }}</p>
                                 <!-- Puedes añadir más campos aquí -->
                             </div>
-                            <a href="" class="stretched-link"></a>
+                            <a href="catalogo/{{h.id}}" class="stretched-link"></a>
                         </div>
                     </div>
                     {% if forloop.counter|divisibleby:4 and not forloop.last %}
