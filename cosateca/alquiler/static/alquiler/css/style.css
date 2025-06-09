@@ -1,0 +1,201 @@
+.pagina-reservas {
+  position: relative;
+  min-height: 100vh;
+}
+
+.filtros-reserva {
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  width: 300px;
+}
+
+.contenido-reserva {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  padding: 0 2rem;
+}
+
+#sidebar-filtros {
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216); 
+}
+
+#sidebar-filtros .list-group-item {
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  color: #2f4f4f;   
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+#sidebar-filtros .list-group-item:hover {
+  background-color: #e9ecef;
+}
+
+#sidebar-filtros .list-group-item.activeFiltro {
+  background-color: #84b99e; 
+  color: white;
+  font-weight: 600;
+}
+
+.reserva-card {
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216); 
+  min-height: 160px;           
+  padding-top: 1.5rem;        
+  padding-bottom: 1.5rem;      
+}
+
+.reserva-card .objeto-imagen {
+  max-height: 140px;  
+  max-width: 100%;        
+  object-fit: contain;
+}
+
+.reserva-card .card-title {
+  font-size: 1.5rem;           
+  font-weight: 700;
+  color: #2f4f4f;
+}
+
+.reserva-card .card-text {
+  font-size: 1.15rem;         
+}
+
+.badge-estado-curso {
+  background-color: #7AC29A;
+  color: white;
+}
+
+.badge-estado-finalizada {
+  background-color: #2F5D37;
+  color: white;
+}
+
+.badge-estado-cancelada {
+  background-color: #E87F7F; 
+  color: white;
+}
+
+.badge-estado-programada {
+  background-color: #FFD166; 
+  color: white;
+}
+
+.badge-estado-retrasada {
+  background-color: #F2994A; 
+  color: white;
+}
+
+.badge-estado-programada,
+.badge-estado-retrasada,
+.badge-estado-curso,
+.badge-estado-finalizada,
+.badge-estado-cancelada {
+  font-size: 1.05rem !important;
+  padding: 0.6em 1.1em !important;
+}
+
+.acciones-reserva .btn-link {
+  color: #244E47 !important;
+  font-size: 1.5rem;
+}
+
+.acciones-reserva .btn-link:hover {
+  color: #343a40;
+}
+
+.huella-carbono-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.no-reservas-bg {
+  background-color: #84b99e !important;
+  color: white !important;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) !important; 
+}
+
+.modal-corporativo {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-corporativo .modal-title {
+  font-size: 2.2rem;
+  color: #2f4f4f;
+}
+
+.modal-corporativo .modal-body,
+.modal-corporativo .modal-content {
+  font-size: 1.35rem;
+  color: #2f4f4f;
+  background: #fff;
+}
+
+  #calendar {
+    min-height: 350px;
+    margin-bottom: 1rem;
+  }
+
+  .fc {
+    font-size: 1rem;
+  }
+
+  .fc-toolbar-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+
+  .fc-daygrid-day.fc-day-today {
+    background-color: #e8f5e9 !important;
+  }
+
+  .fc-highlight {
+    background-color: #a5d6a7 !important;
+  }
+
+  .fc-daygrid-event {
+    background-color: #b0bec5;
+    border: none;
+  }
+
+  .modal-corporativo .btn {
+    width: 140px;
+  }
+
+.fc-daygrid-day-number {
+  color: black; 
+  text-decoration: none; 
+  font-weight: normal; 
+}
+
+  .fc .fc-col-header-cell,
+  .fc .fc-col-header-cell-cushion,
+  .fc .fc-col-header-cell a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+
+  .fc .fc-button {
+    background: none !important;     
+    border: none !important;          
+    color: #000 !important;           
+    text-decoration: none !important; 
+    box-shadow: none !important;     
+  }
+
+  .fc .fc-button svg {
+    fill: #000 !important;
+  }
+
+  .fc .fc-button:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }

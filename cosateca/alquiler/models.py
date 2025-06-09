@@ -5,6 +5,7 @@ class Alquiler(models.Model):
     fecha_fin = models.DateField(null=False, blank=False)
     fecha_recogida = models.DateField(null=True, blank=True)
     fecha_entrega = models.DateField(null=True, blank=True)
+    cancelada = models.BooleanField(default=False, blank=False)
 
     usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='alquileres', blank=False, null=False)
     objeto = models.ForeignKey('objeto.Objeto', on_delete=models.CASCADE, related_name='reservas', blank=False, null=False)
