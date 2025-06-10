@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from objeto.models import Objeto
 from almacen.models import Almacen
+from alquiler.models import Alquiler
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 
@@ -50,19 +52,33 @@ def catalogo(request):
     return render(request, 'catalogo.html', {'herramientas': herramientas, 'almacenes':almacenes})
 
 
-
+@login_required
 def detalle_objeto(request, objeto_id):
     objeto = Objeto.objects.get(id=objeto_id)
+    almacen_asociado = objeto.almacen
 
     estrellas = objeto.valoraciones_recibidas_objeto.aggregate(
         media_estrellas = Avg('estrellas')
     ) ['media_estrellas'] or 0
 
 
+    if request.method == 'POST':
+        fecha_inicio = request.POST.get('fecha_inicio_principal')
+        fecha_fin = request.POST.get('fecha_fin_principal')
+        if fecha_inicio and fecha_fin:
+            Alquiler.objects.create(
+                objeto=objeto,
+                usuario=request.user,
+                fecha_inicio=fecha_inicio,
+                fecha_fin=fecha_fin
+            )
+            # Redirige o muestra mensaje de éxito
+            return redirect('/')  # Cambia por tu vista
 
 
+        
 
 
-    return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas})
+    return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas ,'almacen_asociado':almacen_asociado })
         
 

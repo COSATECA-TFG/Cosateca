@@ -21,6 +21,9 @@
       <div class="d-flex justify-content-center align-items-center mt-3">
         <span id="titulo_detalle_objeto"> {{objeto.nombre}} </span>
       </div>
+          <div class="mt-3 text-center">
+          <span class="almacen_asociado"> <b style="font-size: 18px;">Almacén asociado</b>:  {{almacen_asociado.nombre}}</span>
+    </div>
 
       <div class="estrellas text-center mt-3">
         {% for i in "12345" %}
@@ -42,10 +45,15 @@
   </section>
 
   <section class="col-5 descripcion_reserva position-relative">
+
+
+
+
+
     <div class="descripcion_objeto mt-5 text-center">
       <span id="titulo_detalle_objeto" class="text-center"> Descripción </span>
 
-      <p class="mt-2 text-start fs-5">{{objeto.descripcion}}</p>
+      <p class="mt-2 text-start descripcion_objeto">{{objeto.descripcion}}</p>
     </div>
 
     <div class="estado_tipo text-center mt-5">
@@ -57,12 +65,12 @@
 
     <div class="reserva d-flex flex-column align-items-center">
       <span id="titulo_detalle_objeto">Elija las fechas de reserva</span>
-      <form id='form-reserva' class="reserva-fechas d-flex align-items-center justify-content-center p-2 mt-3"
+      <form method="post" id='form-reserva' class="reserva-fechas d-flex align-items-center justify-content-center p-2 mt-3"
         style="border: 3px solid #244E47; border-radius: 12px;">
         {% csrf_token %}
-        <input type="date" id="fecha_inicio_principal" class="input_fecha form-control border-0 text-center" readonly>
+        <input type="date" id="fecha_inicio_principal" name="fecha_inicio_principal" class="input_fecha form-control border-0 text-center" readonly>
         <i class="bi bi-arrow-right mx-2" style="font-size: 1.5rem;"></i>
-        <input type="date" id="fecha_fin_principal" class="input_fecha form-control border-0 text-center" readonly>
+        <input type="date" id="fecha_fin_principal" name="fecha_fin_principal" class="input_fecha form-control border-0 text-center" readonly>
         <i class="bi bi-calendar3 mx-2 reservar-icono" style="font-size: 1.5rem; cursor:pointer;" tabindex="0"
           data-objeto-id="{{objeto.id}}"></i>
       </form>

@@ -149,3 +149,11 @@
     display: none;
     -webkit-appearance: none;
 }
+
+.almacen_asociado {
+  color: #244E47;
+}
+
+.descripcion_objeto{
+  font-size: 18px !important;
+}
