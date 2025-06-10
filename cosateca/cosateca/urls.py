@@ -24,8 +24,8 @@ urlpatterns = [
     path('', include('core.urls') ),
     path('', include('usuario.urls')),
     path('', include('alquiler.urls')),
-    #path('', include('almacen.urls')),
     path('', include('objeto.urls')),
+    path('', include('almacen.urls')),
 ]
 
 #if settings.DEBUG:
