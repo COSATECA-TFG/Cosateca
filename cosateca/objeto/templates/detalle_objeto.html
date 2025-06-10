@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+<div class="row">
+  <section class="col-3 titulo-imagen">
+    <div class="ms-5">
+      <div class="imagen_detalle_objeto position-relative">
+        <img src="{{objeto.imagen}}" alt="imagen de {{objeto.nombre}}" class="">
+        <span class="texto_imagen">
+          <img src="../static/img/huella_carbono.png" alt="icono" style="width: 1.5em; vertical-align: middle;">
+          {{objeto.huella_carbono}} Kg CO2
+
+        </span>
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center mt-3">
+        <span id="titulo_detalle_objeto"> {{objeto.nombre}} </span>
+      </div>
+
+      <div class="estrellas text-center mt-3">
+        {% for i in "12345" %}
+        {% if forloop.counter <= estrellas %} <span class="estrella_activa">&#9733;</span>
+          {% else %}
+          <span class="estrella_inactiva">&#9733;</span> {# Estrella vacía #}
+          {% endif %}
+          {% endfor %}
+      </div>
+
+      <div class="botonera_detalles_objeto d-flex justify-content-center align-items-center mt-3">
+        <a href="" id="comentario" class="btn me-4"><i class="bi bi-chat-left"></i></a>
+        <a href="" id="valorar" class="btn ms-3 me-4"><i class="bi bi-heart"></i></a>
+        <a href="" id="lista_deseos" class="btn ms-3"> <i class="bi bi-card-checklist"></i></a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section class="col-5 descripcion_reserva position-relative">
+    <div class="descripcion_objeto mt-5 text-center">
+      <span id="titulo_detalle_objeto" class="text-center"> Descripción </span>
+
+      <p class="mt-2 text-start fs-5">{{objeto.descripcion}}</p>
+    </div>
+
+    <div class="estado_tipo text-center mt-5">
+      <span class="tipo me-5">{{objeto.categoria}}</span>
+      <span class="estado ">{{objeto.condicion}}</span>
+
+    </div>
+
+    <div class="reserva d-flex flex-column align-items-center">
+      <span id="titulo_detalle_objeto">Elija las fechas de reserva</span>
+      <form id='form-reserva' class="reserva-fechas d-flex align-items-center justify-content-center p-2 mt-3"
+        style="border: 3px solid #244E47; border-radius: 12px;">
+        <input type="date" class="input_fecha form-control border-0 text-center">
+        <i class="bi bi-arrow-right mx-2" style="font-size: 1.5rem;"></i>
+        <input type="date" class="input_fecha form-control border-0 text-center">
+        <i class="bi bi-calendar3 mx-2" style="font-size: 1.5rem;"></i>
+      </form>
+      <div class="">
+        <button id="enviar-reserva" type="submit" class="btn btn-primary mt-3 boton_envio_formulario ps-4 pe-4 pt-3 pb-3">Reservar</button>
+      </div>
+
+    </div>
+
+
+
+
+  </section>
+
+</div>
+
+
+<script>
+  document.getElementById('enviar-reserva').addEventListener('click', function () {
+    document.getElementById('form-reserva').submit();
+  });
+</script>
+
+
+
+{% endblock %}
