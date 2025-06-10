@@ -1,0 +1,152 @@
+
+/* Catalogo */
+
+.filtrado_ordenacion{
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ;
+  margin-bottom: 1.5%;
+}
+
+.titulo_filtrado_ordenacion{
+  font-size:2rem;
+  
+}
+
+.botonera_filtros{
+  margin-top: 3% !important;
+  margin-bottom: 10% !important;
+}
+
+.botonera_filtros a{
+    background-color: transparent !important;
+    border-radius: 1rem !important;
+    border-color: rgb(216, 216, 216) !important;
+    border-width: 3px !important;
+    width: 55%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    padding-top: 4%;
+    padding-bottom: 4%;
+    color: rgb(164, 163, 163);
+    font-size: 1.2rem;
+}
+
+.input-buscar {
+    background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
+    background-size: 1.2rem;
+    padding-left: 3rem !important;
+    padding-top: 1% !important;
+    padding-bottom: 1% !important;
+    border-radius: 1rem !important;
+    border-color: rgb(226, 226, 226) !important;
+    border-width: 3px !important;
+    font-size: 18px !important;
+}
+
+.input-buscar::placeholder {
+    color: rgb(164, 163, 163) !important;
+    opacity: 0.6 !important;
+}
+
+
+/* Detalle de objeto */
+
+.imagen_detalle_objeto {
+    margin-top: 20% !important;
+    aspect-ratio: 1/1;
+    border-radius: 0.725rem !important;
+    border: 0.3rem solid rgb(216, 216, 216) ; 
+    overflow: hidden;
+    
+}
+
+.imagen_detalle_objeto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#titulo_detalle_objeto {
+  font-size: 1.4rem !important;
+  font-weight: bold;
+  color: #244E47;
+}
+
+.estrella_activa{
+  color: #244E47; 
+  font-size:2.5rem;
+}
+
+.estrella_inactiva{
+  color: #ccc; 
+  font-size:1.875rem;
+}
+
+.botonera_detalles_objeto > #comentario{
+  background-color: #6CBC9B !important;
+}
+
+.botonera_detalles_objeto > #valorar{
+    background-color: #6CBC9B !important;
+}
+
+.botonera_detalles_objeto > #lista_deseos{
+    background-color: #6CBC9B !important;
+}
+
+#comentario .bi, #valorar .bi, #lista_deseos .bi {
+    color: white !important;
+}
+
+.descripcion_objeto > p {
+  color: #244E47;
+
+}
+
+.texto_imagen{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #244E47;
+  padding: 10px;
+  text-align: end;
+}
+
+.estado, .tipo{
+  color: white !important;
+  padding: 2% !important;
+  border-radius: 0.625rem !important;
+}
+
+.tipo {
+  background-color: #244E47 !important;
+}
+
+.estado{
+  background-color: #e4bf44!important;
+}
+
+.reserva{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.reserva-fechas{
+  background-color: white !important;
+  border-radius: 0.625rem !important;
+  border: 3px solid #244E47 !important;
+}
+
+.input_fecha{
+  background-color: transparent !important;
+  width: 100% !important;
+}
+
+.input_fecha::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}

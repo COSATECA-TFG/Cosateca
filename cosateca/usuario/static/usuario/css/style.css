@@ -335,3 +335,40 @@ section > form > div:first-child{
   padding: 10px;
   text-align: end;
 }
+
+.estado, .tipo{
+  color: white !important;
+  padding: 2% !important;
+  border-radius: 0.625rem !important;
+}
+
+.tipo {
+  background-color: #244E47 !important;
+}
+
+.estado{
+  background-color: #e4bf44!important;
+}
+
+.reserva{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.reserva-fechas{
+  background-color: white !important;
+  border-radius: 0.625rem !important;
+  border: 3px solid #244E47 !important;
+}
+
+.input_fecha{
+  background-color: transparent !important;
+  width: 100% !important;
+}
+
+.input_fecha::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
