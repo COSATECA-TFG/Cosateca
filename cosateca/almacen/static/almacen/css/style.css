@@ -1,0 +1,71 @@
+.map-container { 
+    width: 100%; 
+    height: 300px; 
+ }
+
+ .card-title {
+    text-align: center; 
+    font-weight: bold;
+    color: #244E47 !important
+}
+
+.horarios-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.horarios-section h3 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.horarios-section ul {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+    padding: 0;
+    list-style: none;
+}
+
+.horarios-section li {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.horarios-section li span.dia-semana {
+    font-weight: bold; 
+}
+
+.form-control.input-buscar {
+  display: block;               
+  width: 100% !important;        
+  max-width: 1000px;            
+  margin: 0 auto;               
+  background-position: 0.5rem center !important; 
+  padding-left: 2.5rem !important;  
+}
+
+.input-buscar {
+    background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
+    background-size: 1.2rem;
+    padding-left: 2rem !important; 
+    padding-top: 0.5% !important; 
+    padding-bottom: 0.5% !important; 
+    border-radius: 0.8rem !important;
+    border-color: rgb(226, 226, 226) !important;
+    border-width: 2px !important; 
+    font-size: 14px !important; 
+    width: 30%; 
+    margin: 0 auto; 
+}
+
+.input-buscar::placeholder {
+    color: rgb(164, 163, 163) !important;
+    opacity: 0.6 !important;
+}
+
+
+
