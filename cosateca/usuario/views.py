@@ -173,4 +173,10 @@ def detalle_objeto(request, objeto_id):
 
     return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas})
         
+@login_required
+def lista_deseos(request):
 
+    usuario = request.user
+    objetos_deseados = usuario.objetos_deseados.all()
+
+    return render(request, 'lista_deseos.html', {'usuario': usuario, 'objetos_deseados':objetos_deseados})
