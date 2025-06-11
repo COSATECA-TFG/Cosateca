@@ -346,9 +346,7 @@ section > form > div:first-child{
   background-color: #244E47 !important;
 }
 
-.estado{
-  background-color: #e4bf44!important;
-}
+
 
 .reserva{
   position: absolute;
@@ -400,4 +398,21 @@ section > form > div:first-child{
 
 .botonera_lista_deseos > a:last-child{
   background-color: rgb(255, 75, 75) !important;
+}
+
+
+.estado_nuevo {
+  background-color: #244E47 !important;
+}
+
+.estado_bueno {
+  background-color: #6CBC9B !important;
+}
+
+.estado_desgastado {
+  background-color: #bc6c6c !important;
+}
+
+.estado_perdido {
+  background-color: #3a3a3a !important;
 }

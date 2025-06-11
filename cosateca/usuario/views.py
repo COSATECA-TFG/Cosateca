@@ -180,3 +180,17 @@ def lista_deseos(request):
     objetos_deseados = usuario.objetos_deseados.all()
 
     return render(request, 'lista_deseos.html', {'usuario': usuario, 'objetos_deseados':objetos_deseados})
+
+
+@login_required
+def eliminar_objeto_lista_deseos(request, objeto_id):
+    usuario = request.user
+    objetos_deseados = usuario.objetos_deseados.all()
+    objeto_a_eliminar = objetos_deseados.filter(id=objeto_id).first()
+    if objeto_a_eliminar:
+        usuario.objetos_deseados.remove(objeto_a_eliminar)
+        usuario.save()
+        messages.success(request, 'Objeto eliminado de la lista de deseos.')
+    else:
+        messages.error(request, 'El objeto no se encuentra en la lista de deseos.')
+    return redirect('lista_deseos')

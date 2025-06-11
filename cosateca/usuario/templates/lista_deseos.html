@@ -23,7 +23,15 @@
                 </div>
 
                 <div class="estado_tipo mt-5">
-                    <span class="estado pt-3 pb-3 ps-4 pe-4">{{objeto.condicion}}</span>
+                    <span class="estado pt-3 pb-3 ps-4 pe-4
+                    {% if objeto.condicion == 'Nuevo' %} estado_nuevo
+                    {% elif objeto.condicion == 'Bueno' %} estado_bueno
+                    {% elif objeto.condicion == 'Desgastado' %} estado_desgastado
+                    {% elif objeto.condicion == 'Perdido' %} estado-perdido
+                    {% endif %}">
+                    {{objeto.condicion}}
+                    </span>
+                    
                     <span class="ms-3">
                         <img src="../static/img/huella_carbono.png" alt="icono"
                             style="width: 1.5em; vertical-align: middle;">
@@ -35,8 +43,8 @@
             </div>
 
             <div class="col-3 d-flex flex-column align-items-center justify-content-center botonera_lista_deseos">
-                <a href="" class="btn">Reservar</a>
-                <a href="" class="btn mt-3">Eliminar</a>
+                <a href="/catalogo/{{objeto.id}}" class="btn">Reservar</a>
+                <a href="/lista_deseos/eliminar/{{objeto.id}}" class="btn mt-3">Eliminar</a>
             </div>
 
 
