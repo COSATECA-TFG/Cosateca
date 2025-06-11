@@ -72,8 +72,7 @@ def detalle_objeto(request, objeto_id):
                 fecha_inicio=fecha_inicio,
                 fecha_fin=fecha_fin
             )
-            # Redirige o muestra mensaje de éxito
-            return redirect('/')  # Cambia por tu vista
+            return redirect('/mis_reservas')  
 
 
         
