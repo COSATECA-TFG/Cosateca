@@ -9,6 +9,12 @@
     color: #244E47 !important
 }
 
+.comentario_valoracion{
+  font-weight: bold;
+  color: black;
+  font-size: 1.2rem;
+}
+
 .horarios-section {
     display: flex;
     flex-direction: column;
@@ -98,5 +104,48 @@
     font-size: 1.3rem !important;
 }
 
+.comentario {
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}
+
+.valoracion-estrellas i {
+  color: #2CA58D;
+  margin-right: 2px;
+}
+
+.text-success {
+  color: #2CA58D !important;
+}
+
+.rating2 {
+  direction: rtl;
+  font-size: 2rem;
+}
+.rating2 input {
+  display: none;
+}
+.rating2 label {
+  cursor: pointer;
+  color: #ccc;
+  transition: color .2s;
+  font-size: 4rem;
+
+}
+.rating2 input:checked ~ label{
+    color: #6CBC9B;
+
+}
+.rating2 label:hover,
+.rating2 label:hover ~ label {
+  color: none;
+}
 
 

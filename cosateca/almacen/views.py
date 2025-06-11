@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Almacen , AlmacenValoracion
+from django.db.models import Avg
 
 @login_required
 def obtener_almacenes(request):
@@ -27,12 +28,13 @@ def obtener_comentarios(request, almacen_id):
     if almacen_id:
         try:
             almacen = Almacen.objects.get(id=almacen_id)
-            comentarios = almacen.comentarios.all()
-            return render(request, 'comentarios.html', {'almacen': almacen, 'comentarios': comentarios})
+            comentarios = almacen.valoraciones_recibidas_almacen.all()
+            valoracion_media = comentarios.aggregate(Avg('estrellas'))['estrellas__avg']
+            return render(request, 'comentarios_almacen.html', {'almacen': almacen, 'comentarios': comentarios , 'valoracion_media': valoracion_media})
         except Almacen.DoesNotExist:
-            return render(request, 'comentarios.html', {'error': 'Almacén no encontrado'})
+            return render(request, 'comentarios_almacen.html', {'error': 'Almacén no encontrado'})
     else:
-        return render(request, 'comentarios.html', {'error': 'ID de almacén no proporcionado'})
+        return render(request, 'comentarios_almacen.html', {'error': 'ID de almacén no proporcionado'})
     
 @login_required
 def valorar_almacen(request, almacen_id):
