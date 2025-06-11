@@ -101,7 +101,6 @@
 
 .descripcion_objeto > p {
   color: #244E47;
-
 }
 
 .texto_imagen{
@@ -149,4 +148,12 @@
 .input_fecha::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
+}
+
+.almacen_asociado {
+  color: #244E47;
+}
+
+.descripcion_objeto{
+  font-size: 18px !important;
 }
