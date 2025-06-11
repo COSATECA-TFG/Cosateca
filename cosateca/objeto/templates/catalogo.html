@@ -5,6 +5,8 @@
 
 {% include "header.html" %}
 
+{% load query_transform %}
+
 <section class="catalogo">
     <div class="row">
 
@@ -17,13 +19,13 @@
                             Categoría
                         </a>
                         <ul class="dropdown-menu w-50">
-                            <li><a class="dropdown-item" href="?categoria=Bricolaje">Bricolaje</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Jardín">Jardín</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Cocina">Cocina</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Electrónica">Electrónica</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Herramientas">Herramientas</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Limpieza">Limpieza</a></li>
-                            <li><a class="dropdown-item" href="?categoria=Otros">Otros</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Bricolaje' %}">Bricolaje</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Jardín' %}">Jardín</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Cocina' %}">Cocina</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Electrónica' %}">Electrónica</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Herramientas' %}">Herramientas</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Limpieza' %}">Limpieza</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Otros' %}">Otros</a></li>
                         </ul>
                     </div>
                     <div class="dropdown mb-2">
@@ -31,10 +33,10 @@
                             Condición
                         </a>
                         <ul class="dropdown-menu w-50">
-                            <li><a class="dropdown-item" href="?condicion=Nuevo">Nuevo</a></li>
-                            <li><a class="dropdown-item" href="?condicion=Bueno">Bueno</a></li>
-                            <li><a class="dropdown-item" href="?condicion=Desgastado">Desgastado</a></li>
-                            <li><a class="dropdown-item" href="?condicion=Perdido">Perdido</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Nuevo' %}">Nuevo</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Bueno' %}">Bueno</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Desgastado' %}">Desgastado</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Perdido' %}">Perdido</a></li>
 
                     </div>
                     <div class="dropdown mb-2">
@@ -43,7 +45,7 @@
                         </a>
                         <ul class="dropdown-menu w-75">
                             {% for a in almacenes %}
-                                <li><a class="dropdown-item" href="?almacen={{a.nombre}}">{{a.nombre}}</a></li>
+                                <li><a class="dropdown-item" href="?{% query_transform request almacen=a.nombre %}">{{ a.nombre }}</a></li>
                             {%endfor%}
 
                         </ul>
@@ -58,8 +60,9 @@
                             Condición
                         </a>
                         <ul class="dropdown-menu w-50">
-                            <li><a class="dropdown-item" href="?orden_condicion=Mayor">Mejor condición</a></li>
-                            <li><a class="dropdown-item" href="?orden_condicion=Menor">Menor condición</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Mayor' %}">Mejor condición</a></li>
+
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Menor' %}">Menor condición</a></li>
 
                     </div>
                                         <div class="dropdown mb-2">
@@ -67,9 +70,10 @@
                             Valoración
                         </a>
                         <ul class="dropdown-menu w-75">
-                            <li><a class="dropdown-item" href="?orden_valoracion=Mayor">Mayor valoración</a></li>
-                            <li><a class="dropdown-item" href="?orden_valoracion=Menor">Menor valoración</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Mayor' %}">Mayor valoración</a></li>
 
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Menor' %}">Menor valoración</a></li>
+                        </ul>
                     </div>
                 </div>
 
