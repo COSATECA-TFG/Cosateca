@@ -55,7 +55,6 @@ section > form > div:first-child{
     padding-bottom: 20%;
     border-left: 2px solid rgb(216, 216, 216);
     height: 100%;
-    min-height: 250px; /* Ajusta según tu diseño */
 }
 
 .separacion_horizontal_registro {
@@ -289,11 +288,6 @@ section > form > div:first-child{
   object-fit: cover;
 }
 
-#titulo_detalle_objeto {
-  font-size: 1.4rem !important;
-  font-weight: bold;
-  color: #244E47;
-}
 
 .estrella_activa{
   color: #244E47; 
@@ -416,3 +410,18 @@ section > form > div:first-child{
 .estado_perdido {
   background-color: #3a3a3a !important;
 }
+
+
+/* Detalles de usuario */
+
+
+
+.detalles_usuario {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  padding: 4% !important;
+}
+
+
+

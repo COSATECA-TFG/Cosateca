@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm, InicioSesionForm, CuestionarioForm
+from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
 from django.contrib import messages
 from .models import Usuario, Preferencia
 from objeto.models import Objeto
@@ -194,3 +194,52 @@ def eliminar_objeto_lista_deseos(request, objeto_id):
     else:
         messages.error(request, 'El objeto no se encuentra en la lista de deseos.')
     return redirect('lista_deseos')
+
+
+@login_required
+def detalles_usuario(request):
+    usuario = request.user
+
+
+    if request.method == 'POST':
+        form = editarPerfilForm(request.POST, usuario=request.user)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+            sexo = form.cleaned_data['sexo']
+            correo_electronico = form.cleaned_data['correo_electronico']
+            telefono = form.cleaned_data['telefono']
+            dni = form.cleaned_data['dni']
+            nombre_usuario = form.cleaned_data['nombre_usuario']
+
+            
+            
+            
+            usuario.first_name = nombre
+            usuario.last_name = apellido
+            usuario.fecha_nacimiento = fecha_nacimiento
+            usuario.sexo = sexo
+            usuario.email = correo_electronico
+            usuario.telefono =  telefono
+            usuario.dni = dni
+            usuario.username = nombre_usuario
+        
+            
+            usuario.save()
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('usuario')
+            
+    else:
+        form = editarPerfilForm(initial={
+            'nombre': usuario.first_name,
+            'apellido': usuario.last_name,
+            'fecha_nacimiento': usuario.fecha_nacimiento.strftime('%Y-%m-%d'),
+            'sexo': usuario.sexo,
+            'correo_electronico': usuario.email,
+            'telefono': usuario.telefono,
+            'dni': usuario.dni,
+            'nombre_usuario': usuario.username,
+        }, usuario=request.user)
+
+    return render(request, 'detalles_usuario.html', {'usuario': usuario, 'form':form})

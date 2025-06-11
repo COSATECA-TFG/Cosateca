@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Registro Usuario{% endblock %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+
+
+
+    <section class="mt-5 mb-0">
+    <div class="formulario_editar_perfil">
+
+        <form method="post">
+                <h1 id="titulo_detalle_objeto" class="text-center fs-1 mt-4 mb-4">Perfil</h1>
+
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-4 d-flex flex-column align-items-center ">
+                    {{ form.nombre}}
+                    {{ form.apellido}}
+                    {{ form.fecha_nacimiento }}
+                    {{ form.sexo }}
+
+                </div>
+
+                <div class="col-1 d-flex justify-content-center align-items-stretch contenedor_separacion_vertical">
+                    <div class="separacion-vertical"></div>
+                </div>
+
+                <div class="col-4 d-flex flex-column align-items-center">
+                    {{ form.telefono }}
+                    {{ form.dni }}
+                    {{ form.nombre_usuario }}
+                    {{ form.correo_electronico }}
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary mt-3 mb-5 boton_envio_formulario">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+
+
+
+{% endblock %}
