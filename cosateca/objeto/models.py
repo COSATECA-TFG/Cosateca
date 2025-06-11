@@ -12,6 +12,7 @@ class Objeto(models.Model):
     huella_carbono = models.DecimalField(max_digits=7, decimal_places=2, blank=False, null=False)
 
     almacen = models.ForeignKey('almacen.Almacen', on_delete=models.CASCADE, related_name='objetos', blank=False, null=False)
+    usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='objetos_deseados', blank=True, null=True)
 
     def __str__(self):
         return f"Objeto: {self.nombre}"

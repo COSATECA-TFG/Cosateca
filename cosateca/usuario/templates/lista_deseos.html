@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Lista de deseos{% endblock %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+
+<section class="lista_deseos">
+    <div class="contenedor_objetos_deseados">
+        {% for objeto in objetos_deseados %}
+
+        <div class="row d-flex justify-content-between">
+            <div class="col-2 imagen_detalle_objeto d-flex align-items-center mt-0 p-0 ms-5">
+                <img src={{objeto.imagen}} alt="imagen de {{objeto.nombre}}">
+            </div>
+            <div class="col-6">
+                <div id="titulo_detalle_objeto">{{ objeto.nombre }}</div>
+
+                <div class="mt-3">
+                    <span class="almacen_asociado"> <b style="font-size: 18px;">Almacén asociado</b>:
+                        {{objeto.almacen.nombre}}</span>
+                </div>
+
+                <div class="estado_tipo mt-5">
+                    <span class="estado pt-3 pb-3 ps-4 pe-4
+                    {% if objeto.condicion == 'Nuevo' %} estado_nuevo
+                    {% elif objeto.condicion == 'Bueno' %} estado_bueno
+                    {% elif objeto.condicion == 'Desgastado' %} estado_desgastado
+                    {% elif objeto.condicion == 'Perdido' %} estado-perdido
+                    {% endif %}">
+                    {{objeto.condicion}}
+                    </span>
+                    
+                    <span class="ms-3">
+                        <img src="../static/img/huella_carbono.png" alt="icono"
+                            style="width: 1.5em; vertical-align: middle;">
+                        {{objeto.huella_carbono}} Kg CO2
+
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="col-3 d-flex flex-column align-items-center justify-content-center botonera_lista_deseos">
+                <a href="/catalogo/{{objeto.id}}" class="btn">Reservar</a>
+                <a href="/lista_deseos/eliminar/{{objeto.id}}" class="btn mt-3">Eliminar</a>
+            </div>
+
+
+
+        </div>
+        <div class="separacion_horizontal_registro w-100"></div>
+
+
+
+        {% endfor %}
+
+
+
+
+        <script>
+            console.log("Lista de deseos cargada con el usuario: {{ usuario.username }} y con la siguiente cantidad de objetos deseados: {{ objetos_deseados|length }}");
+        </script>
+
+
+        {% endblock %}

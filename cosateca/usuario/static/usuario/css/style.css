@@ -346,9 +346,7 @@ section > form > div:first-child{
   background-color: #244E47 !important;
 }
 
-.estado{
-  background-color: #e4bf44!important;
-}
+
 
 .reserva{
   position: absolute;
@@ -371,4 +369,50 @@ section > form > div:first-child{
 .input_fecha::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
+}
+
+
+/* Lista de deseos */
+
+
+.contenedor_objetos_deseados {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  padding: 4% !important;
+}
+
+
+.botonera_lista_deseos a{
+  color: white !important;
+  padding-left:10% !important;
+  padding-right:10% !important;
+  padding-top: 4% !important;
+  padding-bottom: 4% !important;
+  font-weight: bold ;
+}
+
+.botonera_lista_deseos > a:first-child{
+  background-color: #6CBC9B !important;
+}
+
+.botonera_lista_deseos > a:last-child{
+  background-color: rgb(255, 75, 75) !important;
+}
+
+
+.estado_nuevo {
+  background-color: #244E47 !important;
+}
+
+.estado_bueno {
+  background-color: #6CBC9B !important;
+}
+
+.estado_desgastado {
+  background-color: #bc6c6c !important;
+}
+
+.estado_perdido {
+  background-color: #3a3a3a !important;
 }
