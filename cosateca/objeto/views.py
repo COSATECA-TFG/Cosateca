@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from objeto.models import Objeto
+from objeto.models import Objeto, ObjetoValoracion, ObjetoValoracionDenuncia
+from django.contrib import messages
 from almacen.models import Almacen
 from alquiler.models import Alquiler
+from core.models import BaseValoracionDenuncia
+
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
@@ -81,3 +84,74 @@ def detalle_objeto(request, objeto_id):
     return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas ,'almacen_asociado':almacen_asociado })
         
 
+@login_required
+def valorar_objeto(request, objeto_id):
+    objeto = Objeto.objects.get(id=objeto_id)
+    valoracion_existente = ObjetoValoracion.objects.filter(objeto=objeto, usuario=request.user).first()
+
+    
+    
+    if request.method == 'POST':
+            valoracion = request.POST.get('puntuacion')
+            comentario = request.POST.get('comentario')
+
+            if not valoracion or not comentario.strip():
+                messages.error(request, 'No se puede valorar un objeto sin puntuación o comentario.')
+                return render(request, 'objeto_valoracion.html', {'objeto': objeto, 'valoracion': valoracion_existente})
+
+            if valoracion_existente:
+                valoracion_existente.estrellas = valoracion
+                valoracion_existente.comentario = comentario.strip()
+                valoracion_existente.save()
+            else:
+                nueva_valoracion = ObjetoValoracion(
+                    objeto=objeto,
+                    usuario=request.user,
+                    estrellas=valoracion,
+                    comentario=comentario.strip()
+                )
+                nueva_valoracion.save()
+
+            return redirect('comentarios_obj', objeto_id=objeto_id)
+
+    
+    return render(request, 'objeto_valoracion.html', {'objeto': objeto, 'valoracion': valoracion_existente})
+
+@login_required
+def obtener_comentarios_objeto(request, objeto_id):
+    objeto = Objeto.objects.get(id=objeto_id)
+    valoraciones_recibidas = objeto.valoraciones_recibidas_objeto.all()
+    valoracion_media = valoraciones_recibidas.aggregate(Avg('estrellas'))['estrellas__avg']
+    denuncia_choices = BaseValoracionDenuncia.ENUM_CATEGORIA_DENUNCIA
+
+    
+                # Añadir información de denuncia para cada comentario
+    comentarios_info = []
+    for comentario in valoraciones_recibidas:
+        ya_denunciado = ObjetoValoracionDenuncia.objects.filter(
+        valoracion=comentario, usuario=request.user).exists()
+        comentarios_info.append({
+            'comentario': comentario,
+            'ya_denunciado': ya_denunciado
+        })
+
+    return render(request, 'comentarios_objeto.html', {'objeto': objeto, 'valoraciones': valoraciones_recibidas, 'valoracion_media': valoracion_media, 'comentarios_info':comentarios_info,'denuncia_choices': denuncia_choices})
+
+@login_required
+def denunciar_valoracion_objeto(request, comentario_id):
+    comentario = ObjetoValoracion.objects.get(id=comentario_id)
+    nueva_denuncia = comentario.denuncias_recibidas_objeto.create(
+        usuario=request.user,
+        categoria=request.POST.get('categoria', ''),
+        contexto= request.POST.get('contexto', '')
+    )
+    nueva_denuncia.save()
+    
+    return render(request, 'comentarios_objeto.html', {'comentario': comentario})
+
+
+def eliminar_valoracion_objeto(request, comentario_id):
+    comentario = ObjetoValoracion.objects.get(id=comentario_id, usuario=request.user)
+    objeto_id = comentario.objeto.id
+    comentario.delete()
+    return redirect('comentarios_obj', objeto_id=objeto_id)
