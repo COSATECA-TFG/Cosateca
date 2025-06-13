@@ -243,3 +243,18 @@ def detalles_usuario(request):
         }, usuario=request.user)
 
     return render(request, 'detalles_usuario.html', {'usuario': usuario, 'form':form})
+
+
+
+
+def agregar_objeto_lista_deseos(request, objeto_id):
+    usuario = request.user
+    objeto = Objeto.objects.get(id=objeto_id)
+    
+    if objeto not in usuario.objetos_deseados.all():
+        usuario.objetos_deseados.add(objeto)
+        messages.success(request, 'Objeto agregado a la lista de deseos.')
+    else:
+        messages.error(request, 'El objeto ya está en la lista de deseos.')
+    
+    return redirect('lista_deseos')

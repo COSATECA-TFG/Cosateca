@@ -4,16 +4,33 @@
 
 {% block content %}
 
+
+
+
 {% include "header.html" %}
 
 
 
 
-    <section class="mt-5 mb-0">
+
+
+
+<section class="mt-5 mb-0">
     <div class="formulario_editar_perfil">
 
         <form method="post">
-                <h1 id="titulo_detalle_objeto" class="text-center fs-1 mt-4 mb-4">Perfil</h1>
+
+            <h1 id="titulo_detalle_objeto" class="text-center fs-1 mt-4 mb-4">Perfil</h1>
+
+            {% if messages %}
+            <div class="d-flex justify-content-center">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-0 mb-4 text-center">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
             {% csrf_token %}
 
