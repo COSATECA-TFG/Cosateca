@@ -23,81 +23,161 @@
             </div>
         </div>
 
+        {% for info in comentarios_info %}
+            {% with comentario=info.comentario ya_denunciado=info.ya_denunciado %}
+                <div class="card mb-3 comentario">
+                    <div class="card-body p-3">
+                        {% if comentario.usuario == request.user %}
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col d-flex">
+                                <span class="mb-0 ms-3 me-2 comentario_valoracion">{{ comentario.comentario }}</spanp>
 
-        {% for comentario in comentarios %}
-        <div class="card mb-3 comentario">
-            <div class="card-body p-3">
-                {% if comentario.usuario == request.user %}
-                <div class="row align-items-center justify-content-between">
-                    <div class="col d-flex">
-                        <span class="mb-0 ms-3 me-2 comentario_valoracion">{{ comentario.comentario }}</spanp>
+                            </div>
+                            <div class="col-auto text-end">
 
-                    </div>
-                    <div class="col-auto text-end">
+                                <div class="acciones-reserva">
+                                    <a href="{% url 'valoracion_almacen' almacen.id %}" class="btn btn-link p-0  editar-icono" >
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="{% url 'eliminar_valoracion_almacen' comentario.id %}" class="btn btn-link p-0 eliminar-icono">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
 
-                        <div class="acciones-reserva">
-                            <a href="{% url 'menu' %}" class="btn btn-link p-0  editar-icono" >
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                            <a href="{% url 'menu' %}" class="btn btn-link p-0 eliminar-icono">
-                                <i class="bi bi-trash-fill"></i>
-                            </a>
-                        </div>
-
-                        <h5 class="m-0 card-title">{{ comentario.usuario.get_full_name }}</h5>
-                        <div class="d-flex justify-content-end align-items-center mt-2">
-                            <div class="rating2 d-flex">
-                                {% for i in "54321" %}
-                                <input type="radio" id="star-{{ comentario.id }}-{{ i }}"
-                                    name="rating-{{ comentario.id }}" value="{{ i }}" 
-                                    {% if i == comentario.estrellas|stringformat:"s" %}checked{% endif %} disabled>
-                                <label for="star-{{ comentario.id }}-{{ i }}" title="{{ i }} estrellas">★</label>
-                                {% endfor %}
+                                <h5 class="m-0 card-title">{{ comentario.usuario.get_full_name }}</h5>
+                                <div class="d-flex justify-content-end align-items-center mt-2">
+                                    <div class="rating2 d-flex">
+                                        {% for i in "54321" %}
+                                        <input type="radio" id="star-{{ comentario.id }}-{{ i }}"
+                                            name="rating-{{ comentario.id }}" value="{{ i }}" 
+                                            {% if i == comentario.estrellas|stringformat:"s" %}checked{% endif %} disabled>
+                                        <label for="star-{{ comentario.id }}-{{ i }}" title="{{ i }} estrellas">★</label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                {% else %}
-                <div class="row align-items-center">
+                        {% else %}
+                        <div class="row align-items-center">
 
-                <div class="col-auto text-start">
-                    <div class="acciones-reserva">
-                            <a href="{% url 'menu' %}" class="btn btn-link p-0  editar-icono" >
-<i class="bi bi-exclamation-triangle-fill"></i>                            </a>
+                            <div class="col-auto text-start">
+                                <div class="acciones-reserva">
+                                    
+                                    {% if not ya_denunciado %}
+                                    <!-- Botón para abrir el modal de denuncia -->
+                                    <button
+                                        type="button"
+                                        class="btn btn-link p-0 editar-icono"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#denunciaModal-{{ comentario.id }}"
+                                        title="Denunciar valoración"
+                                    >
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                    </button>
+                                    {% else %}
+                                    <span class="text-muted small ms-2">Ya has denunciado esta valoración</span>
+                                    {% endif %}
+
+                                </div>
+
+                                <h5 class="m-0 card-title">{{ comentario.usuario.get_full_name }}</h5>
+                                <div class="d-flex align-items-center mt-2">
+                                <div class="rating2 d-flex">
+                                    {% for i in "54321" %}
+                                    <input
+                                        type="radio"
+                                        id="star-{{ comentario.id }}-{{ i }}"
+                                        name="rating-{{ comentario.id }}"
+                                        value="{{ i }}"
+                                        {% if i == comentario.estrellas|stringformat:"s" %}checked{% endif %}
+                                        disabled
+                                    >
+                                    <label for="star-{{ comentario.id }}-{{ i }}" title="{{ i }} estrellas">★</label>
+                                    {% endfor %}
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="col text-end comentario_valoracion ms-2 me-3">
+                                <p class="mb-0">{{ comentario.comentario }}</p>
+                            </div>
+
+                            
+                            </div>
+                        <div
+                            class="modal fade"
+                            id="denunciaModal-{{ comentario.id }}"
+                            tabindex="-1"
+                            aria-labelledby="denunciaModalLabel-{{ comentario.id }}"
+                            aria-hidden="true"
+                        >
+                            <div class="modal-dialog modal-dialog-centered modal-xl">
+                            <div class="modal-content rounded-3">
+                                <div class="modal-header border-0">
+                                <h5
+                                    class="modal-title fw-bold denuncia-title w-100 text-center"
+                                    id="denunciaModalLabel-{{ comentario.id }}"
+                                >
+                                    ¿Por qué quieres denunciar la valoración?
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Cerrar"
+                                ></button>
+                                </div>
+                                <div class="modal-body">
+                                <form method="post" action="{% url 'denunciar_valoracion_almacen' comentario.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3 ms-5 me-5">
+                                    <label for="motivo-{{ comentario.id }}" class="form-label comentario_valoracion">Motivo de la infracción</label>
+                                    <select
+                                        id="motivo-{{ comentario.id }}"
+                                        name="categoria"
+                                        class="form-select"
+                                        required
+                                    >
+                                        {% for key, value in denuncia_choices %}
+                                            <option value="{{ key }}">{{ value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                    <div class="mb-3 ms-5 me-5">
+                                    <label for="detalle-{{ comentario.id }}" class="form-label comentario_valoracion">
+                                        Explica por qué consideras que se está cometiendo una infracción
+                                    </label>
+                                    <textarea
+                                        id="detalle-{{ comentario.id }}"
+                                        name="contexto"
+                                        class="form-control"
+                                        rows="4"
+                                        required
+                                    ></textarea>
+                                    </div>
+                                    <div class="text-center">
+                                    <button type="submit" class="btn btn-success px-4">
+                                        Confirmar
+                                    </button>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
+                            </div>
                         </div>
 
-                    <h5 class="m-0 card-title">{{ comentario.usuario.get_full_name }}</h5>
-                    <div class="d-flex align-items-center mt-2">
-                    <div class="rating2 d-flex">
-                        {% for i in "54321" %}
-                        <input
-                            type="radio"
-                            id="star-{{ comentario.id }}-{{ i }}"
-                            name="rating-{{ comentario.id }}"
-                            value="{{ i }}"
-                            {% if i == comentario.estrellas|stringformat:"s" %}checked{% endif %}
-                            disabled
-                        >
-                        <label for="star-{{ comentario.id }}-{{ i }}" title="{{ i }} estrellas">★</label>
-                        {% endfor %}
-                    </div>
+     
+                        {% endif %}
                     </div>
                 </div>
+                {% endwith %}
 
-                <div class="col text-end comentario_valoracion ms-2 me-3">
-                    <p class="mb-0">{{ comentario.comentario }}</p>
-                </div>
-                </div>
-
-                {% endif %}
-            </div>
-        </div>
-        {% empty %}
+                      {% empty %}
         <p class="text-muted">Aún no hay valoraciones.</p>
         {% endfor %}
 
-
+            
 
     </section>
 </main>

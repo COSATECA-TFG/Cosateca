@@ -25,14 +25,15 @@
 
                     <div class="rating mb-3 justify-content-center d-flex mb-4">
                         {% for i in "54321" %}
-                        <input type="radio" id="star{{ i }}" name="puntuacion" value="{{ i }}" required>
+                        <input type="radio" id="star{{ i }}" name="puntuacion" value="{{ i }}" required
+                            {% if valoracion and valoracion.estrellas|stringformat:"s" == i %}checked{% endif %}>
                         <label for="star{{ i }}" title="{{ i }} estrellas">★</label>
                         {% endfor %}
                     </div>
 
                     <div class="mb-3">
                         <textarea name="comentario" class="form-control" rows="4"
-                            placeholder="Escribe tu comentario…" required></textarea>
+                            placeholder="Escribe tu comentario…" required>{% if valoracion %}{{ valoracion.comentario }}{% endif %}</textarea>
                     </div>
 
                     <div class="d-flex justify-content-center">

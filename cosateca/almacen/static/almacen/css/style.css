@@ -148,4 +148,12 @@
   color: none;
 }
 
+ .denuncia-title {
+    text-align: center ! important; 
+    font-weight: bold;
+    color: #244E47 !important;
+    font-size: 2rem !important;
+}
+
+
 
