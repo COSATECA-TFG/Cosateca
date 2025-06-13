@@ -7,7 +7,20 @@
 
 
 <section class="lista_deseos">
+
+    {% if messages %}
+    <div class="d-flex justify-content-center">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mt-3 mb-0 text-center">
+        {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
     <div class="contenedor_objetos_deseados">
+
+
         {% for objeto in objetos_deseados %}
 
         <div class="row d-flex justify-content-between">
@@ -29,9 +42,9 @@
                     {% elif objeto.condicion == 'Desgastado' %} estado_desgastado
                     {% elif objeto.condicion == 'Perdido' %} estado-perdido
                     {% endif %}">
-                    {{objeto.condicion}}
+                        {{objeto.condicion}}
                     </span>
-                    
+
                     <span class="ms-3">
                         <img src="../static/img/huella_carbono.png" alt="icono"
                             style="width: 1.5em; vertical-align: middle;">
