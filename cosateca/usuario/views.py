@@ -246,7 +246,7 @@ def detalles_usuario(request):
 
 
 
-
+@login_required
 def agregar_objeto_lista_deseos(request, objeto_id):
     usuario = request.user
     objeto = Objeto.objects.get(id=objeto_id)
@@ -258,3 +258,55 @@ def agregar_objeto_lista_deseos(request, objeto_id):
         messages.error(request, 'El objeto ya está en la lista de deseos.')
     
     return redirect('lista_deseos')
+
+
+
+@login_required
+def consultar_huella_carbono_reducida(request):
+    usuario = request.user
+
+    #Quiero todos los alquileres realizados por un usuario, para luego obtener todos los objetos que ha alquilado
+    alquileres_realizados = usuario.alquileres.filter(cancelada=False).all()
+    total_objetos_alquilados = alquileres_realizados.count()
+
+    objetos_alquilados = []
+    for alquiler in alquileres_realizados:
+        objeto = alquiler.objeto
+        objetos_alquilados.append(objeto)
+
+    tipo_cantidad = {cat[0]: 0 for cat in Objeto.ENUM_TAREA_TIPO}
+    for obj in objetos_alquilados:
+        tipo_cantidad[obj.categoria] += 1
+    
+    cantidad_huella_ahorrada = sum(obj.huella_carbono for obj in objetos_alquilados)
+
+    huella_por_mes = { 
+        'January': 0,
+        'February': 0,
+        'March': 0,
+        'April': 0,
+        'May': 0,
+        'June': 0,
+        'July': 0,
+        'August': 0,
+        'September': 0,
+        'October': 0,
+        'November': 0,
+        'December': 0
+    }
+    for alquiler in alquileres_realizados:
+        if alquiler.fecha_inicio:
+            mes = alquiler.fecha_inicio.strftime('%B')
+            huella = alquiler.objeto.huella_carbono
+            huella_por_mes[mes] += huella
+
+
+
+
+    return render(request, 'huella_carbono_reducida.html',
+                   {'n_obj_alquilados': total_objetos_alquilados,
+                    'objetos_alquilados': objetos_alquilados,
+                    'obj_tipo_cantidad': tipo_cantidad,
+                    'cantidad_huella_ahorrada': cantidad_huella_ahorrada,
+                    'huella_por_mes': huella_por_mes}
+                    )

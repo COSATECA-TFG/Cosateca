@@ -414,8 +414,6 @@ section > form > div:first-child{
 
 /* Detalles de usuario */
 
-
-
 .detalles_usuario {
   background-color: white;
   border-radius: 0.625rem !important;
@@ -423,5 +421,43 @@ section > form > div:first-child{
   padding: 4% !important;
 }
 
+
+/* Huella de carbono */
+.huella_carbono {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ;
+  padding: 4% !important;
+}
+
+.datos_simples_huella{
+  background-color: rgb(200, 198, 198) !important;
+  border-radius: 0.625rem !important;
+  width: 75% !important;
+  margin: 0 auto !important;
+}
+
+.color-verde-bold{
+  color: #244E47 !important;
+  font-weight: bold !important;
+}
+
+.color-verde{
+  color: #244E47 !important;
+}
+
+.color-verde-claro-bold{
+  color: #6CBC9B !important;
+  font-weight: bold !important;
+}
+
+.color-verde-claro{
+  color: #6CBC9B !important;
+}
+
+.categorias_barchart{
+  width: 75% !important;
+  margin: 0 auto !important;
+}
 
 

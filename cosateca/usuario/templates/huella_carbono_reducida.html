@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Huella de carbono reducida{% endblock %}
+
+{% block content %}
+
+{% include "header.html" %}
+
+<section class="mt-2 mb-0">
+    <div class="huella_carbono text-center">
+        <span id="titulo_detalle_objeto" class="fs-1">Mi huella de carbono ahorrada</span>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <div class="datos_simples_huella mb-4 pt-3 pb-3 text-start">
+                    <span class="ms-3 color-verde-bold fs-4">Objetos alquilados:<br></span>
+                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                </div>
+
+                <div class="datos_simples_huella pt-3 pb-3 text-start">
+                    <span class="ms-3 color-verde-bold fs-4">Equivalencia en árboles plantados:<br></span>
+                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                </div>
+
+
+
+
+            </div>
+
+            <div class="col-6">
+                <div class="datos_simples_huella mb-4 pt-3 pb-3 text-start">
+                    <span class="ms-3 color-verde-bold fs-4">Objetos alquilados:<br></span>
+                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                </div>
+
+                <div class="datos_simples_huella pt-3 pb-3 text-start">
+                    <span class="ms-3 color-verde-bold fs-4">Equivalencia en árboles plantados:<br></span>
+                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                </div>
+
+                <div class="categorias_barchart mt-3">
+                    <canvas id="categoriasBarChart"></canvas>
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+
+</section>
+
+
+
+
+<script>
+    console.log("Objetos: {{ objetos_alquilados|safe }}");
+    console.log("Objetos: {{ n_obj_alquilados }}");
+    console.log("tipo cantidad: {{ obj_tipo_cantidad|safe }}")
+    console.log("huella de carbono ahorrada: {{ cantidad_huella_ahorrada }}");
+    console.log("huella de carbono reducida: {{ huella_por_mes|safe }}");
+</script>
+
+{{ obj_tipo_cantidad|json_script:"objTipoCantidad" }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const objTipoCantidad = JSON.parse(document.getElementById('objTipoCantidad').textContent);
+
+        const labels = Object.keys(objTipoCantidad);
+        const data = Object.values(objTipoCantidad);
+
+        const ctx = document.getElementById('categoriasBarChart').getContext('2d');
+        const huellaBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '',
+                    data: data,
+                    backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function (value) {
+                                if (Number.isInteger(value)) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+{% endblock %}
