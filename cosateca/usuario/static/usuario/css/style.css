@@ -460,4 +460,30 @@ section > form > div:first-child{
   margin: 0 auto !important;
 }
 
+/* Amonestaciones */
+
+.icon-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.icon-grave {
+  background-color: #d32f2f; 
+}
+
+.icon-media {
+  background-color: #fbc02d; 
+}
+
+.icon-leve {
+  background-color: #388e3c; 
+}
+
+
 

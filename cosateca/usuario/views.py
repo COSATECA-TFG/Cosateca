@@ -300,9 +300,6 @@ def consultar_huella_carbono_reducida(request):
             huella = alquiler.objeto.huella_carbono
             huella_por_mes[mes] += huella
 
-
-
-
     return render(request, 'huella_carbono_reducida.html',
                    {'n_obj_alquilados': total_objetos_alquilados,
                     'objetos_alquilados': objetos_alquilados,
@@ -310,3 +307,12 @@ def consultar_huella_carbono_reducida(request):
                     'cantidad_huella_ahorrada': cantidad_huella_ahorrada,
                     'huella_por_mes': huella_por_mes}
                     )
+
+@login_required
+def consultar_amonestaciones(request):
+    usuario = request.user
+    amonestaciones = usuario.amonestaciones_recibidas.all()
+
+    total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+    
+    return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
