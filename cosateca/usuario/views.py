@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm, InicioSesionForm, CuestionarioForm
+from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
 from django.contrib import messages
 from .models import Usuario, Preferencia
 from objeto.models import Objeto
@@ -194,3 +194,119 @@ def eliminar_objeto_lista_deseos(request, objeto_id):
     else:
         messages.error(request, 'El objeto no se encuentra en la lista de deseos.')
     return redirect('lista_deseos')
+
+
+@login_required
+def detalles_usuario(request):
+    usuario = request.user
+
+
+    if request.method == 'POST':
+        form = editarPerfilForm(request.POST, usuario=request.user)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+            sexo = form.cleaned_data['sexo']
+            correo_electronico = form.cleaned_data['correo_electronico']
+            telefono = form.cleaned_data['telefono']
+            dni = form.cleaned_data['dni']
+            nombre_usuario = form.cleaned_data['nombre_usuario']
+
+            
+            
+            
+            usuario.first_name = nombre
+            usuario.last_name = apellido
+            usuario.fecha_nacimiento = fecha_nacimiento
+            usuario.sexo = sexo
+            usuario.email = correo_electronico
+            usuario.telefono =  telefono
+            usuario.dni = dni
+            usuario.username = nombre_usuario
+        
+            
+            usuario.save()
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('usuario')
+            
+    else:
+        form = editarPerfilForm(initial={
+            'nombre': usuario.first_name,
+            'apellido': usuario.last_name,
+            'fecha_nacimiento': usuario.fecha_nacimiento.strftime('%Y-%m-%d'),
+            'sexo': usuario.sexo,
+            'correo_electronico': usuario.email,
+            'telefono': usuario.telefono,
+            'dni': usuario.dni,
+            'nombre_usuario': usuario.username,
+        }, usuario=request.user)
+
+    return render(request, 'detalles_usuario.html', {'usuario': usuario, 'form':form})
+
+
+
+@login_required
+def agregar_objeto_lista_deseos(request, objeto_id):
+    usuario = request.user
+    objeto = Objeto.objects.get(id=objeto_id)
+    
+    if objeto not in usuario.objetos_deseados.all():
+        usuario.objetos_deseados.add(objeto)
+        messages.success(request, 'Objeto agregado a la lista de deseos.')
+    else:
+        messages.error(request, 'El objeto ya está en la lista de deseos.')
+    
+    return redirect('lista_deseos')
+
+
+
+@login_required
+def consultar_huella_carbono_reducida(request):
+    usuario = request.user
+
+    #Quiero todos los alquileres realizados por un usuario, para luego obtener todos los objetos que ha alquilado
+    alquileres_realizados = usuario.alquileres.filter(cancelada=False).all()
+    total_objetos_alquilados = alquileres_realizados.count()
+
+    objetos_alquilados = []
+    for alquiler in alquileres_realizados:
+        objeto = alquiler.objeto
+        objetos_alquilados.append(objeto)
+
+    tipo_cantidad = {cat[0]: 0 for cat in Objeto.ENUM_TAREA_TIPO}
+    for obj in objetos_alquilados:
+        tipo_cantidad[obj.categoria] += 1
+    
+    cantidad_huella_ahorrada = sum(obj.huella_carbono for obj in objetos_alquilados)
+
+    huella_por_mes = { 
+        'January': 0,
+        'February': 0,
+        'March': 0,
+        'April': 0,
+        'May': 0,
+        'June': 0,
+        'July': 0,
+        'August': 0,
+        'September': 0,
+        'October': 0,
+        'November': 0,
+        'December': 0
+    }
+    for alquiler in alquileres_realizados:
+        if alquiler.fecha_inicio:
+            mes = alquiler.fecha_inicio.strftime('%B')
+            huella = alquiler.objeto.huella_carbono
+            huella_por_mes[mes] += huella
+
+
+
+
+    return render(request, 'huella_carbono_reducida.html',
+                   {'n_obj_alquilados': total_objetos_alquilados,
+                    'objetos_alquilados': objetos_alquilados,
+                    'obj_tipo_cantidad': tipo_cantidad,
+                    'cantidad_huella_ahorrada': cantidad_huella_ahorrada,
+                    'huella_por_mes': huella_por_mes}
+                    )
