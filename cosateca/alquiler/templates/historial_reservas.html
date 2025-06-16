@@ -107,7 +107,7 @@
                   {% endif %}
                 </div>
 
-                {% if reserva.fecha_inicio > timezone.now.date %}                  
+                {% if reserva.fecha_inicio > timezone.now.date and reserva.cancelada == False %}                  
                   <div class="col-2 d-flex flex-column acciones-reserva">
                     <a href="{% url 'editar_reserva' reserva.id %}" 
                        class="btn btn-link p-0 mb-2 editar-icono" 
@@ -127,8 +127,8 @@
         {% endfor %}
 
       {% else %}
-        <div class="alert alert-info no-reservas-bg">
-          No hay reservas disponibles.
+        <div class="alert alert-warning text-center mt-4" role="alert">
+          No tienes reservas en tu historial.
         </div>
       {% endif %}
     </div>

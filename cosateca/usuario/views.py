@@ -264,8 +264,6 @@ def agregar_objeto_lista_deseos(request, objeto_id):
 @login_required
 def consultar_huella_carbono_reducida(request):
     usuario = request.user
-
-    #Quiero todos los alquileres realizados por un usuario, para luego obtener todos los objetos que ha alquilado
     alquileres_realizados = usuario.alquileres.filter(cancelada=False).all()
     total_objetos_alquilados = alquileres_realizados.count()
 
@@ -300,10 +298,9 @@ def consultar_huella_carbono_reducida(request):
             huella = alquiler.objeto.huella_carbono
             huella_por_mes[mes] += huella
 
+
     arboles_plantados_estimados = cantidad_huella_ahorrada / 21  # Asumiendo que un árbol absorbe 21 kg de CO2 al año
     arboles_plantados_estimados = round(arboles_plantados_estimados, 2)    
-
-
 
     return render(request, 'huella_carbono_reducida.html',
                    {'n_obj_alquilados': total_objetos_alquilados,
@@ -313,3 +310,13 @@ def consultar_huella_carbono_reducida(request):
                     'huella_por_mes': huella_por_mes,
                     'arboles_plantados_estimados': arboles_plantados_estimados}
                     )
+
+
+@login_required
+def consultar_amonestaciones(request):
+    usuario = request.user
+    amonestaciones = usuario.amonestaciones_recibidas.all()
+
+    total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+    
+    return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
