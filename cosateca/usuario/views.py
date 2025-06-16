@@ -300,6 +300,8 @@ def consultar_huella_carbono_reducida(request):
             huella = alquiler.objeto.huella_carbono
             huella_por_mes[mes] += huella
 
+    arboles_plantados_estimados = cantidad_huella_ahorrada / 21  # Asumiendo que un árbol absorbe 21 kg de CO2 al año
+    arboles_plantados_estimados = round(arboles_plantados_estimados, 2)    
 
 
 
@@ -308,5 +310,6 @@ def consultar_huella_carbono_reducida(request):
                     'objetos_alquilados': objetos_alquilados,
                     'obj_tipo_cantidad': tipo_cantidad,
                     'cantidad_huella_ahorrada': cantidad_huella_ahorrada,
-                    'huella_por_mes': huella_por_mes}
+                    'huella_por_mes': huella_por_mes,
+                    'arboles_plantados_estimados': arboles_plantados_estimados}
                     )
