@@ -68,7 +68,7 @@
 }
 
 #titulo_detalle_objeto {
-  font-size: 1.4rem !important;
+  font-size: 1.4rem;
   font-weight: bold;
   color: #244E47;
 }
@@ -156,4 +156,15 @@
 
 .descripcion_objeto{
   font-size: 18px !important;
+}
+
+/* Perfil */
+
+.formulario_editar_perfil {
+    background-color: white;
+    border-radius: 0.625rem !important;
+    border: 2px solid rgb(216, 216, 216) ; 
+    max-width: 70%;
+    margin: 6% auto;
+
 }
