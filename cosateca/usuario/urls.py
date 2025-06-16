@@ -15,4 +15,6 @@ urlpatterns = [
     path('lista_deseos/agregar/<int:objeto_id>', views.agregar_objeto_lista_deseos, name='agregar_objeto'),
     path('usuario', views.detalles_usuario, name='usuario'),
     path('usuario/huella_carbono', views.consultar_huella_carbono_reducida, name='huella_carbono_reducida'),
+    path('usuario/amonestaciones', views.consultar_amonestaciones, name='consultar_amonestaciones'),
+    
 ]

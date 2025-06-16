@@ -174,7 +174,9 @@
                 {% endwith %}
 
                       {% empty %}
-        <p class="text-muted">Aún no hay valoraciones.</p>
+                <div class="alert alert-warning text-center mt-4" role="alert">
+                    No hay valoraciones para este almacén.
+                </div>
         {% endfor %}
 
             

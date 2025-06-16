@@ -11,17 +11,18 @@
     {% if messages %}
     <div class="d-flex justify-content-center">
         {% for message in messages %}
-        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mt-3 mb-0 text-center">
-        {{ message }}
+        <div
+            class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mt-3 mb-0 text-center">
+            {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
-    
+
+
+    {% if objetos_deseados %}
+    {% for objeto in objetos_deseados %}
     <div class="contenedor_objetos_deseados">
-
-
-        {% for objeto in objetos_deseados %}
 
         <div class="row d-flex justify-content-between">
             <div class="col-2 imagen_detalle_objeto d-flex align-items-center mt-0 p-0 ms-5">
@@ -64,17 +65,23 @@
 
         </div>
         <div class="separacion_horizontal_registro w-100"></div>
+    </div>
 
 
 
-        {% endfor %}
+    {% endfor %}
+    {% else %}
+    <div class="alert alert-warning text-center mt-4" role="alert">
+        No tienes objetos deseados en tu lista.
+    </div>
+    {% endif %}
 
 
 
 
-        <script>
-            console.log("Lista de deseos cargada con el usuario: {{ usuario.username }} y con la siguiente cantidad de objetos deseados: {{ objetos_deseados|length }}");
-        </script>
+    <script>
+        console.log("Lista de deseos cargada con el usuario: {{ usuario.username }} y con la siguiente cantidad de objetos deseados: {{ objetos_deseados|length }}");
+    </script>
 
 
-        {% endblock %}
+    {% endblock %}
