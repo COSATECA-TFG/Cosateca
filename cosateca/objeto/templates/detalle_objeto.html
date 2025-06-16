@@ -29,12 +29,16 @@
         {% for i in "12345" %}
         {% if forloop.counter <= estrellas %} <span class="estrella_activa">&#9733;</span>
           {% else %}
-          <span class="estrella_inactiva">&#9733;</span> {# Estrella vacía #}
+          <span class="estrella_inactiva">&#9733;</span> 
           {% endif %}
           {% endfor %}
       </div>
 
       <div class="botonera_detalles_objeto d-flex justify-content-center align-items-center mt-3">
+        <a href="{% url 'comentarios_obj' objeto.id %}" id="comentario" class="btn me-4"><i class="bi bi-chat-left"></i></a>
+        <a href="/valorar_objeto/{{objeto.id}}" id="valorar" class="btn ms-3 me-4"><i class="bi bi-heart"></i></a>
+        <a href="" id="lista_deseos" class="btn ms-3"> <i class="bi bi-card-checklist"></i></a>
+
         <a href="" id="comentario" class="btn me-4"><i class="bi bi-chat-left"></i></a>
         <a href="" id="valorar" class="btn ms-3 me-4"><i class="bi bi-heart"></i></a>
         <a href="/lista_deseos/agregar/{{objeto.id}}" id="lista_deseos" class="btn ms-3"> <i class="bi bi-card-checklist"></i></a>
