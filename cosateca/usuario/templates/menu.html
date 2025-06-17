@@ -5,6 +5,8 @@
 
 {% include "header.html" %}
 
+{% load query_transform %}
+
   <section class="mt-2">
     <a href="/recomendaciones_personalizadas" class="titulos_menu">Recomendaciones para ti ></a>
     <div class="row gy-4">
@@ -26,19 +28,6 @@
         </div>
       {% endfor %}
     </div>
-
-    <div class="col-6 col-md-3">
-      <div class="cuadro-placeholder">
-        <div class="cuadro-placeholder-inner"></div>
-      </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-      <div class="cuadro-placeholder">
-        <div class="cuadro-placeholder-inner"></div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <section class="mt-3">
