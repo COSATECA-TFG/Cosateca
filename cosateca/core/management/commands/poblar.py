@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from usuario.models import Usuario, Gestor, Preferencia, Amonestacion
 from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, ObjetoValoracionDenuncia
+from objeto.models import Objeto
 from django.utils import timezone
 from datetime import date
 
@@ -78,7 +79,7 @@ class Command(BaseCommand):
             }
             
         ]
-        
+
 
 
         for data in usuarios:
@@ -163,8 +164,92 @@ class Command(BaseCommand):
             categoria="Opinión falsa",
             contexto="El usuario ha publicado una opinión falsa sobre el servicio.",
         )
+
+
         
         
+        almacen = Almacen.objects.get(nombre="Almacén Central")
+        objetos = [
+    {
+        'nombre': 'Taladro Bosch',
+        'descripcion': 'Taladro eléctrico Bosch de 500W, ideal para bricolaje doméstico.',
+        'categoria': 'Bricolaje',
+        'condicion': 'Bueno',
+        'huella_carbono': 12.50,
+        'imagen': '',  
+    },
+    {
+        'nombre': 'Cortacésped',
+        'descripcion': 'Cortacésped manual para jardines pequeños y medianos.',
+        'categoria': 'Jardín',
+        'condicion': 'Desgastado',
+        'huella_carbono': 8.20,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Batidora Moulinex',
+        'descripcion': 'Batidora de mano Moulinex, perfecta para repostería y cocina diaria.',
+        'categoria': 'Cocina',
+        'condicion': 'Nuevo',
+        'huella_carbono': 5.75,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Multímetro digital',
+        'descripcion': 'Multímetro digital para mediciones eléctricas y electrónicas.',
+        'categoria': 'Electrónica',
+        'condicion': 'Bueno',
+        'huella_carbono': 3.10,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Martillo',
+        'descripcion': 'Martillo de acero inoxidable, resistente y duradero.',
+        'categoria': 'Herramientas',
+        'condicion': 'Bueno',
+        'huella_carbono': 2.80,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Aspiradora Rowenta',
+        'descripcion': 'Aspiradora potente para limpieza de alfombras y suelos.',
+        'categoria': 'Limpieza',
+        'condicion': 'Bueno',
+        'huella_carbono': 9.60,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Caja de tornillos',
+        'descripcion': 'Caja con tornillos de varios tamaños para bricolaje.',
+        'categoria': 'Otros',
+        'condicion': 'Nuevo',
+        'huella_carbono': 1.20,
+        'imagen': '',
+    },
+    {
+        'nombre': 'Destornillador eléctrico',
+        'descripcion': 'Destornillador eléctrico recargable, incluye varias puntas.',
+        'categoria': 'Herramientas',
+        'condicion': 'Bueno',
+        'huella_carbono': 4.50,
+        'imagen': '',
+    },
+    ]
+
+
+
+        for obj in objetos:
+            if not Objeto.objects.filter(nombre=obj['nombre']).exists():
+                Objeto.objects.create(
+                    nombre=obj['nombre'],
+                    descripcion=obj['descripcion'],
+                    categoria=obj['categoria'],
+                    condicion=obj['condicion'],
+                    huella_carbono=obj['huella_carbono'],
+                    almacen=almacen,
+                    imagen= 'https://tatica.org/wp-content/plugins/gutenverse/assets/img/img-placeholder.jpg'
+                )
+
         
         
         

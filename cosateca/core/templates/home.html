@@ -5,20 +5,25 @@
 
 {% block content %}
 
-<section class="row header_inicio justify-content-between pe-5 ps-5 pb-5 pt-2">
+<section class="row header_inicio justify-content-between pe-5 ps-5 pb-5 pt-2 me-2 ms-2">
     <div class="col-4 ">
         <div class="img_wrapper">
             <img src="../static/img/cosateca_imagotipo.png" alt="image_inicio" class="imagotipo">
         </div>
     </div>
     <div class="col-4 d-flex justify-content-end align-items-start botonera_header_inicio">
-        <a href="/registro" class="btn boton_header_inicio">Registrarse</a>
-        <a href="/inicio_sesion" class="btn boton_header_inicio">Iniciar sesión</a>
+        {% if user.is_authenticated %}
+            <a href="/cerrar_sesion" class="btn boton_header_inicio">Cerrar sesión</a>
+        {% else %}
+            <a href="/registro" class="btn boton_header_inicio">Registrarse</a>
+            <a href="/inicio_sesion" class="btn boton_header_inicio">Iniciar sesión</a>
+        {% endif %}
+        
     </div>
 </section>
 
 
-<section class="row inicio mt-5">
+<section class="row inicio mt-5 me-2 ms-2">
 
     <div class="col-6  d-flex flex-column align-items-start contenedor_texto_inicio">
         <h1 class="texto_inicio">Bienvenidos a la <b>Cosateca</b></h1>
@@ -26,7 +31,11 @@
         <p>Comparte objetos, reduce tu huella de carbono</p>
 
         <div class="botonera_inicio w-100">
-            <a href="" class="btn boton_inicio me-4">Comenzar</a>
+            {% if user.is_authenticated %}
+            <a href="/menu" class="btn boton_inicio me-4">Comenzar</a>
+            {% else %}
+            <a href="/inicio_sesion" class="btn boton_inicio me-4">Comenzar</a>
+            {% endif %}
             <a href="" class="btn boton_inicio">Leer más</a>
         </div>
 

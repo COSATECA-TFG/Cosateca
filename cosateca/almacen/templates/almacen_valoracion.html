@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Valorar Almacén{% endblock %}
+
+{% block content %}
+{% include "header.html" %}
+
+{% if error %}{{ error }}{% endif %}
+
+<div class="container my-5 ">
+    <div class="card p-4 mx-auto shadow-sm">
+        <div class="row gx-4">
+
+            <div class="col-md-4 text-center mb-4 mt-2">
+                <div id="map-{{ almacen.id }}" class="map-container rounded"
+                    data-lat="{{ almacen.localizacion.latitud }}" data-lng="{{ almacen.localizacion.longitud }}">
+                </div>
+                <h5 class="mt-3 card-title">{{ almacen.nombre }}</h5>
+            </div>
+
+
+            <div class="col-md-8">
+                <h4 class="mb-4 text-center card-title mt-4">Valorar almacén</h4>
+                <form method="post" action="{% url 'valoracion_almacen' almacen.id %}">
+                    {% csrf_token %}
+
+                    <div class="rating mb-3 justify-content-center d-flex mb-4">
+                        {% for i in "54321" %}
+                        <input type="radio" id="star{{ i }}" name="puntuacion" value="{{ i }}" required
+                            {% if valoracion and valoracion.estrellas|stringformat:"s" == i %}checked{% endif %}>
+                        <label for="star{{ i }}" title="{{ i }} estrellas">★</label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <textarea name="comentario" class="form-control" rows="4"
+                            placeholder="Escribe tu comentario…" required>{% if valoracion %}{{ valoracion.comentario }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success btn-custom-width mb-4">Enviar valoración</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mapEl = document.getElementById('map-{{ almacen.id }}');
+        const lat = parseFloat(mapEl.dataset.lat);
+        const lng = parseFloat(mapEl.dataset.lng);
+        initializeMap('map-{{ almacen.id }}', lat, lng);
+    });
+</script>
+
+<script>
+    function initializeMap(containerId, lat, lng) {
+        const map = L.map(containerId).setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([lat, lng]).addTo(map);
+    }
+</script>
+{% endblock %}

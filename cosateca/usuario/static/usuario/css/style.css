@@ -55,7 +55,6 @@ section > form > div:first-child{
     padding-bottom: 20%;
     border-left: 2px solid rgb(216, 216, 216);
     height: 100%;
-    min-height: 250px; /* Ajusta según tu diseño */
 }
 
 .separacion_horizontal_registro {
@@ -108,6 +107,10 @@ section > form > div:first-child{
     
 }
 
+.boton_envio_formulario:hover {
+  opacity: 0.9;
+}
+
 /* Inicio de sesión */
 
 
@@ -145,5 +148,375 @@ section > form > div:first-child{
     width: 30% !important;
     
 }
+
+/* Cuestionario */
+
+.item-radio {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem; 
+}
+
+.item-radio input[type="radio"] {
+  margin-right: 0.5rem;
+
+}
+
+.item-radio label {
+  color: #244E47;
+  font-size: 1rem;
+}
+
+.titulo_cuestionario {
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px;
+  color: #244E47;
+  margin-top: 4%;
+  margin-bottom: 4%; 
+}
+
+.preguntas_cuestionario {
+  margin-left: 8%;      
+  margin-right: 0;
+  font-size: 1.25rem;   
+}
+
+.preguntas_cuestionario label,
+.preguntas_cuestionario strong {
+  font-size: 1.25rem;   
+}
+
+.preguntas_cuestionario input[type="radio"] {
+  transform: scale(1.2);
+  margin-right: 0.7rem;
+}
+
+/* Menu */
+
+.cuadro-placeholder {
+  width: 100%;
+  padding-top: 75%;
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  position: relative;
+}
+
+.cuadro-placeholder-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.titulos_menu {
+  text-decoration: none;
+  color: #244E47;
+  font-weight: bold;
+  font-size: 2rem; 
+  display: block;
+}
+
+
+/* Catalogo */
+
+.filtrado_ordenacion{
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ;
+  margin-bottom: 1.5%;
+}
+
+.titulo_filtrado_ordenacion{
+  font-size:2rem;
+  
+}
+
+.botonera_filtros{
+  margin-top: 3% !important;
+  margin-bottom: 10% !important;
+}
+
+.botonera_filtros a{
+    background-color: transparent !important;
+    border-radius: 1rem !important;
+    border-color: rgb(216, 216, 216) !important;
+    border-width: 3px !important;
+    width: 55%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    padding-top: 4%;
+    padding-bottom: 4%;
+    color: rgb(164, 163, 163);
+    font-size: 1.2rem;
+}
+
+.input-buscar {
+    background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
+    background-size: 1.2rem;
+    padding-left: 3rem !important;
+    padding-top: 1% !important;
+    padding-bottom: 1% !important;
+    border-radius: 1rem !important;
+    border-color: rgb(226, 226, 226) !important;
+    border-width: 3px !important;
+    font-size: 18px !important;
+}
+
+.input-buscar::placeholder {
+    color: rgb(164, 163, 163) !important;
+    opacity: 0.6 !important;
+}
+
+
+/* Detalle de objeto */
+
+.imagen_detalle_objeto {
+    margin-top: 20% !important;
+    aspect-ratio: 1/1;
+    border-radius: 0.725rem !important;
+    border: 0.3rem solid rgb(216, 216, 216) ; 
+    overflow: hidden;
+    
+}
+
+
+
+.estrella_activa{
+  color: #244E47; 
+  font-size:2.5rem;
+}
+
+.estrella_inactiva{
+  color: #ccc; 
+  font-size:1.875rem;
+}
+
+.botonera_detalles_objeto > #comentario{
+  background-color: #6CBC9B !important;
+}
+
+.botonera_detalles_objeto > #valorar{
+    background-color: #6CBC9B !important;
+}
+
+.botonera_detalles_objeto > #lista_deseos{
+    background-color: #6CBC9B !important;
+}
+
+#comentario .bi, #valorar .bi, #lista_deseos .bi {
+    color: white !important;
+}
+
+.descripcion_objeto > p {
+  color: #244E47;
+
+}
+
+.texto_imagen{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #244E47;
+  padding: 10px;
+  text-align: end;
+}
+
+.estado, .tipo{
+  color: white !important;
+  padding: 2% !important;
+  border-radius: 0.625rem !important;
+}
+
+.tipo {
+  background-color: #244E47 !important;
+}
+
+
+
+.reserva{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.reserva-fechas{
+  background-color: white !important;
+  border-radius: 0.625rem !important;
+  border: 3px solid #244E47 !important;
+}
+
+.input_fecha{
+  background-color: transparent !important;
+  width: 100% !important;
+}
+
+.input_fecha::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+
+/* Lista de deseos */
+
+
+.contenedor_objetos_deseados {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  padding: 4% !important;
+}
+
+
+.botonera_lista_deseos a{
+  color: white !important;
+  padding-left:10% !important;
+  padding-right:10% !important;
+  padding-top: 4% !important;
+  padding-bottom: 4% !important;
+  font-weight: bold ;
+}
+
+.botonera_lista_deseos > a:first-child{
+  background-color: #6CBC9B !important;
+}
+
+.botonera_lista_deseos > a:last-child{
+  background-color: rgb(255, 75, 75) !important;
+}
+
+
+.estado_nuevo {
+  background-color: #244E47 !important;
+}
+
+.estado_bueno {
+  background-color: #6CBC9B !important;
+}
+
+.estado_desgastado {
+  background-color: #bc6c6c !important;
+}
+
+.estado_perdido {
+  background-color: #3a3a3a !important;
+}
+
+
+/* Detalles de usuario */
+
+.detalles_usuario {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ; 
+  padding: 4% !important;
+}
+
+
+/* Huella de carbono */
+.huella_carbono {
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ;
+  padding: 4% !important;
+}
+
+.datos_simples_huella{
+  background-color: rgb(200, 198, 198) !important;
+  border-radius: 0.625rem !important;
+  width: 75% !important;
+  margin: 0 auto !important;
+}
+
+.color-verde-bold{
+  color: #244E47 !important;
+  font-weight: bold !important;
+}
+
+.color-verde{
+  color: #244E47 !important;
+}
+
+.color-verde-claro-bold{
+  color: #6CBC9B !important;
+  font-weight: bold !important;
+}
+
+.color-verde-claro{
+  color: #6CBC9B !important;
+}
+
+.categorias_barchart{
+  width: 75% !important;
+  margin: 0 auto !important;
+}
+
+
+.meses_linechart{
+  width: 75% !important;
+  margin: 0 auto !important;
+}
+
+
+.huella-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: auto;
+}
+
+.huella-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.huella-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #1c4c43;
+}
+
+.huella-cantidad {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.huella-unidad {
+  font-size: 1rem;
+}
+
+/* Amonestaciones */
+
+.icon-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.icon-grave {
+  background-color: #d32f2f; 
+}
+
+.icon-media {
+  background-color: #fbc02d; 
+}
+
+.icon-leve {
+  background-color: #388e3c; 
+
+}
+
 
 

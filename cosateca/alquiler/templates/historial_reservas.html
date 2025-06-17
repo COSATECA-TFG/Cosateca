@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+
+  {% include "header.html" %}
+
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+  <div class="pagina-reservas mt-5">
+
+    <div class="filtros-reserva ms-5">
+      <div class="list-group" id="sidebar-filtros">
+        <a href="{% url 'mis_reservas' %}?filtro=todas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'todas' %}activeFiltro{% endif %}">
+          Todas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=programadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'programadas' %}activeFiltro{% endif %}">
+          Programadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=en_curso"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'en_curso' %}activeFiltro{% endif %}">
+          En curso
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=retrasadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'retrasadas' %}activeFiltro{% endif %}">
+          Retrasadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=canceladas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'canceladas' %}activeFiltro{% endif %}">
+          Canceladas
+        <a href="{% url 'mis_reservas' %}?filtro=finalizadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'finalizadas' %}activeFiltro{% endif %}">
+          Finalizadas
+        </a>
+      </div>
+    </div>
+
+    <div class="contenido-reserva">
+      {% if reservas %}
+        {% for reserva in reservas %}
+          <div class="card mb-3 reserva-card">
+            <div class="card-body">
+              <div class="row align-items-center justify-content-between">
+
+                <div class="col-2">
+                  <img src="{{ reserva.objeto.imagen }}"
+                       alt="Imagen {{ reserva.objeto.nombre }}"
+                       class="img-fluid objeto-imagen">
+                </div>
+
+                <div class="col-4">
+                  <h5 class="card-title mb-1">{{ reserva.objeto.nombre }}</h5>
+                  <p class="card-text text-muted mb-0">
+                    {{ reserva.fecha_inicio|date:"d M" }} – 
+                    {{ reserva.fecha_fin|date:"d M Y" }}
+                  </p>
+                </div>
+
+                <div class="col-2 text-center">
+                  <img src="../static/img/huella_carbono.png" alt="Huella de Carbono" class="huella-carbono-img">
+                  <p class="card-text mt-2 text-muted mb-0">
+                    {{ reserva.objeto.huella_carbono }} kg CO₂
+                  </p>
+                </div>
+
+                <div class="col-2">
+                  {% if reserva.cancelada %}
+                    <span class="badge rounded-pill badge-estado-cancelada">
+                      Cancelada
+                    </span>
+                  {% else %}
+                    {% if reserva.fecha_inicio > timezone.now.date %}
+                      <span class="badge rounded-pill badge-estado-programada">
+                        Programada
+                      </span>
+                    {% elif timezone.now.date >= reserva.fecha_inicio and reserva.fecha_fin >= timezone.now.date %}
+                      <span class="badge rounded-pill badge-estado-curso">
+                        En curso
+                      </span>
+                    {% elif timezone.now.date > reserva.fecha_fin and reserva.fecha_entrega %}
+                      <span class="badge rounded-pill badge-estado-finalizada">
+                        Finalizada
+                      </span>
+                    {% elif timezone.now.date > reserva.fecha_fin and not reserva.fecha_entrega %}
+                      <span class="badge rounded-pill badge-estado-retrasada">
+                        Retrasada
+                      </span>
+                    {% endif %}
+                  {% endif %}
+                </div>
+
+                {% if reserva.fecha_inicio > timezone.now.date and reserva.cancelada == False %}                  
+                  <div class="col-2 d-flex flex-column acciones-reserva">
+                    <a href="{% url 'editar_reserva' reserva.id %}" 
+                       class="btn btn-link p-0 mb-2 editar-icono" 
+                       data-objeto-id="{{ reserva.objeto.id }}" 
+                       data-reserva-id="{{ reserva.id }}">
+                      <i class="bi bi-pencil-fill"></i>
+                    </a>
+                    <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-link p-0 eliminar-icono">
+                      <i class="bi bi-trash-fill"></i>
+                    </a>
+                  </div>
+                {% endif %}
+
+              </div> 
+            </div> 
+          </div> 
+        {% endfor %}
+
+      {% else %}
+        <div class="alert alert-warning text-center mt-4" role="alert">
+          No tienes reservas en tu historial.
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+<div class="modal fade" id="modalConfirmarCancelacion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center p-4 modal-corporativo">
+      <h5 class="modal-title mb-4" id="modalLabel"><strong>¿Quieres cancelar la reserva?</strong></h5>
+      <div class="d-flex justify-content-center gap-3">
+        <form method="POST" id="formCancelarReserva">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success" style="font-size:1.2rem;">Confirmar</button>
+        </form>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="font-size:1.2rem;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalEditarReserva" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center p-4 modal-corporativo">
+      <h5 class="modal-title mb-4" id="modalEditarLabel"><strong>Editar Reserva</strong></h5>
+      <form method="POST" id="formEditarReserva">
+        {% csrf_token %}
+        <div id="calendar" class="mb-3"></div> 
+        <input type="hidden" id="fechaInicio" name="fecha_inicio">
+        <input type="hidden" id="fechaFin" name="fecha_fin">
+        <div class="d-flex justify-content-center gap-3 mt-3">
+          <button type="submit" class="btn btn-success" style="font-size:1.2rem;">Confirmar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="font-size:1.2rem;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formCancelar = document.getElementById("formCancelarReserva");
+  let enlacesCancelar = document.querySelectorAll(".eliminar-icono");
+
+  enlacesCancelar.forEach(enlace => {
+    enlace.addEventListener("click", function(event) {
+      event.preventDefault();
+      const url = this.getAttribute("href");
+      formCancelar.setAttribute("action", url);
+      let modal = new bootstrap.Modal(document.getElementById('modalConfirmarCancelacion'));
+      modal.show();
+    });
+  });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const formEditar   = document.getElementById("formEditarReserva");
+  const editarBtns   = document.querySelectorAll(".editar-icono");
+  let calendar, reservData = [], selectedStart = null, selectedEnd = null;
+
+  function formatDateLocal(d) {
+    const y    = d.getFullYear();
+    const m    = String(d.getMonth()+1).padStart(2,'0');
+    const day  = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  editarBtns.forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      formEditar.action = btn.href;
+      const objetoId  = btn.dataset.objetoId;
+      const reservaId = btn.dataset.reservaId;
+      const modal     = new bootstrap.Modal(document.getElementById('modalEditarReserva'));
+      modal.show();
+
+      setTimeout(() => {
+        fetch(`/reservas_ocupadas/${objetoId}/?reserva_id=${reservaId}`)
+          .then(r => r.json())
+          .then(data => {
+            reservData = data.reservas;
+            initCalendar();
+          });
+      }, 200);
+    });
+  });
+
+  function initCalendar() {
+    const el = document.getElementById('calendar');
+    el.innerHTML = "";
+    selectedStart = null;
+    selectedEnd   = null;
+
+    calendar = new FullCalendar.Calendar(el, {
+      initialView: 'dayGridMonth',
+      locale:      'es',
+      height:      'auto',
+      selectable:  true,
+      showNonCurrentDates: false,
+
+      events:         reservData,
+      eventDisplay:   'background',
+      eventColor:     '#ccc',
+      buttonText: {
+        today: 'Hoy', // Cambiar el texto del botón "Today"
+      },
+
+      selectAllow: info => {
+        const s = info.start,
+              e = new Date(info.end.getTime() - 1);
+        return !reservData.some(ev => {
+          const es = new Date(ev.start),
+                ee = new Date(ev.end);
+          ee.setDate(ee.getDate() - 1); 
+          return s < ee && e >= es;
+        });
+      },
+
+      select: info => {
+        const s = info.start,
+              e = new Date(info.end.getTime() - 1);
+        handleRange(s, e);
+      },
+
+      dateClick: info => {
+        if (!selectedStart || selectedEnd) {
+          selectedStart = info.date;
+          selectedEnd   = null;
+          clearPrevRange();
+        } else {
+          selectedEnd = info.date;
+          if (selectedEnd < selectedStart) {
+            [selectedStart, selectedEnd] = [selectedEnd, selectedStart];
+          }
+          handleRange(selectedStart, selectedEnd);
+        }
+      }
+    });
+
+    calendar.render();
+  }
+
+  function clearPrevRange() {
+    const ev = calendar.getEventById('rangeEvent');
+    if (ev) ev.remove();
+  }
+
+  function handleRange(startDate, endDate) {
+    const overlap = reservData.some(ev => {
+      const es = new Date(ev.start),
+            ee = new Date(ev.end);
+      ee.setDate(ee.getDate() - 1); 
+      return startDate < ee && endDate >= es;
+    });
+    if (overlap) {
+      calendar.unselect();
+      return;
+    }
+
+    clearPrevRange();
+
+    const endExcl = new Date(endDate);
+    endExcl.setDate(endExcl.getDate() + 1);
+
+    const startStr   = formatDateLocal(startDate);
+    const endExclStr = formatDateLocal(endExcl);
+
+    calendar.addEvent({
+      id:      'rangeEvent',
+      start:   startStr,
+      end:     endExclStr,
+      display: 'background',
+      color:   '#28a745'
+    });
+
+    document.getElementById('fechaInicio').value = startStr;
+    document.getElementById('fechaFin').value    = formatDateLocal(endDate);
+  }
+});
+</script>
+
+
+
+
+
+
+
+{% endblock %}
