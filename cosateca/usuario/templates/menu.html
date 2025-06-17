@@ -40,11 +40,9 @@
 <section class="mt-3">
   <a href="/catalogo?{% query_transform request orden_valoracion='Mayor' %}" class="titulos_menu">Top valoraciones ></a>
   <div class="row gy-4">
-    <script>console.log('{{objetos_mejor_valorados|safe}}')</script>
     {% for h in objetos_mejor_valorados|slice:":4" %}
     <div class="col-md-3 mb-4">
       <div class="card h-100">
-        <!-- Imagen del elemento (opcional) -->
         {% if h.imagen %}
         <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
         {% endif %}
@@ -55,15 +53,12 @@
 
             {{ h.huella_carbono }} Kg CO2
           </p>
-          <!-- Puedes añadir más campos aquí -->
         </div>
         <a href="catalogo/{{h.id}}" class="stretched-link"></a>
       </div>
     </div>
-    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+    {% endfor %}
   </div>
-  {% endif %}
-  {% endfor %}
 
 </section>
 
