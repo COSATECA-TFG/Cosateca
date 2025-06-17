@@ -5,21 +5,27 @@
 
 {% include "header.html" %}
 
-<section class="mt-2 mb-0">
-    <div class="huella_carbono text-center">
+<section class="mt-2 mb-4">
+    <div class="huella_carbono text-center pt-4">
         <span id="titulo_detalle_objeto" class="fs-1">Mi huella de carbono ahorrada</span>
 
         <div class="row mt-4">
             <div class="col-6">
-                <div class="datos_simples_huella mb-4 pt-3 pb-3 text-start">
-                    <span class="ms-3 color-verde-bold fs-4">Objetos alquilados:<br></span>
-                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                <div class="huella-wrapper">
+                <canvas id="huellaDoughnut" class="huella-canvas"></canvas>
+                <div id="huellaLabel" class="huella-label">
+                    <span class="huella-cantidad">0.0</span><br>
+                    <span class="huella-unidad">kg CO₂</span>
+                </div>
                 </div>
 
-                <div class="datos_simples_huella pt-3 pb-3 text-start">
-                    <span class="ms-3 color-verde-bold fs-4">Equivalencia en árboles plantados:<br></span>
-                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+
+
+
+                <div class="meses_linechart mt-3">
+                    <canvas id="mesesLineChart"></canvas>
                 </div>
+
 
 
 
@@ -34,7 +40,7 @@
 
                 <div class="datos_simples_huella pt-3 pb-3 text-start">
                     <span class="ms-3 color-verde-bold fs-4">Equivalencia en árboles plantados:<br></span>
-                    <span class="ms-5 fs-1 color-verde-bold">{{n_obj_alquilados}}</span>
+                    <span class="ms-5 fs-1 color-verde-bold">{{arboles_plantados_estimados}}</span>
                 </div>
 
                 <div class="categorias_barchart mt-3">
@@ -108,6 +114,87 @@
         });
     });
 </script>
+
+{{ huella_por_mes|json_script:"huellaPorMes" }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const huellaPorMes = JSON.parse(document.getElementById('huellaPorMes').textContent);
+
+        const labels = Object.keys(huellaPorMes);
+        const data = Object.values(huellaPorMes);
+
+        const ctx = document.getElementById('mesesLineChart').getContext('2d');
+        const huellaMesLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '',
+                    data: data,
+                    backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+
+
+
+</script>
+
+
+
+{{ cantidad_huella_ahorrada|json_script:"cantidadHuellaAhorrada" }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cantidadHuellaAhorrada = JSON.parse(document.getElementById('cantidadHuellaAhorrada').textContent);
+    console.log("Pepe:", cantidadHuellaAhorrada);
+    console.log(cantidadHuellaAhorrada)
+
+    const valorActual = Number(cantidadHuellaAhorrada)  // Valor actual de la huella de carbono ahorrada
+    const maximo = 3000;
+
+    const ctx = document.getElementById('huellaDoughnut').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [valorActual, maximo - valorActual],
+                backgroundColor: ['#1c4c43', '#95d4ba'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutout: '75%',
+            responsive: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        }
+    });
+
+    // Centrar texto
+    document.getElementById('huellaLabel').innerHTML = `
+        <span class="huella-cantidad">${valorActual.toFixed(1)}</span><br>
+        <span class="huella-unidad">kg CO₂</span>
+    `;
+});
+</script>
+
 
 
 
