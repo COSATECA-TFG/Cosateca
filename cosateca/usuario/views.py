@@ -110,11 +110,9 @@ def cuestionario_preferencias(request):
 
 @login_required
 def menu(request):
-    objetos_mejor_valorados = Objeto.objects.annotate(
-        media_estrellas=Avg('valoraciones_recibidas_objeto__estrellas')
-    ).order_by('-media_estrellas')[:5]
-    
-    return render(request, 'menu.html', {'objects_mejor_valorados': objetos_mejor_valorados})
+    objetos = Objeto.objects.all()
+    objetos_mejor_valorados = objetos.order_by('valoraciones_recibidas_objeto__estrellas')
+    return render(request, 'menu.html', {'objetos_mejor_valorados': objetos_mejor_valorados})
 
 @login_required
 def catalogo(request):

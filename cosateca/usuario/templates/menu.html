@@ -3,73 +3,72 @@
 
 {% block content %}
 
-  {% include "header.html" %}
+{% include "header.html" %}
 
-  {% load query_transform %}
+{% load query_transform %}
 
-  <section class="mt-2">
-    <a href="/recomendaciones_personalizadas" class = "titulos_menu">Recomendaciones para ti ></a>
-    <div class="row gy-4">
+<section class="mt-2">
+  <a href="/recomendaciones_personalizadas" class="titulos_menu">Recomendaciones para ti ></a>
+  <div class="row gy-4">
 
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
+    <div class="col-6 col-md-3">
+      <div class="cuadro-placeholder">
+        <div class="cuadro-placeholder-inner"></div>
       </div>
     </div>
-  </section>
 
-  <section class="mt-3">
-    <a href="/catalogo?{% query_transform request orden_valoracion='Mayor' %}" class = "titulos_menu">Top valoraciones ></a>
-    <div class="row gy-4">
-
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="cuadro-placeholder">
-          <div class="cuadro-placeholder-inner"></div>
-        </div>
+    <div class="col-6 col-md-3">
+      <div class="cuadro-placeholder">
+        <div class="cuadro-placeholder-inner"></div>
       </div>
     </div>
-  </section>
 
-  <section class="mt-3 mb-3">
-    <a href="/almacenes" class = "titulos_menu">Almacenes disponibles ></a>
-  </section>
+    <div class="col-6 col-md-3">
+      <div class="cuadro-placeholder">
+        <div class="cuadro-placeholder-inner"></div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="cuadro-placeholder">
+        <div class="cuadro-placeholder-inner"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-3">
+  <a href="/catalogo?{% query_transform request orden_valoracion='Mayor' %}" class="titulos_menu">Top valoraciones ></a>
+  <div class="row gy-4">
+    <script>console.log('{{objetos_mejor_valorados|safe}}')</script>
+    {% for h in objetos_mejor_valorados|slice:":4" %}
+    <div class="col-md-3 mb-4">
+      <div class="card h-100">
+        <!-- Imagen del elemento (opcional) -->
+        {% if h.imagen %}
+        <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
+        {% endif %}
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ h.nombre }}</h5>
+          <p class="card-text">
+            <img src="../static/img/huella_carbono.png" alt="icono" style="width: 1.5em; vertical-align: middle;">
+
+            {{ h.huella_carbono }} Kg CO2
+          </p>
+          <!-- Puedes añadir más campos aquí -->
+        </div>
+        <a href="catalogo/{{h.id}}" class="stretched-link"></a>
+      </div>
+    </div>
+    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+  </div>
+  {% endif %}
+  {% endfor %}
+
+</section>
+
+<section class="mt-3 mb-3">
+  <a href="/almacenes" class="titulos_menu">Almacenes disponibles ></a>
+</section>
 
 {% endblock %}
