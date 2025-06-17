@@ -5,22 +5,26 @@
 
 {% include "header.html" %}
 
-{% load query_transform %}
-
-<section class="mt-2">
-  <a href="/recomendaciones_personalizadas" class="titulos_menu">Recomendaciones para ti ></a>
-  <div class="row gy-4">
-
-    <div class="col-6 col-md-3">
-      <div class="cuadro-placeholder">
-        <div class="cuadro-placeholder-inner"></div>
-      </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-      <div class="cuadro-placeholder">
-        <div class="cuadro-placeholder-inner"></div>
-      </div>
+  <section class="mt-2">
+    <a href="/recomendaciones_personalizadas" class="titulos_menu">Recomendaciones para ti ></a>
+    <div class="row gy-4">
+      {% for objeto in objetos_preferentes|slice:":4" %}
+        <div class="col-md-3 mb-4">
+          <div class="card h-100">
+            {% if objeto.imagen %}
+              <img src="{{ objeto.imagen }}" class="card-img-top" alt="{{ objeto.nombre }}">
+            {% endif %}
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ objeto.nombre }}</h5>
+              <p class="card-text">
+                <img src="../static/img/huella_carbono.png" alt="icono" style="width: 1.5em; vertical-align: middle;">
+                {{ objeto.huella_carbono }} Kg CO2
+              </p>
+            </div>
+            <a href="catalogo/{{ objeto.id }}" class="stretched-link"></a>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 
     <div class="col-6 col-md-3">
@@ -53,6 +57,7 @@
 
             {{ h.huella_carbono }} Kg CO2
           </p>
+
         </div>
         <a href="catalogo/{{h.id}}" class="stretched-link"></a>
       </div>
@@ -62,8 +67,9 @@
 
 </section>
 
-<section class="mt-3 mb-3">
-  <a href="/almacenes" class="titulos_menu">Almacenes disponibles ></a>
-</section>
+
+  <section class="mt-3 mb-3">
+    <a href="/almacenes" class="titulos_menu">Almacenes disponibles ></a>
+  </section>
 
 {% endblock %}

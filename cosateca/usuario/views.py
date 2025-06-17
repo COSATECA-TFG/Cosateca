@@ -7,6 +7,7 @@ from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
+from objeto.views import objetos_recomendados
 
 
 
@@ -112,7 +113,9 @@ def cuestionario_preferencias(request):
 def menu(request):
     objetos = Objeto.objects.all()
     objetos_mejor_valorados = objetos.order_by('valoraciones_recibidas_objeto__estrellas')
-    return render(request, 'menu.html', {'objetos_mejor_valorados': objetos_mejor_valorados})
+    objetos_preferentes = objetos_recomendados(request)
+    return render(request, 'menu.html', {'objetos_mejor_valorados': objetos_mejor_valorados, 'objetos_preferentes': objetos_preferentes})
+
 
 @login_required
 def catalogo(request):
