@@ -111,8 +111,11 @@ def cuestionario_preferencias(request):
 
 @login_required
 def menu(request):
+    objetos = Objeto.objects.all()
+    objetos_mejor_valorados = objetos.order_by('valoraciones_recibidas_objeto__estrellas')
     objetos_preferentes = objetos_recomendados(request)
-    return render(request, 'menu.html', {'objetos_preferentes': objetos_preferentes})
+    return render(request, 'menu.html', {'objetos_mejor_valorados': objetos_mejor_valorados, 'objetos_preferentes': objetos_preferentes})
+
 
 @login_required
 def catalogo(request):

@@ -64,7 +64,7 @@
 .imagen_detalle_objeto img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 #titulo_detalle_objeto {

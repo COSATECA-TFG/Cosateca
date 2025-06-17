@@ -282,11 +282,6 @@ section > form > div:first-child{
     
 }
 
-.imagen_detalle_objeto img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 
 .estrella_activa{
@@ -495,6 +490,7 @@ section > form > div:first-child{
 
 .huella-unidad {
   font-size: 1rem;
+}
 
 /* Amonestaciones */
 
