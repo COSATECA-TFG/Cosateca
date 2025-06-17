@@ -11,7 +11,6 @@
       {% for objeto in objetos_preferentes|slice:":4" %}
         <div class="col-md-3 mb-4">
           <div class="card h-100">
-            <!-- Imagen del objeto (opcional) -->
             {% if objeto.imagen %}
               <img src="{{ objeto.imagen }}" class="card-img-top" alt="{{ objeto.nombre }}">
             {% endif %}
