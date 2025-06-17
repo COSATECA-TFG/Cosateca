@@ -171,7 +171,7 @@ def eliminar_valoracion_objeto(request, comentario_id):
     return redirect('comentarios_obj', objeto_id=objeto_id)
 
 @login_required
-def lista_objetos_recomendados(request):
+def objetos_recomendados(request):
     pref = request.user.preferencia
 
     horario_qs = Horario.objects.filter(
@@ -205,6 +205,12 @@ def lista_objetos_recomendados(request):
         )
     ).order_by('-score', 'huella_carbono')
 
+    return objetos
+
+@login_required
+def lista_objetos_recomendados(request):
+    
+    objetos = objetos_recomendados(request)
     almacenes = Almacen.objects.all()
 
     return render(request, 'catalogo.html', {'herramientas': objetos, 'almacenes':almacenes})
