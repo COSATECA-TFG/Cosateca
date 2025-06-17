@@ -1,13 +1,27 @@
 from django.shortcuts import render, redirect
 from objeto.models import Objeto, ObjetoValoracion, ObjetoValoracionDenuncia
 from django.contrib import messages
-from almacen.models import Almacen
+from almacen.models import Almacen, Horario
 from alquiler.models import Alquiler
 from core.models import BaseValoracionDenuncia
+from django.db.models import Q, F, ExpressionWrapper, FloatField, OuterRef, Exists
 
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
+
+CONDICIONES_POR_EXPERIENCIA = {
+    'Principiante': ['Nuevo', 'Bueno'],
+    'Intermedio':   ['Nuevo', 'Bueno', 'Desgastado'],
+    'Avanzado':     ['Nuevo', 'Bueno', 'Desgastado', 'Perdido'],
+}
+
+DIAS_POR_FRANJA = {
+    'Mañana':           ['Lunes','Martes','Miércoles','Jueves','Viernes'],
+    'Tarde':            ['Lunes','Martes','Miércoles','Jueves','Viernes'],
+    'Fines de semana':  ['Sábado','Domingo'],
+    'Sin preferencia':  ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
+}
 
 @login_required
 def catalogo(request):
@@ -155,3 +169,42 @@ def eliminar_valoracion_objeto(request, comentario_id):
     objeto_id = comentario.objeto.id
     comentario.delete()
     return redirect('comentarios_obj', objeto_id=objeto_id)
+
+@login_required
+def lista_objetos_recomendados(request):
+    pref = request.user.preferencia
+
+    horario_qs = Horario.objects.filter(
+        almacen=OuterRef('almacen'),
+        dia_semana__in=DIAS_POR_FRANJA[pref.franja_horaria]
+    )
+
+    objetos = Objeto.objects.annotate(
+        match_categoria=Case(
+            When(categoria=pref.tarea_tipo, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+        match_experiencia=Case(
+            When(condicion__in=CONDICIONES_POR_EXPERIENCIA[pref.experiencia], then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+        match_horario=Case(
+            When(Exists(horario_qs), then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+    ).annotate(
+        score=ExpressionWrapper(
+            F('match_categoria')*5 +
+            F('match_experiencia')*3 +
+            F('match_horario')*1 -
+            F('huella_carbono')*0.1,
+            output_field=FloatField()
+        )
+    ).order_by('-score', 'huella_carbono')
+
+    almacenes = Almacen.objects.all()
+
+    return render(request, 'catalogo.html', {'herramientas': objetos, 'almacenes':almacenes})
