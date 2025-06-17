@@ -5,6 +5,8 @@
 
   {% include "header.html" %}
 
+  {% load query_transform %}
+
   <section class="mt-2">
     <a href="/recomendaciones_personalizadas" class = "titulos_menu">Recomendaciones para ti ></a>
     <div class="row gy-4">
@@ -36,8 +38,9 @@
   </section>
 
   <section class="mt-3">
-    <a href="/top_valoraciones" class = "titulos_menu">Top valoraciones ></a>
+    <a href="/catalogo?{% query_transform request orden_valoracion='Mayor' %}" class = "titulos_menu">Top valoraciones ></a>
     <div class="row gy-4">
+
 
       <div class="col-6 col-md-3">
         <div class="cuadro-placeholder">
