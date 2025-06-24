@@ -55,6 +55,7 @@ class almacenViewTest(TestCase):
         )
         
         self.valoracion_almacen = AlmacenValoracion.objects.create(
+            id = 1,
             almacen = self.almacen,
             usuario = self.usuario,
             estrellas = 4,
@@ -73,6 +74,8 @@ class almacenViewTest(TestCase):
         self.url_obtener_almacen = lambda almacen_id: reverse('almacen', kwargs={'almacen_id': almacen_id})
         self.url_obtener_comentarios = lambda almacen_id: reverse('comentarios', kwargs={'almacen_id': almacen_id})
         self.url_valorar_almacen = lambda almacen_id: reverse('valoracion_almacen', kwargs={'almacen_id': almacen_id}) 
+        self.url_eliminar_valoracion_almacen = lambda comentario_id: reverse('eliminar_valoracion_almacen', kwargs={'comentario_id': comentario_id})
+        self.url_denunciar_valoracion_almacen = lambda comentario_id: reverse('denunciar_valoracion_almacen', kwargs={'comentario_id': comentario_id})
         
     def test_obtener_almacenes_valido(self):
         log = self.client.login(username='testuser', password='tester1')
@@ -165,3 +168,49 @@ class almacenViewTest(TestCase):
         self.assertTemplateUsed(response, 'almacen_valoracion.html')
         self.assertIn('error', response.context)
         self.assertEqual(response.context['error'], 'Debes proporcionar una puntuación y un comentario.')
+
+    def test_eliminar_valoracion_almacen(self):
+        log = self.client.login(username='testuser', password='tester1')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.url_eliminar_valoracion_almacen(comentario_id=1))
+        
+        self.assertEqual(response.status_code, 302)
+        esEliminada = not (AlmacenValoracion.objects.filter(id=1).exists())
+        self.assertTrue(esEliminada, "La valoración del almacén debería eliminarse correctamente")
+    
+    def test_eliminar_valoracion_almacen_invalido(self):
+        response = self.client.get(self.url_eliminar_valoracion_almacen(comentario_id=1))
+        self.assertEqual(response.status_code, 302, "El usuario al no estar logueado debe de ser redirigido")   
+        
+        self.client.login(username='testuser', password='tester1')
+        response = self.client.get(self.url_eliminar_valoracion_almacen(comentario_id=1000))
+        self.assertEqual(response.status_code, 302, "Debería redirigir al usuario al no encontrar ninguna valoración")
+        self.assertEqual(response.url, reverse('menu'), "Debería redirigir al usuario al menú principal")
+        
+    def test_denunciar_valoracion_almacen_valido(self):
+        log = self.client.login(username='testuser', password='tester1')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        
+        datos_denuncia = {
+            'categoria': 'Acoso',
+            'contexto': 'Este comentario es acoso.'
+        }
+        response = self.client.post(self.url_denunciar_valoracion_almacen(comentario_id=1), datos_denuncia)
+        
+        self.assertEqual(response.status_code, 302, "Debería redirigir al usuario después de denunciar la valoración")
+        self.denuncia_valoracion_almacen.refresh_from_db()
+        self.assertEqual(self.denuncia_valoracion_almacen.categoria, "Acoso", "La categoría de la denuncia debería actualizarse correctamente")
+        self.assertEqual(self.denuncia_valoracion_almacen.contexto, 'Este comentario es acoso.', "El contexto de la denuncia debería actualizarse correctamente")
+        
+    def test_denunciar_valoracion_almacen_invalido(self):
+        response = self.client.get(self.url_denunciar_valoracion_almacen(comentario_id=1))
+        self.assertEqual(response.status_code, 302, "El usuario al no estar logueado debe de ser redirigido")   
+        
+        self.client.login(username='testuser', password='tester1')
+        datos_denuncia = {
+            'categoria': '',
+            'contexto': ''
+        }
+        response = self.client.post(self.url_denunciar_valoracion_almacen(comentario_id=10000), datos_denuncia)
+        self.assertTemplateUsed(response, 'comentarios_almacen.html')
+        self.assertEqual(response.context['error'], 'Comentario no encontrado o no autorizado', "El mensaje de error no es el esperado")
