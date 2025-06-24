@@ -2,6 +2,9 @@ from django.test import TestCase, Client
 from usuario.models import Usuario, Preferencia
 from datetime import date
 from django.urls import reverse
+from objeto.models import Objeto
+from almacen.models import Almacen, Localizacion
+from django.contrib.messages import get_messages
 
 class UsuarioViewsTest(TestCase):
     def setUp(self):
@@ -33,11 +36,49 @@ class UsuarioViewsTest(TestCase):
         )
 
         self.cuestionario_preferencias = Preferencia.objects.create(
-            usuario=self.user2,
-            tarea_tipo='Bricolaje',
-            frecuencia_uso='Semanal',
-            experiencia='Intermedio',
-            franja_horaria='Tarde'
+        usuario=self.user2,
+        tarea_tipo='Bricolaje',
+        frecuencia_uso='Semanal',
+        experiencia='Intermedio',
+        franja_horaria='Tarde'
+        )
+
+        self.localizacion_prueba = Localizacion.objects.create(
+            latitud = 12.345678,
+            longitud = 98.765432,
+            calle = "Calle de prueba",
+            numero = "1",
+            pais = "País de prueba",
+            ciudad = "Ciudad de prueba",
+            codigo_postal = "12345"
+        )
+        
+        self.almacen = Almacen.objects.create(
+            id=1,
+            nombre="Almacen test 1",
+            descripcion="Descripción del almacén de prueba 1",
+            localizacion = self.localizacion_prueba
+        )
+
+        self.objeto = Objeto.objects.create(
+        nombre='Objeto de prueba',
+        descripcion='Descripción del objeto de prueba',
+        imagen='https://i.blogs.es/f7234d/imagen/1200_800.webp',
+        categoria='Herramientas',
+        condicion='Bueno',
+        huella_carbono=10.00,
+        usuario=self.user2,
+        almacen=self.almacen
+        )
+
+        self.objeto2 = Objeto.objects.create(
+        nombre='Objeto de prueba 2',
+        descripcion='Descripción del objeto de prueba 2',
+        imagen='https://i.blogs.es/f7234d/imagen/1200_800.webp',
+        categoria='Herramientas',
+        condicion='Bueno',
+        huella_carbono=10.00,
+        almacen=self.almacen
         )
 
         self.registro_url = reverse('registro')
@@ -46,9 +87,11 @@ class UsuarioViewsTest(TestCase):
         self.cuestionario_preferencias_url = reverse('cuestionario_preferencias')
         self.menu_url = reverse('menu')
         self.lista_deseos_url = reverse('lista_deseos')
-        self.eliminar_objeto_lista_deseos_url = reverse('eliminar_objeto', args=[1])
+        self.eliminar_objeto_lista_deseos_url = reverse('eliminar_objeto', args=[self.objeto.id])
+        self.eliminar_objeto_lista_deseos_url_2 = reverse('eliminar_objeto', args=[self.objeto2.id])
         self.detalles_usuario_url = reverse('usuario')
-        self.agregar_objeto_lista_deseos_url = reverse('agregar_objeto', args=[1])
+        self.agregar_objeto_lista_deseos_url = reverse('agregar_objeto', args=[self.objeto2.id])
+        self.agregar_objeto_lista_deseos_url_2 = reverse('agregar_objeto', args=[self.objeto.id])
         self.consultar_huella_carbono_reducida_url = reverse('huella_carbono_reducida')
         self.consultar_amonestaciones_url = reverse('consultar_amonestaciones')
 
@@ -171,15 +214,116 @@ class UsuarioViewsTest(TestCase):
         response = self.client.get(self.menu_url)
         self.assertEqual(response.status_code, 302)
 
-    def test_lista_deseos_valida(self):
+    def test_lista_deseos_valido(self):
         self.client.login(username='usuario_test2', password='test12345')
         response = self.client.get(self.lista_deseos_url)
         
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'lista_deseos.html')
         objetos_deseados = response.context['objetos_deseados']
-        self.assertEqual(len(objetos_deseados), 0)
+        self.assertEqual(len(objetos_deseados), 1)
 
-    def test_lista_deseos_invalida(self):
+    def test_lista_deseos_invalido(self):
         response = self.client.get(self.lista_deseos_url)
         self.assertEqual(response.status_code, 302) 
+
+    def test_eliminar_objeto_lista_deseos_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        
+        response = self.client.get(self.eliminar_objeto_lista_deseos_url)
+        
+        self.assertRedirects(response, self.lista_deseos_url)
+
+        response2 = self.client.get(self.lista_deseos_url)
+
+        objetos_deseados = response2.context['objetos_deseados']
+        self.assertEqual(len(objetos_deseados), 0)
+
+    def test_eliminar_objeto_lista_deseos_invalido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+
+        response = self.client.get(self.eliminar_objeto_lista_deseos_url_2)
+
+        self.assertRedirects(response, self.lista_deseos_url)
+
+        response2 = self.client.get(self.lista_deseos_url)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].message, "El objeto no se encuentra en la lista de deseos.")
+
+        objetos_deseados = response2.context['objetos_deseados']
+        self.assertEqual(len(objetos_deseados), 1)
+
+    def test_detalles_usuario_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.get(self.detalles_usuario_url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'detalles_usuario.html')
+        usuario = response.context['usuario']
+        self.assertEqual(usuario.username, 'usuario_test2')
+        self.assertEqual(usuario.email, 'test2@example.com')
+        self.assertEqual(usuario.first_name, 'Test2')
+        self.assertEqual(usuario.last_name, 'User2')
+        self.assertEqual(usuario.fecha_nacimiento, date(1990, 1, 1))
+        self.assertEqual(usuario.sexo, 'NB')
+        self.assertEqual(usuario.telefono, '800000000')
+        self.assertEqual(usuario.dni, '12345679X')
+
+    def test_detalles_usuario_invalido(self):
+        response = self.client.get(self.detalles_usuario_url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_agregar_objeto_lista_deseos_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        
+        response = self.client.get(self.agregar_objeto_lista_deseos_url)
+        
+        self.assertRedirects(response, self.lista_deseos_url)
+
+        response2 = self.client.get(self.lista_deseos_url)
+
+        objetos_deseados = response2.context['objetos_deseados']
+        self.assertEqual(len(objetos_deseados), 2)
+
+    def test_agregar_objeto_lista_deseos_invalido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        
+        response = self.client.get(self.agregar_objeto_lista_deseos_url_2)
+        
+        self.assertRedirects(response, self.lista_deseos_url)
+
+        response2 = self.client.get(self.lista_deseos_url)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].message, "El objeto ya está en la lista de deseos.")
+
+        objetos_deseados = response2.context['objetos_deseados']
+        self.assertEqual(len(objetos_deseados), 1)
+
+    def test_consultar_huella_carbono_reducida_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+
+        response = self.client.get(self.consultar_huella_carbono_reducida_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'huella_carbono_reducida.html')
+        self.assertEqual(response.context['cantidad_huella_ahorrada'], 0.00)
+
+    def test_consultar_huella_carbono_reducida_invalido(self):
+        response = self.client.get(self.consultar_huella_carbono_reducida_url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_consultar_amonestaciones_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+
+        response = self.client.get(self.consultar_amonestaciones_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'consultar_amonestaciones.html')
+        self.assertEqual(len(response.context['amonestaciones']), 0)
+        self.assertEqual(response.context['total_amonestaciones'], 0)
+
+    def test_consultar_amonestaciones_invalido(self):
+        response = self.client.get(self.consultar_amonestaciones_url)
+        self.assertEqual(response.status_code, 302)
