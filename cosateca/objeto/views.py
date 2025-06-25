@@ -5,8 +5,8 @@ from almacen.models import Almacen, Horario
 from alquiler.models import Alquiler
 from core.models import BaseValoracionDenuncia
 from django.db.models import Q, F, ExpressionWrapper, FloatField, OuterRef, Exists
-
-
+from django.utils.timezone import now 
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 
@@ -71,7 +71,11 @@ def catalogo(request):
 
 @login_required
 def detalle_objeto(request, objeto_id):
-    objeto = Objeto.objects.get(id=objeto_id)
+    objeto = Objeto.objects.filter(id=objeto_id).first()
+
+    if not objeto:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('catalogo')
     almacen_asociado = objeto.almacen
 
     estrellas = objeto.valoraciones_recibidas_objeto.aggregate(
@@ -82,8 +86,13 @@ def detalle_objeto(request, objeto_id):
     if request.method == 'POST':
         fecha_inicio = request.POST.get('fecha_inicio_principal')
         fecha_fin = request.POST.get('fecha_fin_principal')
+        
         if fecha_inicio and fecha_fin:
-            Alquiler.objects.create(
+            if (datetime.strptime(fecha_inicio, '%Y-%m-%d').date() < now().date()) or (datetime.strptime(fecha_fin, '%Y-%m-%d').date() < now().date())  or (datetime.strptime(fecha_inicio, '%Y-%m-%d').date() > datetime.strptime(fecha_fin, '%Y-%m-%d').date()):
+                messages.error(request, 'Las fechas de inicio y fin deben ser válidas y la fecha de inicio no puede ser posterior a la fecha de fin.')
+                return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas, 'almacen_asociado':almacen_asociado})
+            else:
+                Alquiler.objects.create(
                 objeto=objeto,
                 usuario=request.user,
                 fecha_inicio=fecha_inicio,
@@ -153,19 +162,33 @@ def obtener_comentarios_objeto(request, objeto_id):
 
 @login_required
 def denunciar_valoracion_objeto(request, comentario_id):
-    comentario = ObjetoValoracion.objects.get(id=comentario_id)
-    nueva_denuncia = comentario.denuncias_recibidas_objeto.create(
-        usuario=request.user,
-        categoria=request.POST.get('categoria', ''),
-        contexto= request.POST.get('contexto', '')
-    )
-    nueva_denuncia.save()
-    
+    comentario = ObjetoValoracion.objects.filter(id=comentario_id).first()
+    if not comentario:
+        messages.error(request, 'El comentario no existe.')
+        return redirect('catalogo')
+
+    if request.method == 'POST':
+        categoria1=request.POST.get('categoria', '')
+        contexto1= request.POST.get('contexto', '')
+        if not categoria1 or not contexto1.strip():
+            messages.error(request, 'Debe seleccionar una categoría y proporcionar un contexto para la denuncia.')
+            return render(request, 'comentarios_objeto.html', {'comentario': comentario})
+        nueva_denuncia = comentario.denuncias_recibidas_objeto.create(
+            usuario=request.user,
+            categoria= categoria1,
+            contexto= contexto1
+        )
+        nueva_denuncia.save()
+
     return render(request, 'comentarios_objeto.html', {'comentario': comentario})
 
 
 def eliminar_valoracion_objeto(request, comentario_id):
-    comentario = ObjetoValoracion.objects.get(id=comentario_id, usuario=request.user)
+    comentario = ObjetoValoracion.objects.filter(id=comentario_id, usuario=request.user).first()
+    if not comentario:
+        messages.error(request, 'No tienes permiso para eliminar esta valoración.')
+        return redirect('catalogo')
+
     objeto_id = comentario.objeto.id
     comentario.delete()
     return redirect('comentarios_obj', objeto_id=objeto_id)
