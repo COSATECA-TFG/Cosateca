@@ -20,7 +20,7 @@
 
             <div class="col-md-8">
                 <h4 class="mb-4 text-center card-title mt-4">Valorar almacén</h4>
-                <form method="post" action="{% url 'valoracion_almacen' almacen.id %}">
+                <form method="post" action="{% if almacen %} {% url 'valoracion_almacen' almacen.id %} {% endif %}">
                     {% csrf_token %}
 
                     <div class="rating mb-3 justify-content-center d-flex mb-4">

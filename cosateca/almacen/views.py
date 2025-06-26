@@ -108,12 +108,18 @@ def eliminar_valoracion_almacen(request, comentario_id):
 def denunciar_valoracion_almacen(request, comentario_id):
     try:
         comentario = AlmacenValoracion.objects.get(id=comentario_id)
-        nueva_denuncia = comentario.denuncias_recibidas_almacen.create(
-            usuario=request.user,
-            categoria=request.POST.get('categoria', ''),
-            contexto= request.POST.get('contexto', '')
-        )
-        nueva_denuncia.save()
+        denuncia_existente = ObjetoValoracionDenuncia.objects.filter(valoracion=comentario, usuario=request.user).first()
+        if denuncia_existente:
+            denuncia_existente.categoria = request.POST.get('categoria', '')
+            denuncia_existente.contexto = request.POST.get('contexto', '')
+            denuncia_existente.save()
+        else:
+            nueva_denuncia = comentario.denuncias_recibidas_almacen.create(
+                usuario=request.user,
+                categoria=request.POST.get('categoria', ''),
+                contexto= request.POST.get('contexto', '')
+            )
+            nueva_denuncia.save()
         return redirect('comentarios', almacen_id=comentario.almacen.id)
     except AlmacenValoracion.DoesNotExist:
         return render(request, 'comentarios_almacen.html', {'error': 'Comentario no encontrado o no autorizado'})
