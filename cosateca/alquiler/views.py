@@ -4,6 +4,10 @@ from .models import Alquiler
 from django.utils import timezone
 from django.http import JsonResponse
 from datetime import timedelta
+from django.contrib import messages
+from django.http import JsonResponse
+
+
 
 @login_required
 def historial_reservas(request):
@@ -28,7 +32,6 @@ def historial_reservas(request):
         'timezone': timezone,
     })
 
-from django.contrib import messages
 
 @login_required
 def cancelar_reserva(request, reserva_id):
@@ -45,7 +48,6 @@ def cancelar_reserva(request, reserva_id):
 
     return redirect('mis_reservas')
 
-from django.http import JsonResponse
 
 @login_required
 def editar_reserva(request, reserva_id):
