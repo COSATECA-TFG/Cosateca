@@ -270,6 +270,50 @@ class UsuarioViewsTest(TestCase):
         self.assertEqual(usuario.sexo, 'NB')
         self.assertEqual(usuario.telefono, '800000000')
         self.assertEqual(usuario.dni, '12345679X')
+    
+    def test_post_detalles_usuario_valido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        
+        data = {
+            'nombre': 'NuevoNombre',
+            'apellido': 'NuevoApellido',
+            'fecha_nacimiento': '1990-01-01',
+            'sexo': 'NB',
+            'correo_electronico': 'test2@example.com',
+            'telefono': '800000001',
+            'dni': '12345679X',
+            'nombre_usuario': 'usuario_test2'
+        }
+        response = self.client.post(self.detalles_usuario_url, data)
+        usuario = Usuario.objects.get(username='usuario_test2')
+        self.assertEqual(usuario.first_name, 'NuevoNombre')
+        self.assertEqual(usuario.last_name, 'NuevoApellido')
+        self.assertEqual(usuario.email, 'test2@example.com')
+        self.assertEqual(usuario.telefono, '800000001')
+        self.assertEqual(usuario.dni, '12345679X')
+        self.assertEqual(usuario.telefono, '800000001')
+        self.assertEqual(usuario.sexo, 'NB')
+
+    def test_post_detalles_usuario_invalido(self):
+        self.client.login(username='usuario_test2', password='test12345')
+        
+        data = {
+            'nombre': '',
+            'apellido': '',
+            'fecha_nacimiento': '',
+            'sexo': '',
+            'correo_electronico': '',
+            'telefono': '',
+            'dni': '',
+            'nombre_usuario': ''
+        }
+        response = self.client.post(self.detalles_usuario_url, data)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Este campo es obligatorio.')
+
+
+
 
     def test_detalles_usuario_invalido(self):
         response = self.client.get(self.detalles_usuario_url)
