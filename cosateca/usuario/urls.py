@@ -17,4 +17,8 @@ urlpatterns = [
     path('usuario/huella_carbono', views.consultar_huella_carbono_reducida, name='huella_carbono_reducida'),
     path('usuario/amonestaciones', views.consultar_amonestaciones, name='consultar_amonestaciones'),
     
+    
+    path('gestion_reservas_gestor', views.gestion_reserva_gestor, name='gestion_reserva_gestor'),
+
+    
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
 from django.contrib import messages
-from .models import Usuario, Preferencia
+from .models import Usuario, Preferencia, Gestor
 from objeto.models import Objeto
 from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
@@ -62,14 +62,17 @@ def inicio_sesion(request):
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
             
-            if usuario_autenticado is not None:
+            if usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
                 try:
                     usuario_autenticado.preferencia
                     login(request, usuario_autenticado)
                     return redirect('menu')
                 except Preferencia.DoesNotExist:
                     request.session['usuario_id'] = usuario_autenticado.id
-                    return redirect('cuestionario_preferencias')        
+                    return redirect('cuestionario_preferencias')
+            elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
+                login(request, usuario_autenticado)
+                return redirect('gestion_reserva_gestor')
 
     else:
         form = InicioSesionForm()
@@ -115,6 +118,8 @@ def menu(request):
     objetos_mejor_valorados = objetos.order_by('valoraciones_recibidas_objeto__estrellas')
     objetos_preferentes = objetos_recomendados(request)
     return render(request, 'menu.html', {'objetos_mejor_valorados': objetos_mejor_valorados, 'objetos_preferentes': objetos_preferentes})
+
+
 
 
 @login_required
@@ -264,3 +269,16 @@ def consultar_amonestaciones(request):
     total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
     
     return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+
+@login_required
+def gestion_reserva_gestor(request):
+    return render(request, 'gestion_reserva_gestor.html')
