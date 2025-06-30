@@ -5,9 +5,11 @@
 {% block content %}
 
 
-
-
+{% if usuario.gestor %}
+{% include "header_gestor.html" %}
+{% else %}
 {% include "header.html" %}
+{% endif %}
 
 
 
