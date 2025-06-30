@@ -279,6 +279,3 @@ def consultar_amonestaciones(request):
 #------------------------------------------------------------------------------------------------------------------------------------
 
 
-@login_required
-def gestion_reserva_gestor(request):
-    return render(request, 'gestion_reserva_gestor.html')

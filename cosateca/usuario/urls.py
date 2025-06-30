@@ -18,7 +18,6 @@ urlpatterns = [
     path('usuario/amonestaciones', views.consultar_amonestaciones, name='consultar_amonestaciones'),
     
     
-    path('gestion_reservas_gestor', views.gestion_reserva_gestor, name='gestion_reserva_gestor'),
 
     
 ]

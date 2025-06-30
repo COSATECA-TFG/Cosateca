@@ -237,3 +237,6 @@ def lista_objetos_recomendados(request):
     almacenes = Almacen.objects.all()
 
     return render(request, 'catalogo.html', {'herramientas': objetos, 'almacenes':almacenes})
+
+
+

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Menú Gestor{% endblock %}
+
+{% block content %}
+{% include "header_gestor.html" %}
+
+{% load query_transform %}
+<div class="mt-5">
+
+{% for reserva in reservas %}
+
+<div class="card shadow-sm w-50 mx-auto">
+  <div class="card-body">
+    <div class="d-flex">
+      <div class="me-4" style="width: 250px">
+        <img src="{{ reserva.objeto.imagen }}" 
+             alt="{{ reserva.objeto.nombre }}" 
+             class="img-thumbnail w-100">
+                <p class="card-title fs-5 mt-4">{{ reserva.objeto.nombre }}</p>
+
+      </div>
+
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-4 card-title fs-2">{{ reserva.usuario.get_full_name }}</h5>
+        </div>
+
+
+        <div class="row">
+          <div class="col-sm-6">
+            <p class="mb-3"><strong>Fecha de inicio:</strong> {{ reserva.fecha_inicio|date:"d/m/Y" }}</p>
+            <p class="mb-1"><strong>Fecha de fin:</strong>    {{ reserva.fecha_fin|date:"d/m/Y" }}</p>
+          </div>
+          <div class="col-sm-6">
+            <p class="mb-3"><strong>Fecha de recogida:</strong>
+              {{ reserva.fecha_recogida|default:"–" }}</p>
+            <p class="mb-1"><strong>Fecha de devolución:</strong>
+              {{ reserva.fecha_devolucion|default:"–" }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% empty %}
+  <div class="alert alert-warning text-center mt-4">
+    <p>No hay reservas disponibles.</p>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

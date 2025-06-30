@@ -102,3 +102,14 @@ def reservas_ocupadas(request, objeto_id):
     eventos = eventos_pasados + eventos_reservas
 
     return JsonResponse({"reservas": eventos})
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required
+def gestion_reserva_gestor(request):
+    reservas = Alquiler.objects.filter(fecha_entrega__isnull=True).order_by('fecha_inicio')
+    return render(request, 'gestion_reserva_gestor.html', {'reservas': reservas})
