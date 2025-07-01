@@ -1,5 +1,4 @@
 <header class="ms-5 me-5 mt-3">
-  <!-- ————— Fila 1: logo y saludo ————— -->
   <div class="row justify-content-between align-items-center">
     <div class="col-4">
       <div class="img_wrapper">
@@ -8,7 +7,7 @@
         </a>
       </div>
     </div>
-    <div class="col-4"></div> <!-- columna vacía para “empujar” el saludo a la derecha -->
+    <div class="col-4"></div> 
     <div class="col-4 d-flex justify-content-end align-items-center">
       {% if user.is_authenticated %}
   
@@ -22,12 +21,11 @@
     </div>
   </div>
 
-  <!-- ————— Fila 2: menú centrado con su propio margen ————— -->
   <div class="row">
     <div class="col-12 d-flex justify-content-center menu_header">
       <a href="/gestion_reservas_gestor" class="btn boton_header_inicio {% if request.path == '/gestion_reservas_gestor' %}fw-bold{% endif %}">Gestión de reservas</a>
       <a href="/gestion_objetos_gestor" class="btn boton_header_inicio {% if request.path == '/gestion_objetos_gestor' %}fw-bold{% endif %}">Gestión de objetos</a>
-      <a href="/almacenes_gestor" class="btn boton_header_inicio {% if request.path == '/almacenes_gestor' %}fw-bold{% endif %}">Almacenes</a>
+      <a href="/almacenes" class="btn boton_header_inicio {% if request.path == '/almacenes' %}fw-bold{% endif %}">Almacenes</a>
     </div>
   </div>
 </header>
