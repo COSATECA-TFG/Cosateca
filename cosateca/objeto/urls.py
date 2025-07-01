@@ -14,5 +14,7 @@ urlpatterns = [
     path('recomendaciones_personalizadas', views.lista_objetos_recomendados, name='recomendaciones_personalizadas'),
 
     path('gestion_objetos_gestor', views.gestion_objetos_gestor, name='gestion_objetos_gestor'),
+    path('eliminar_articulo_gestor/<int:objeto_id>', views.eliminar_articulo_catalogo_gestor, name='eliminar_articulo_catalogo_gestor'),
+    path('editar_articulo_gestor/<int:objeto_id>', views.editar_articulo_catalogo_gestor, name='editar_articulo_catalogo_gestor'),
 
 ]

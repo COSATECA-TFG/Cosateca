@@ -241,6 +241,8 @@ def lista_objetos_recomendados(request):
 #Funcionalidades relacionadas con el gestor
 
 #------------------------------------------------------------------------------------------------------------------------------------
+ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
+ENUM_CONDICION = [('Nuevo', 'Nuevo'), ('Bueno', 'Bueno'), ('Desgastado', 'Desgastado'), ('Perdido', 'Perdido')]
 
 
 @login_required
@@ -286,4 +288,50 @@ def gestion_objetos_gestor(request):
         nombre = request.GET.get('nombre_herramienta', '')
         if nombre:
             herramientas = herramientas.filter(nombre__icontains=nombre)
-    return render(request, 'catalogo_gestor.html', {'herramientas': herramientas, 'almacenes':almacenes})
+    return render(request, 'catalogo_gestor.html', {'herramientas': herramientas, 'almacenes':almacenes, 'ENUM_TAREA_TIPO':ENUM_TAREA_TIPO, 'ENUM_CONDICION':ENUM_CONDICION})
+
+
+def eliminar_articulo_catalogo_gestor(request, objeto_id):
+    objeto = Objeto.objects.filter(id=objeto_id).first()
+    if not objeto:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('gestion_objetos_gestor')
+
+    if request.method == 'POST':
+        objeto.delete()
+        messages.success(request, 'Objeto eliminado correctamente.')
+        return redirect('gestion_objetos_gestor')
+    
+    
+    
+def editar_articulo_catalogo_gestor(request, objeto_id):
+    objeto_a_modificar = Objeto.objects.filter(id=objeto_id).first()
+    if not objeto_a_modificar:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('gestion_objetos_gestor')
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        categoria = request.POST.get('categoria')
+        condicion = request.POST.get('condicion')
+        huella_carbono = request.POST.get('huella_carbono')
+        almacen_id = request.POST.get('almacen')
+
+        if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('/')
+
+        objeto_a_modificar.nombre = nombre
+        objeto_a_modificar.descripcion = descripcion
+        objeto_a_modificar.categoria = categoria
+        objeto_a_modificar.condicion = condicion
+        huella_carbono = huella_carbono.replace(',', '.')
+        objeto_a_modificar.huella_carbono = float(huella_carbono)
+        objeto_a_modificar.almacen = Almacen.objects.get(id=almacen_id)
+        objeto_a_modificar.save()
+
+        messages.success(request, 'Objeto actualizado correctamente.')
+        return redirect('gestion_objetos_gestor')
+
+
