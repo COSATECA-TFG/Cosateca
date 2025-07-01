@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
 from django.contrib import messages
-from .models import Usuario, Preferencia, Gestor
+from .models import Usuario, Preferencia, Gestor, Amonestacion
 from objeto.models import Objeto
 from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
@@ -280,5 +280,27 @@ def consultar_amonestaciones(request):
 
 
 @login_required
-def gestion_reserva_gestor(request):
-    return render(request, 'gestion_reserva_gestor.html')
+def amonestar_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        if request.method == 'POST':
+            motivo = request.POST.get('motivo')
+            severidad = request.POST.get('severidad')
+
+            if motivo and severidad:
+                amonestacion = Amonestacion.objects.create(
+                    motivo=motivo,
+                    severidad=severidad,
+                    usuario=usuario,
+                    gestor=request.user.gestor
+                )
+                messages.success(request, "Amonestación registrada exitosamente.")
+            else:
+                messages.error(request, "Por favor, completa todos los campos.")
+        else:
+            messages.error(request, "Método de solicitud no válido.")
+        
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+
+    return redirect('gestion_reserva_gestor')
