@@ -317,6 +317,10 @@ def editar_articulo_catalogo_gestor(request, objeto_id):
         condicion = request.POST.get('condicion')
         huella_carbono = request.POST.get('huella_carbono')
         almacen_id = request.POST.get('almacen')
+        imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
+        
+        
+        
 
         if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
             messages.error(request, 'Todos los campos son obligatorios.')
@@ -329,6 +333,8 @@ def editar_articulo_catalogo_gestor(request, objeto_id):
         huella_carbono = huella_carbono.replace(',', '.')
         objeto_a_modificar.huella_carbono = float(huella_carbono)
         objeto_a_modificar.almacen = Almacen.objects.get(id=almacen_id)
+        if imagen:
+            objeto_a_modificar.imagen = imagen
         objeto_a_modificar.save()
 
         messages.success(request, 'Objeto actualizado correctamente.')

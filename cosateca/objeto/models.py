@@ -1,4 +1,6 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+
 from core.models import BaseValoracion, BaseValoracionDenuncia
 class Objeto(models.Model):
     ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
@@ -6,7 +8,7 @@ class Objeto(models.Model):
 
     nombre = models.CharField(max_length=100, blank=False, null=False)
     descripcion = models.TextField(max_length=500, blank=False, null=False)
-    imagen = models.ImageField(upload_to='imagenes/', blank=True, null=True)
+    imagen = CloudinaryField('imagen', blank=True, null=True)
     categoria = models.CharField(choices=ENUM_TAREA_TIPO, blank=False, null=False)
     condicion = models.CharField(choices=ENUM_CONDICION, blank=False, null=False)
     huella_carbono = models.DecimalField(max_digits=7, decimal_places=2, blank=False, null=False)

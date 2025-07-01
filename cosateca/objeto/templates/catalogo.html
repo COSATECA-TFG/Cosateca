@@ -95,7 +95,7 @@
                         <div class="card h-100">
                             <!-- Imagen del elemento (opcional) -->
                             {% if h.imagen %}
-                            <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
+                            <img src="{{ h.imagen.url }}" class="card-img-top" alt="{{ h.nombre }}">
                             {% endif %}
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ h.nombre }}</h5>
