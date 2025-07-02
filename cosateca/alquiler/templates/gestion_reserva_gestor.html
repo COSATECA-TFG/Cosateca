@@ -20,11 +20,14 @@
 
   {% for reserva in reservas %}
 
-  <div class="card shadow-sm w-50 mx-auto">
+  <div class="card shadow-sm mx-auto" style="width: 60%;">
     <div class="card-body">
       <div class="d-flex">
         <div class="me-4" style="width: 250px">
-          <img src="{{ reserva.objeto.imagen }}" alt="{{ reserva.objeto.nombre }}" class="img-thumbnail w-100">
+
+          <div class="contenedor_imagen">
+          <img src="{{ reserva.objeto.imagen.url }}" alt="{{ reserva.objeto.nombre }}">
+          </div>
           <p class="card-title fs-5 mt-4">{{ reserva.objeto.nombre }}</p>
 
         </div>
@@ -41,13 +44,13 @@
 
           <div class="row">
             <div class="col-sm-6">
-              <p class="mb-3"><strong>Fecha de inicio:</strong> {{ reserva.fecha_inicio|date:"d/m/Y" }}</p>
-              <p class="mb-1"><strong>Fecha de fin:</strong> {{ reserva.fecha_fin|date:"d/m/Y" }}</p>
+              <p class="mb-3" style="font-size: 18px;"><strong style="font-size: 21px;">Fecha de inicio:</strong> {{ reserva.fecha_inicio|date:"d/m/Y" }}</p>
+              <p class="mb-1" style="font-size: 18px;"><strong style="font-size: 21px;">Fecha de fin:</strong> {{ reserva.fecha_fin|date:"d/m/Y" }}</p>
             </div>
             <div class="col-sm-6">
-              <p class="mb-3 d-flex justify-content-between align-items-center">
-                <span>
-                  <strong>Fecha de recogida:</strong>
+              <p class="mb-3 d-flex justify-content-between ">
+                <span style="font-size: 18px;">
+                  <strong style="font-size: 21px;">Fecha de recogida:</strong>
                   {{ reserva.fecha_recogida|date:"d/m/Y"|default:"–" }}
                 </span>
                 {% if not reserva.fecha_recogida %}
@@ -57,9 +60,9 @@
                 </a>
                 {% endif %}
               </p>
-              <p class="mb-1 d-flex justify-content-between align-items-center">
-                <span>
-                  <strong>Fecha de devolución:</strong>
+              <p class="mb-1 d-flex justify-content-between ">
+                <span style="font-size: 18px;">
+                  <strong style="font-size: 21px;">Fecha de devolución:</strong>
                   {{ reserva.fecha_devolucion|date:"d/m/Y"|default:"–" }}
                 </span>
                 {% if reserva.fecha_recogida and not reserva.fecha_entrega %}

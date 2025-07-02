@@ -14,7 +14,7 @@
         <div class="col-md-3 mb-4">
           <div class="card h-100">
             {% if objeto.imagen %}
-              <img src="{{ objeto.imagen }}" class="card-img-top" alt="{{ objeto.nombre }}">
+              <img src="{{ objeto.imagen.url }}" class="card-img-top imagenes_catalogo_card" alt="{{ objeto.nombre }}">
             {% endif %}
             <div class="card-body text-center">
               <h5 class="card-title">{{ objeto.nombre }}</h5>
@@ -37,7 +37,7 @@
     <div class="col-md-3 mb-4">
       <div class="card h-100">
         {% if h.imagen %}
-        <img src="{{ h.imagen }}" class="card-img-top" alt="{{ h.nombre }}">
+        <img src="{{ h.imagen.url }}" class="card-img-top imagenes_catalogo_card" alt="{{ h.nombre }}">
         {% endif %}
         <div class="card-body text-center">
           <h5 class="card-title">{{ h.nombre }}</h5>

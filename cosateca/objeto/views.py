@@ -146,9 +146,6 @@ def obtener_comentarios_objeto(request, objeto_id):
     valoraciones_recibidas = objeto.valoraciones_recibidas_objeto.all()
     valoracion_media = valoraciones_recibidas.aggregate(Avg('estrellas'))['estrellas__avg']
     denuncia_choices = BaseValoracionDenuncia.ENUM_CATEGORIA_DENUNCIA
-
-    
-                # Añadir información de denuncia para cada comentario
     comentarios_info = []
     for comentario in valoraciones_recibidas:
         ya_denunciado = ObjetoValoracionDenuncia.objects.filter(
@@ -237,6 +234,143 @@ def lista_objetos_recomendados(request):
     almacenes = Almacen.objects.all()
 
     return render(request, 'catalogo.html', {'herramientas': objetos, 'almacenes':almacenes})
+
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
+ENUM_CONDICION = [('Nuevo', 'Nuevo'), ('Bueno', 'Bueno'), ('Desgastado', 'Desgastado'), ('Perdido', 'Perdido')]
+
+
+@login_required
+def gestion_objetos_gestor(request):
+    herramientas = Objeto.objects.all()
+    almacenes = Almacen.objects.all()
+    categoria = request.GET.get('categoria', '')
+    if categoria:
+        herramientas = herramientas.filter(categoria__icontains=categoria)
+
+    condicion = request.GET.get('condicion', '')
+    if condicion:
+        herramientas = herramientas.filter(condicion__icontains=condicion)
+
+    localizacion = request.GET.get('almacen', '')
+    if localizacion:
+        herramientas = herramientas.filter(almacen__nombre__icontains=localizacion)
+
+    orden_condicion = request.GET.get('orden_condicion', '')
+    if orden_condicion: 
+        herramientas = herramientas.annotate(
+            condicion_valor=Case(
+                When(condicion='Nuevo', then=Value(1)),
+                When(condicion='Bueno', then=Value(2)),
+                When(condicion='Desgastado', then=Value(3)),
+                When(condicion='Perdido', then=Value(4)),
+                default=0,
+                output_field=IntegerField()
+            )
+        )
+        if orden_condicion == 'Menor':
+            herramientas = herramientas.order_by('-condicion_valor')
+        else:
+            herramientas = herramientas.order_by('condicion_valor')
+
+    orden_valoracion = request.GET.get('orden_valoracion', '')
+    if orden_valoracion:
+        if orden_valoracion == 'Mayor':
+            herramientas = herramientas.order_by('-valoraciones_recibidas_objeto__estrellas')
+        else:
+            herramientas = herramientas.order_by('valoraciones_recibidas_objeto__estrellas')
+    if request.method == 'GET':
+        nombre = request.GET.get('nombre_herramienta', '')
+        if nombre:
+            herramientas = herramientas.filter(nombre__icontains=nombre)
+    return render(request, 'catalogo_gestor.html', {'herramientas': herramientas, 'almacenes':almacenes, 'ENUM_TAREA_TIPO':ENUM_TAREA_TIPO, 'ENUM_CONDICION':ENUM_CONDICION})
+
+
+def eliminar_articulo_catalogo_gestor(request, objeto_id):
+    objeto = Objeto.objects.filter(id=objeto_id).first()
+    if not objeto:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('gestion_objetos_gestor')
+
+    if request.method == 'POST':
+        objeto.delete()
+        messages.success(request, 'Objeto eliminado correctamente.')
+        return redirect('gestion_objetos_gestor')
+    
+    
+    
+def editar_articulo_catalogo_gestor(request, objeto_id):
+    objeto_a_modificar = Objeto.objects.filter(id=objeto_id).first()
+    if not objeto_a_modificar:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('gestion_objetos_gestor')
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        categoria = request.POST.get('categoria')
+        condicion = request.POST.get('condicion')
+        huella_carbono = request.POST.get('huella_carbono')
+        almacen_id = request.POST.get('almacen')
+        imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
+        
+        
+        
+
+        if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('/')
+
+        objeto_a_modificar.nombre = nombre
+        objeto_a_modificar.descripcion = descripcion
+        objeto_a_modificar.categoria = categoria
+        objeto_a_modificar.condicion = condicion
+        huella_carbono = huella_carbono.replace(',', '.')
+        objeto_a_modificar.huella_carbono = float(huella_carbono)
+        objeto_a_modificar.almacen = Almacen.objects.get(id=almacen_id)
+        if imagen:
+            objeto_a_modificar.imagen = imagen
+        objeto_a_modificar.save()
+
+        messages.success(request, 'Objeto actualizado correctamente.')
+        return redirect('gestion_objetos_gestor')
+    
+
+@login_required
+def crear_articulo_catalogo_gestor(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        categoria = request.POST.get('categoria')
+        condicion = request.POST.get('condicion')
+        huella_carbono = request.POST.get('huella_carbono')
+        almacen_id = request.POST.get('almacen')
+        imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
+        
+        
+
+        if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('/')
+
+        nuevo_objeto = Objeto(
+            nombre=nombre,
+            descripcion=descripcion,
+            categoria=categoria,
+            condicion=condicion,
+            huella_carbono=float(huella_carbono.replace(',', '.')),
+            almacen=Almacen.objects.get(id=almacen_id),
+            imagen=imagen
+        )
+        nuevo_objeto.save()
+
+        messages.success(request, 'Objeto creado correctamente.')
+        return redirect('gestion_objetos_gestor')
 
 
 
