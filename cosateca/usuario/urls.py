@@ -16,9 +16,11 @@ urlpatterns = [
     path('usuario', views.detalles_usuario, name='usuario'),
     path('usuario/huella_carbono', views.consultar_huella_carbono_reducida, name='huella_carbono_reducida'),
     path('usuario/amonestaciones', views.consultar_amonestaciones, name='consultar_amonestaciones'),
+
+    path('amonestar_usuario/<int:usuario_id>', views.amonestar_usuario, name='amonestar_usuario'),
+
     
     
-    path('gestion_reservas_gestor', views.gestion_reserva_gestor, name='gestion_reserva_gestor'),
 
     
 ]

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Menú Gestor{% endblock %}
+
+{% block content %}
+{% include "header_gestor.html" %}
+
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% load query_transform %}
+<div class="mt-5 mb-5">
+
+  {% for reserva in reservas %}
+
+  <div class="card shadow-sm mx-auto" style="width: 60%;">
+    <div class="card-body">
+      <div class="d-flex">
+        <div class="me-4" style="width: 250px">
+
+          <div class="contenedor_imagen">
+          <img src="{{ reserva.objeto.imagen.url }}" alt="{{ reserva.objeto.nombre }}">
+          </div>
+          <p class="card-title fs-5 mt-4">{{ reserva.objeto.nombre }}</p>
+
+        </div>
+
+        <div class="flex-grow-1">
+          <div class="d-flex align-items-center mb-4">
+            <h5 class="mb-0 card-title fs-2 me-2">{{ reserva.usuario.get_full_name }}</h5>
+            <button type="button" class="btn btn-link p-0 text-warning ms-5" data-bs-toggle="modal"
+              data-bs-target="#amonestarModal-{{ reserva.usuario.id }}" title="Amonestar usuario">
+              <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            </button>
+          </div>
+
+
+          <div class="row">
+            <div class="col-sm-6">
+              <p class="mb-3" style="font-size: 18px;"><strong style="font-size: 21px;">Fecha de inicio:</strong> {{ reserva.fecha_inicio|date:"d/m/Y" }}</p>
+              <p class="mb-1" style="font-size: 18px;"><strong style="font-size: 21px;">Fecha de fin:</strong> {{ reserva.fecha_fin|date:"d/m/Y" }}</p>
+            </div>
+            <div class="col-sm-6">
+              <p class="mb-3 d-flex justify-content-between ">
+                <span style="font-size: 18px;">
+                  <strong style="font-size: 21px;">Fecha de recogida:</strong>
+                  {{ reserva.fecha_recogida|date:"d/m/Y"|default:"–" }}
+                </span>
+                {% if not reserva.fecha_recogida %}
+                <a href="{% url 'confirmar_recogida' reserva.id %}" class="btn btn-success rounded-circle p-0 me-4"
+                  style="width: 32px; height: 32px; line-height: 32px; text-align: center;">
+                  <i class="bi bi-check-lg text-white"></i>
+                </a>
+                {% endif %}
+              </p>
+              <p class="mb-1 d-flex justify-content-between ">
+                <span style="font-size: 18px;">
+                  <strong style="font-size: 21px;">Fecha de devolución:</strong>
+                  {{ reserva.fecha_devolucion|date:"d/m/Y"|default:"–" }}
+                </span>
+                {% if reserva.fecha_recogida and not reserva.fecha_entrega %}
+                <a href="{% url 'confirmar_entrega' reserva.id %}" class="btn btn-success rounded-circle p-0 me-4"
+                  style="width: 32px; height: 32px; line-height: 32px; text-align: center;">
+                  <i class="bi bi-check-lg text-white"></i>
+                </a>
+                {% endif %}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="amonestarModal-{{ reserva.usuario.id }}" tabindex="-1"
+    aria-labelledby="amonestarModalLabel-{{ reserva.usuario.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content rounded-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold denuncia-title w-100 text-center"
+            id="amonestarModalLabel-{{ reserva.usuario.id }}">
+            ¿Por qué quieres amonestar a {{ reserva.usuario.get_full_name }}?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'amonestar_usuario' reserva.usuario.id %}">
+            {% csrf_token %}
+            <div class="mb-3 ms-5 me-5">
+              <label for="severidad-{{ reserva.usuario.id }}" class="form-label comentario_valoracion">
+                Severidad
+              </label>
+              <select id="severidad-{{ reserva.usuario.id }}" name="severidad" class="form-select" required>
+                {% for clave, etiqueta in amonestaciones_choices %}
+                <option value="{{ clave }}">{{ etiqueta }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3 ms-5 me-5">
+              <label for="motivo-{{ reserva.usuario.id }}" class="form-label comentario_valoracion">
+                Motivo de la amonestación
+              </label>
+              <textarea id="motivo-{{ reserva.usuario.id }}" name="motivo" class="form-control" rows="4" maxlength="500"
+                required></textarea>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-success px-4">
+                Confirmar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% empty %}
+  <div class="alert alert-warning text-center mt-4">
+    <p>No hay reservas disponibles.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

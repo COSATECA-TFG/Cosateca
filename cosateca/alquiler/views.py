@@ -6,6 +6,8 @@ from django.http import JsonResponse
 from datetime import timedelta
 from django.contrib import messages
 from django.http import JsonResponse
+from usuario.models import Amonestacion
+
 
 
 
@@ -102,3 +104,42 @@ def reservas_ocupadas(request, objeto_id):
     eventos = eventos_pasados + eventos_reservas
 
     return JsonResponse({"reservas": eventos})
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required
+def gestion_reserva_gestor(request):
+    reservas = Alquiler.objects.filter(fecha_entrega__isnull=True).order_by('fecha_inicio')
+    amonestaciones_choices = Amonestacion.ENUM_SEVERIDAD
+    return render(request, 'gestion_reserva_gestor.html', {'reservas': reservas, 'amonestaciones_choices': amonestaciones_choices})
+
+@login_required
+def confirmar_recogida(request, reserva_id):
+    try:
+        reserva = Alquiler.objects.get(id=reserva_id)
+        if reserva.fecha_recogida is None:
+            reserva.fecha_recogida = timezone.now()
+            reserva.save()
+    except Alquiler.DoesNotExist:
+        messages.error(request, "Reserva no encontrada.")
+
+    return redirect('gestion_reserva_gestor')
+
+@login_required
+def confirmar_devolucion(request, reserva_id):
+    try:
+        reserva = Alquiler.objects.get(id=reserva_id)
+        if reserva.fecha_entrega is None:
+            reserva.fecha_entrega = timezone.now()
+            reserva.save()
+
+    except Alquiler.DoesNotExist:
+        messages.error(request, "Reserva no encontrada.")
+
+    return redirect('gestion_reserva_gestor')
+
+

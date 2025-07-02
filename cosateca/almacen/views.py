@@ -6,12 +6,12 @@ from core.models import BaseValoracionDenuncia
 
 @login_required
 def obtener_almacenes(request):
-
+    usuario = request.user
     filtro = request.GET.get('busqueda_almacen', '')
     almacenes = Almacen.objects.all()
     if filtro:
         almacenes = almacenes.filter(nombre__icontains=filtro) | almacenes.filter(localizacion__ciudad__icontains=filtro)
-    return render(request, 'almacenes.html', {'almacenes': almacenes,})
+    return render(request, 'almacenes.html', {'almacenes': almacenes, 'usuario': usuario})
 
 @login_required
 def obtener_almacen(request, almacen_id):
