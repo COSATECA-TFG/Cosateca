@@ -1,6 +1,14 @@
 
 /* Catalogo */
 
+.imagenes_catalogo_card{
+  object-fit: fill !important;
+  height: 225px !important;
+
+
+}
+
+
 .filtrado_ordenacion{
   background-color: white;
   border-radius: 0.625rem !important;
@@ -185,4 +193,10 @@
     font-size: 1.2rem;
     font-weight: bold;
 }
+
+.boton_editar_crear{
+  background-color: #244E47 !important;
+  border-color: #244E47 !important;
+}
+
 

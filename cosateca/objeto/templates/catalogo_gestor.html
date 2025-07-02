@@ -137,7 +137,7 @@
                                                     class="img-fluid mb-3" style="max-height: 200px; display:none;">
 
                                             </div>
-                                            <label for="imagen" class="label_catalogo_gestor">Modificar imagen:</label>
+                                            <label for="imagen" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
                                             <input type="file" class="form-control mb-3" name="imagen" id="imagen"
                                                 placeholder="Imagen del objeto" onchange="previewImage(event, 'crear')">
 
@@ -188,7 +188,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary">Crear</button>
+                                    <button type="submit" class="btn btn-primary boton_editar_crear">Crear</button>
                                 </div>
                         </div>
                     </div>
@@ -202,7 +202,7 @@
                         <div class="card h-100">
                             <!-- Imagen del elemento (opcional) -->
                             {% if h.imagen %}
-                            <img src="{{ h.imagen.url }}" class="card-img-top" alt="{{ h.nombre }}">
+                            <img src="{{ h.imagen.url }}" class="card-img-top imagenes_catalogo_card" alt="{{ h.nombre }}">
                             {% endif %}
                             <div class="card-body text-center">
                                 <div class="botonera_gestor row justify-content-end">
@@ -285,7 +285,7 @@
                                                     class="img-fluid mb-3" style="max-height: 200px; display:none;">
                                                 {% endif %}
                                                 </div>
-                                                <label for="imagen" class="label_catalogo_gestor">Modificar imagen:</label>
+                                                <label for="imagen" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
                                                 <input type="file" class="form-control mb-3" name="imagen" id="imagen"
                                                     placeholder="Imagen del objeto"
                                                     onchange="previewImage(event, '{{ h.id }}')">
@@ -332,9 +332,9 @@
 
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
+                                        <button type="button" class="btn btn-secondary "
                                             data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary">Editar</button>
+                                        <button type="submit" class="btn btn-primary boton_editar_crear">Editar</button>
                                     </div>
                                 </form>
                             </div>
