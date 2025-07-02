@@ -105,7 +105,7 @@
         <div class="col-9">
 
             <div class="align-items-center d-flex">
-                <form method="get" class="col-10">
+                <form method="get" class="col-10 ps-1">
                     <input type="text" name="nombre_herramienta" class="form-control mb-3 input-buscar"
                         placeholder="Buscar">
                 </form>
@@ -194,6 +194,8 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-6">
+                                                <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
+                                                <div class="d-flex justify-content-center mt-2">
                                                 {% if h.imagen %}
                                                 <img id="preview-img-{{ h.id }}" src="{{ h.imagen }}"
                                                     alt="Imagen actual" class="img-fluid mb-3"
@@ -202,39 +204,48 @@
                                                 <img id="preview-img-{{ h.id }}" src="" alt="Vista previa"
                                                     class="img-fluid mb-3" style="max-height: 200px; display:none;">
                                                 {% endif %}
-                                                <input type="file" class="form-control mb-3" name="imagen"
+                                                </div>
+                                                <label for="imagen" class="label_catalogo_gestor">Modificar imagen:</label>
+                                                <input type="file" class="form-control mb-3" name="imagen" id="imagen"
                                                     placeholder="Imagen del objeto"
                                                     onchange="previewImage(event, '{{ h.id }}')">
                                                 
+                                                <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
+                                                <input type="text" class="form-control mb-3" name="nombre" id="nombre"
+                                                    placeholder="Nombre del objeto" value="{{ h.nombre }}" required>
+
+
+                                                    
                                             </div>
                                             <div class="col-6">
-                                                <input type="text" class="form-control mb-3" name="nombre"
-                                                    placeholder="Nombre del objeto" value="{{ h.nombre }}" required>
-                                                <input type="text" class="form-control mb-3" name="descripcion"
-                                                    placeholder="Descripción del objeto" value="{{ h.descripcion }}" required>
-                                                <select class="form-select mb-3" name="categoria" value="{{ h.categoria }}" required>
+                                                <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
+                                                <textarea class="form-control mb-3" name="descripcion" id="descripcion"
+                                                    placeholder="Descripción del objeto" rows="2" required> {{ h.descripcion }}</textarea>
+                                                <label for="categoria" class="label_catalogo_gestor">Selecciona categoría:</label>
+                                                <select class="form-select mb-3" name="categoria" value="{{ h.categoria }}" id="categoria" required>
                                                     {% for c, v in ENUM_TAREA_TIPO %}
                                                     <option value="{{ c }}" {% if h.categoria == c %}selected{% endif %}>{{ v }}</option>
                                                     {% endfor %}
                                                 </select>
 
-                                                <select class="form-select mb-3" name="condicion" value="{{ h.condicion }}" required>
+                                                <label for="condición" class="label_catalogo_gestor">Selecciona condición:</label>
+                                                <select class="form-select mb-3" name="condicion" value="{{ h.condicion }}" id="condicion" required>
                                                     {% for c, v in ENUM_CONDICION %}
                                                     <option value="{{ c }}" {% if h.condicion == c %}selected{% endif %}>{{ v }}</option>
                                                     {% endfor %}
                                                 </select>
-
+                                                <label for="almacen" class="label_catalogo_gestor">Selecciona almacén:</label>
                                                 <select class="form-select mb-3" name="almacen" value="{{ h.almacen }}" required>
                                                     {% for a in almacenes %}
                                                     <option value="{{ a.id }}" {% if h.almacen == a %}selected{% endif %}>{{ a.nombre }}</option>
                                                     {% endfor %}
                                                 </select>
+                                                <label for="huella_carbono" class="label_catalogo_gestor">Huella de carbono:</label>
+                                                <input type="text" class="form-control mb-3" name="huella_carbono" id="huella_carbono"
+                                                    placeholder="Huella de carbono del objeto (Kg CO2)"
+                                                    value="{{ h.huella_carbono }}" required>
 
                                             </div>
-                                            <input type="text" class="form-control mb-3" name="huella_carbono"
-                                                placeholder="Huella de carbono del objeto (Kg CO2)"
-                                                value="{{ h.huella_carbono }}" required>
-
                                         </div>
 
 
