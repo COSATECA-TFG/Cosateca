@@ -109,10 +109,90 @@
                     <input type="text" name="nombre_herramienta" class="form-control mb-3 input-buscar"
                         placeholder="Buscar">
                 </form>
-                <a class="btn btn-link pb-3 mb-2 editar-borrar-icono-gestor col-1">
+                <a href="#" class="btn btn-link pb-3 mb-2 editar-borrar-icono-gestor col-1" data-bs-toggle="modal" data-bs-target="#modalCrear">
                     <i class="bi bi-plus-circle-fill" style="font-size: 50px"></i>
                 </a>
             </div>
+
+
+            <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrear" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <form method="post" action="{% url 'crear_articulo_catalogo_gestor' %}"
+                                enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalEditarLabel{{ h.id }}"><strong>Añadir nuevo
+                                            objeto</strong>
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
+                                            <div class="d-flex justify-content-center mt-2">
+                                                <img id="preview-img-crear" src="" alt="Vista previa"
+                                                    class="img-fluid mb-3" style="max-height: 200px; display:none;">
+
+                                            </div>
+                                            <label for="imagen" class="label_catalogo_gestor">Modificar imagen:</label>
+                                            <input type="file" class="form-control mb-3" name="imagen" id="imagen"
+                                                placeholder="Imagen del objeto" onchange="previewImage(event, 'crear')">
+
+                                            <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
+                                            <input type="text" class="form-control mb-3" name="nombre" id="nombre"
+                                                placeholder="Nombre del objeto" required>
+
+
+
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
+                                            <textarea class="form-control mb-3" name="descripcion" id="descripcion"
+                                                placeholder="Descripción del objeto" rows="2" required></textarea>
+                                            <label for="categoria" class="label_catalogo_gestor">Selecciona
+                                                categoría:</label>
+                                            <select class="form-select mb-3" name="categoria" id="categoria" required>
+                                                {% for c, v in ENUM_TAREA_TIPO %}
+                                                <option value="{{ c }}">{{ v }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <label for="condición" class="label_catalogo_gestor">Selecciona
+                                                condición:</label>
+                                            <select class="form-select mb-3" name="condicion" id="condicion" required>
+                                                {% for c, v in ENUM_CONDICION %}
+                                                <option value="{{ c }}">{{ v }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="almacen" class="label_catalogo_gestor">Selecciona
+                                                almacén:</label>
+                                            <select class="form-select mb-3" name="almacen" required>
+                                                {% for a in almacenes %}
+                                                <option value="{{ a.id }}">{{ a.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="huella_carbono" class="label_catalogo_gestor">Huella de
+                                                carbono:</label>
+                                            <input type="text" class="form-control mb-3" name="huella_carbono"
+                                                id="huella_carbono" placeholder="Huella de carbono del objeto (Kg CO2)"
+                                                required>
+
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Crear</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
 
 
             <div class="container mt-4">
@@ -197,7 +277,7 @@
                                                 <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
                                                 <div class="d-flex justify-content-center mt-2">
                                                 {% if h.imagen %}
-                                                <img id="preview-img-{{ h.id }}" src="{{ h.imagen }}"
+                                                <img id="preview-img-{{ h.id }}" src="{{ h.imagen.url }}"
                                                     alt="Imagen actual" class="img-fluid mb-3"
                                                     style="max-height: 200px;">
                                                 {% else %}

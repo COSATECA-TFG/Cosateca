@@ -339,5 +339,38 @@ def editar_articulo_catalogo_gestor(request, objeto_id):
 
         messages.success(request, 'Objeto actualizado correctamente.')
         return redirect('gestion_objetos_gestor')
+    
+
+@login_required
+def crear_articulo_catalogo_gestor(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        categoria = request.POST.get('categoria')
+        condicion = request.POST.get('condicion')
+        huella_carbono = request.POST.get('huella_carbono')
+        almacen_id = request.POST.get('almacen')
+        imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
+        
+        
+
+        if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('/')
+
+        nuevo_objeto = Objeto(
+            nombre=nombre,
+            descripcion=descripcion,
+            categoria=categoria,
+            condicion=condicion,
+            huella_carbono=float(huella_carbono.replace(',', '.')),
+            almacen=Almacen.objects.get(id=almacen_id),
+            imagen=imagen
+        )
+        nuevo_objeto.save()
+
+        messages.success(request, 'Objeto creado correctamente.')
+        return redirect('gestion_objetos_gestor')
+
 
 

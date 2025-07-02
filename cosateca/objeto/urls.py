@@ -16,5 +16,5 @@ urlpatterns = [
     path('gestion_objetos_gestor', views.gestion_objetos_gestor, name='gestion_objetos_gestor'),
     path('eliminar_articulo_gestor/<int:objeto_id>', views.eliminar_articulo_catalogo_gestor, name='eliminar_articulo_catalogo_gestor'),
     path('editar_articulo_gestor/<int:objeto_id>', views.editar_articulo_catalogo_gestor, name='editar_articulo_catalogo_gestor'),
-
+    path('crear_articulo_gestor', views.crear_articulo_catalogo_gestor, name='crear_articulo_catalogo_gestor'),
 ]
