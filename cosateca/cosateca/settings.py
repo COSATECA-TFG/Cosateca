@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
@@ -141,9 +145,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'nombre_de_tu_cloud',
-    'API_KEY': 'api_key_de_tu_cloud',
-    'API_SECRET': 'api_secret_de_tu_cloud',
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUD_API_KEY'),
+    'API_SECRET': os.getenv('CLOUD_API_SECRET'),
 }
 
 
