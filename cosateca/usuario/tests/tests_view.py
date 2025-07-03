@@ -67,7 +67,6 @@ class UsuarioViewsTest(TestCase):
         categoria='Herramientas',
         condicion='Bueno',
         huella_carbono=10.00,
-        usuario=self.user2,
         almacen=self.almacen
         )
 
