@@ -5,6 +5,17 @@
 
   {% include "header.html" %}
 
+  {% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
   <div class="container my-4">
     <h2 class="fw-bold text-center mb-4 titulo_cuestionario">Mis amonestaciones ({{total_amonestaciones}}/10)</h2>
 

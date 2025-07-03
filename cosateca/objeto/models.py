@@ -14,7 +14,6 @@ class Objeto(models.Model):
     huella_carbono = models.DecimalField(max_digits=7, decimal_places=2, blank=False, null=False)
 
     almacen = models.ForeignKey('almacen.Almacen', on_delete=models.CASCADE, related_name='objetos', blank=False, null=False)
-    usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='objetos_deseados', blank=True, null=True)
 
     def __str__(self):
         return f"Objeto: {self.nombre}"
@@ -47,3 +46,14 @@ class ObjetoValoracionDenuncia(BaseValoracionDenuncia):
 
     def __str__(self):
         return f"Denuncia de {self.usuario.username} para valoración de {self.valoracion.objeto.nombre}"
+    
+class ListaDeseos(models.Model):
+    usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='listas_deseos', blank=False, null=False)
+    objeto = models.ForeignKey('objeto.Objeto', on_delete=models.CASCADE, related_name='listas_deseos', blank=False, null=False)
+
+    def __str__(self):
+        return f"Lista de deseos de {self.usuario.username}"
+    
+    class Meta:
+        verbose_name = 'Lista de Deseos'
+        verbose_name_plural = 'Listas de Deseos'

@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
 from django.contrib import messages
 from .models import Usuario, Preferencia, Gestor, Amonestacion
-from objeto.models import Objeto
+from objeto.models import Objeto, ListaDeseos
 from almacen.models import Almacen
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 from objeto.views import objetos_recomendados
+from core.decorators import usuario_required, gestor_required, acceso_desde_login_requerido
 
 
 
@@ -84,6 +85,21 @@ def cerrar_sesion(request):
     return redirect('/')
 
 def cuestionario_preferencias(request):
+    usuario_id = request.session.get('usuario_id')
+    print(usuario_id)
+
+    if not usuario_id:
+        # Si no se accede desde login, redirigir
+        return redirect('home')
+
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        return redirect('home')
+
+    # Evitar que el usuario complete el cuestionario 2 veces
+    if hasattr(usuario, 'preferencia'):
+        return redirect('menu')
     if request.method == 'POST':
         form = CuestionarioForm(request.POST)
         if form.is_valid():
@@ -112,7 +128,7 @@ def cuestionario_preferencias(request):
     return render(request, 'cuestionario_preferencias.html', {'form': form})
     
 
-@login_required
+@usuario_required
 def menu(request):
     objetos = Objeto.objects.all()
     objetos_mejor_valorados = objetos.order_by('valoraciones_recibidas_objeto__estrellas')
@@ -122,27 +138,31 @@ def menu(request):
 
 
 
-@login_required
+@usuario_required
 def lista_deseos(request):
 
     usuario = request.user
-    objetos_deseados = usuario.objetos_deseados.all()
+    listas_deseos = usuario.listas_deseos.all()
+
+    objetos_deseados = [lista.objeto for lista in listas_deseos]
 
     return render(request, 'lista_deseos.html', {'usuario': usuario, 'objetos_deseados':objetos_deseados})
 
 
-@login_required
+@usuario_required
 def eliminar_objeto_lista_deseos(request, objeto_id):
     usuario = request.user
-    objetos_deseados = usuario.objetos_deseados.all()
-    objeto_a_eliminar = objetos_deseados.filter(id=objeto_id).first()
-    if objeto_a_eliminar:
-        usuario.objetos_deseados.remove(objeto_a_eliminar)
-        usuario.save()
+    objeto = Objeto.objects.get(id=objeto_id)
+    entrada = ListaDeseos.objects.filter(usuario=usuario, objeto=objeto).first()
+    
+    if entrada in usuario.listas_deseos.all():
+        entrada.delete()
         messages.success(request, 'Objeto eliminado de la lista de deseos.')
     else:
-        messages.error(request, 'El objeto no se encuentra en la lista de deseos.')
+        messages.error(request, 'El objeto no está en tu lista de deseos.')
+
     return redirect('lista_deseos')
+    
 
 
 @login_required
@@ -195,22 +215,26 @@ def detalles_usuario(request):
 
 
 
-@login_required
+@usuario_required
 def agregar_objeto_lista_deseos(request, objeto_id):
     usuario = request.user
     objeto = Objeto.objects.get(id=objeto_id)
-    
-    if objeto not in usuario.objetos_deseados.all():
-        usuario.objetos_deseados.add(objeto)
-        messages.success(request, 'Objeto agregado a la lista de deseos.')
+    entrada = ListaDeseos.objects.filter(usuario=usuario, objeto=objeto).first()
+    if entrada in usuario.listas_deseos.all():
+        messages.error(request, 'El objeto ya está en tu lista de deseos.')
+        return redirect('catalogo')
+    elif not objeto:
+        messages.error(request, 'El objeto no existe.')
+        return redirect('catalogo')
     else:
-        messages.error(request, 'El objeto ya está en la lista de deseos.')
-    
-    return redirect('lista_deseos')
+        lista_deseos = ListaDeseos(usuario=usuario, objeto=objeto)
+        lista_deseos.save()
+        messages.success(request, 'Objeto agregado a la lista de deseos.')
+        return redirect('catalogo')
 
 
 
-@login_required
+@usuario_required
 def consultar_huella_carbono_reducida(request):
     usuario = request.user
     alquileres_realizados = usuario.alquileres.filter(cancelada=False).all()
@@ -261,7 +285,7 @@ def consultar_huella_carbono_reducida(request):
                     )
 
 
-@login_required
+@usuario_required
 def consultar_amonestaciones(request):
     usuario = request.user
     amonestaciones = usuario.amonestaciones_recibidas.all()
@@ -279,7 +303,7 @@ def consultar_amonestaciones(request):
 #------------------------------------------------------------------------------------------------------------------------------------
 
 
-@login_required
+@gestor_required
 def amonestar_usuario(request, usuario_id):
     try:
         usuario = Usuario.objects.get(id=usuario_id)

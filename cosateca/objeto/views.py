@@ -9,6 +9,8 @@ from django.utils.timezone import now
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
+from core.decorators import usuario_required, gestor_required
+
 
 CONDICIONES_POR_EXPERIENCIA = {
     'Principiante': ['Nuevo', 'Bueno'],
@@ -23,7 +25,7 @@ DIAS_POR_FRANJA = {
     'Sin preferencia':  ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
 }
 
-@login_required
+@usuario_required
 def catalogo(request):
     herramientas = Objeto.objects.all()
     almacenes = Almacen.objects.all()
@@ -69,9 +71,12 @@ def catalogo(request):
     return render(request, 'catalogo.html', {'herramientas': herramientas, 'almacenes':almacenes})
 
 
-@login_required
+@usuario_required
 def detalle_objeto(request, objeto_id):
     objeto = Objeto.objects.filter(id=objeto_id).first()
+    """
+    Vista para mostrar el detalle de un objeto.
+    """
 
     if not objeto:
         messages.error(request, 'El objeto no existe.')
@@ -107,7 +112,7 @@ def detalle_objeto(request, objeto_id):
     return render(request, 'detalle_objeto.html', {'objeto': objeto, 'estrellas': estrellas ,'almacen_asociado':almacen_asociado })
         
 
-@login_required
+@usuario_required
 def valorar_objeto(request, objeto_id):
     objeto = Objeto.objects.get(id=objeto_id)
     valoracion_existente = ObjetoValoracion.objects.filter(objeto=objeto, usuario=request.user).first()
@@ -140,7 +145,7 @@ def valorar_objeto(request, objeto_id):
     
     return render(request, 'objeto_valoracion.html', {'objeto': objeto, 'valoracion': valoracion_existente})
 
-@login_required
+@usuario_required
 def obtener_comentarios_objeto(request, objeto_id):
     objeto = Objeto.objects.get(id=objeto_id)
     valoraciones_recibidas = objeto.valoraciones_recibidas_objeto.all()
@@ -157,7 +162,7 @@ def obtener_comentarios_objeto(request, objeto_id):
 
     return render(request, 'comentarios_objeto.html', {'objeto': objeto, 'valoraciones': valoraciones_recibidas, 'valoracion_media': valoracion_media, 'comentarios_info':comentarios_info,'denuncia_choices': denuncia_choices})
 
-@login_required
+@usuario_required
 def denunciar_valoracion_objeto(request, comentario_id):
     comentario = ObjetoValoracion.objects.filter(id=comentario_id).first()
     if not comentario:
@@ -179,7 +184,7 @@ def denunciar_valoracion_objeto(request, comentario_id):
 
     return render(request, 'comentarios_objeto.html', {'comentario': comentario})
 
-
+@usuario_required
 def eliminar_valoracion_objeto(request, comentario_id):
     comentario = ObjetoValoracion.objects.filter(id=comentario_id, usuario=request.user).first()
     if not comentario:
@@ -190,7 +195,7 @@ def eliminar_valoracion_objeto(request, comentario_id):
     comentario.delete()
     return redirect('comentarios_obj', objeto_id=objeto_id)
 
-@login_required
+@usuario_required
 def objetos_recomendados(request):
     pref = request.user.preferencia
 
@@ -227,7 +232,7 @@ def objetos_recomendados(request):
 
     return objetos
 
-@login_required
+@usuario_required
 def lista_objetos_recomendados(request):
     
     objetos = objetos_recomendados(request)
@@ -245,7 +250,7 @@ ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina',
 ENUM_CONDICION = [('Nuevo', 'Nuevo'), ('Bueno', 'Bueno'), ('Desgastado', 'Desgastado'), ('Perdido', 'Perdido')]
 
 
-@login_required
+@gestor_required
 def gestion_objetos_gestor(request):
     herramientas = Objeto.objects.all()
     almacenes = Almacen.objects.all()
@@ -290,7 +295,7 @@ def gestion_objetos_gestor(request):
             herramientas = herramientas.filter(nombre__icontains=nombre)
     return render(request, 'catalogo_gestor.html', {'herramientas': herramientas, 'almacenes':almacenes, 'ENUM_TAREA_TIPO':ENUM_TAREA_TIPO, 'ENUM_CONDICION':ENUM_CONDICION})
 
-
+@gestor_required
 def eliminar_articulo_catalogo_gestor(request, objeto_id):
     objeto = Objeto.objects.filter(id=objeto_id).first()
     if not objeto:
@@ -303,7 +308,7 @@ def eliminar_articulo_catalogo_gestor(request, objeto_id):
         return redirect('gestion_objetos_gestor')
     
     
-    
+@gestor_required
 def editar_articulo_catalogo_gestor(request, objeto_id):
     objeto_a_modificar = Objeto.objects.filter(id=objeto_id).first()
     if not objeto_a_modificar:
@@ -341,7 +346,7 @@ def editar_articulo_catalogo_gestor(request, objeto_id):
         return redirect('gestion_objetos_gestor')
     
 
-@login_required
+@gestor_required
 def crear_articulo_catalogo_gestor(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')

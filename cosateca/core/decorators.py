@@ -11,11 +11,10 @@ def usuario_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('home')
         
         try:
             Gestor.objects.get(usuario_ptr=request.user)
-            messages.error(request, "Los gestores no tienen acceso a esta funcionalidad.")
             return redirect('home')  
         except Gestor.DoesNotExist:
             return view_func(request, *args, **kwargs)
@@ -29,13 +28,24 @@ def gestor_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('home')
         
         try:
             Gestor.objects.get(usuario_ptr=request.user)
             return view_func(request, *args, **kwargs)
         except Gestor.DoesNotExist:
-            messages.error(request, "Esta funcionalidad está reservada para gestores.")
             return redirect('home')  
     
     return wrapper
+
+from django.shortcuts import redirect
+from functools import wraps
+
+def acceso_desde_login_requerido(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if 'usuario_id' not in request.session:
+            return redirect('inicio_sesion')  # nombre de tu URL de login
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
