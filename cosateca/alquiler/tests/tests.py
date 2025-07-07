@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
-from usuario.models import Usuario, Preferencia
+from usuario.models import Usuario, Preferencia, Gestor
 from datetime import date
 from alquiler.models import Alquiler
 from objeto.models import Objeto
@@ -52,6 +52,21 @@ class alquilerViewTest(TestCase):
             descripcion="Descripción del almacén de prueba 1",
             localizacion = self.localizacion_prueba
         )
+
+
+        self.gestor = Gestor.objects.create_user(
+        username='gestor_test',
+        password='test12345',
+        email='testGestor@example.com',
+        first_name='Test',
+        last_name='User',
+        fecha_nacimiento=date(1990, 1, 1),
+        sexo='NB',
+        telefono='600000001',
+        dni='12345674X',
+        almacen=self.almacen
+
+        )
         
         
         self.objeto = Objeto.objects.create(
@@ -68,8 +83,19 @@ class alquilerViewTest(TestCase):
             id = 1,
             fecha_inicio = date(2023, 10, 1),
             fecha_fin = date(2023, 10, 10),
-            fecha_recogida = date(2023, 10, 2),
-            fecha_entrega =  date(2023, 10, 9),
+            fecha_recogida = None,
+            fecha_entrega =  None,
+            cancelada = False,
+            usuario = self.usuario,
+            objeto = self.objeto
+        )
+
+        self.alquiler2 = Alquiler.objects.create(
+            id=2,
+            fecha_inicio = date(2023, 10, 20),
+            fecha_fin = date(2023, 10, 30),
+            fecha_recogida = None,
+            fecha_entrega = date(2023, 11, 1) ,
             cancelada = False,
             usuario = self.usuario,
             objeto = self.objeto
@@ -79,6 +105,11 @@ class alquilerViewTest(TestCase):
         self.url_cancelar_reserva = lambda reserva_id: reverse('cancelar_reserva',  kwargs={'reserva_id': reserva_id})
         self.url_editar_reserva = lambda reserva_id: reverse('editar_reserva', kwargs={'reserva_id': reserva_id})
         self.url_reservas_ocupadas = lambda objeto_id: reverse('reservas_ocupadas', kwargs={'objeto_id': objeto_id})
+
+        self.url_gestion_reservas = reverse('gestion_reserva_gestor')
+        self.url_confirmar_recogida = lambda reserva_id: reverse('confirmar_recogida', kwargs={'reserva_id': reserva_id})
+        self.url_confirmar_devolucion = lambda reserva_id: reverse('confirmar_entrega', kwargs={'reserva_id': reserva_id})
+
         
     def test_historial_reservas_valido(self):
         log = self.client.login(username='testuser', password='tester1')
@@ -159,9 +190,88 @@ class alquilerViewTest(TestCase):
         response = self.client.get(self.url_reservas_ocupadas(objeto_id=self.objeto.id), datos)
         self.assertEqual(response.status_code, 200, "El código de estado de la respuesta no es 200")
         resultado = response.json()
-        self.assertEqual(len(resultado['reservas']), 1, "El número de reservas ocupadas no es el esperado")
+        self.assertEqual(len(resultado['reservas']), 2, "El número de reservas ocupadas no es el esperado")
     
     def test_reservas_ocupadas_invalido(self):
         response = self.client.get(self.url_reservas_ocupadas(objeto_id=self.objeto.id))
         self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
     
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Tests relacionados con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+
+    def test_gestion_reserva_gestor_valido(self):
+        log = self.client.login(username='gestor_test', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.url_gestion_reservas)
+        self.assertEqual(response.status_code, 200, "El código de estado de la respuesta no es 200")
+        self.assertTemplateUsed(response, 'gestion_reserva_gestor.html', "La plantilla utilizada no es la correcta")
+
+    def test_gestion_reserva_gestor_invalido(self):
+        response = self.client.get(self.url_gestion_reservas)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+        
+        log = self.client.login(username='testuser', password='tester1')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.url_gestion_reservas)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+    def test_confirmar_recogida_valido(self):
+        log = self.client.login(username='gestor_test', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        
+        response = self.client.get(self.url_confirmar_recogida(self.alquiler.id))
+        
+        self.alquiler.refresh_from_db()
+        self.assertIsNotNone(self.alquiler.fecha_recogida, "La fecha de recogida no se actualizó correctamente")
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+    def test_confirmar_recogida_invalido(self):
+        response = self.client.get(self.url_confirmar_recogida(self.alquiler.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+        
+        self.client.login(username='testUser', password='tester1')
+        response = self.client.get(self.url_confirmar_recogida(self.alquiler.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+
+        log = self.client.login(username='gestor_test', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.url_confirmar_recogida(1000))
+
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Reserva no encontrada.' in str(m) for m in mensajes))
+
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección al fallar en la búsqueda de una reserva con un id inexistente")
+
+    def test_confirmar_devolucion_valido(self):
+        log = self.client.login(username='gestor_test', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        
+        response = self.client.get(self.url_confirmar_devolucion(self.alquiler.id))
+        
+        self.alquiler.refresh_from_db()
+        self.assertIsNotNone(self.alquiler.fecha_entrega, "La fecha de recogida no se actualizó correctamente")
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+    def test_confirmar_devolucion_invalido(self):
+        response = self.client.get(self.url_confirmar_devolucion(self.alquiler.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+        
+        self.client.login(username='testUser', password='tester1')
+        response = self.client.get(self.url_confirmar_devolucion(self.alquiler.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+
+        log = self.client.login(username='gestor_test', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.url_confirmar_devolucion(1000))
+
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Reserva no encontrada.' in str(m) for m in mensajes))
+
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección al fallar en la búsqueda de una reserva con un id inexistente")
