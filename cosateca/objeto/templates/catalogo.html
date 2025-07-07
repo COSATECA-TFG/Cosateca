@@ -5,6 +5,17 @@
 
 {% include "header.html" %}
 
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 {% load query_transform %}
 
 <section class="catalogo">
@@ -15,7 +26,7 @@
                 <span class="titulo_filtrado_ordenacion"> <b>FILTROS</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
                     <div class="dropdown mb-2">
-                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCategoria">
                             Categoría
                         </a>
                         <ul class="dropdown-menu w-50">
@@ -29,7 +40,7 @@
                         </ul>
                     </div>
                     <div class="dropdown mb-2">
-                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCondicion">
                             Condición
                         </a>
                         <ul class="dropdown-menu w-50">
@@ -40,7 +51,7 @@
 
                     </div>
                     <div class="dropdown mb-2">
-                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuLocalizacion">
                             Localización
                         </a>
                         <ul class="dropdown-menu w-75">
@@ -56,7 +67,7 @@
                 <span class="titulo_filtrado_ordenacion"> <b>ORDENAR POR</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
                     <div class="dropdown mb-2">
-                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarCondicion">
                             Condición
                         </a>
                         <ul class="dropdown-menu w-50">
@@ -66,7 +77,7 @@
 
                     </div>
                                         <div class="dropdown mb-2">
-                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarValoracion">
                             Valoración
                         </a>
                         <ul class="dropdown-menu w-75">
@@ -130,6 +141,40 @@
 
 
 </section>
+
+
+<script>
+    function modificarTextoFiltros() {
+        const menuCategoria = document.getElementById('menuCategoria');
+        const menuCondicion = document.getElementById('menuCondicion');
+        const menuLocalizacion = document.getElementById('menuLocalizacion');
+        const menuOrdenarCondicion = document.getElementById('menuOrdenarCondicion');
+        const menuOrdenarValoracion = document.getElementById('menuOrdenarValoracion');
+
+
+        const parametrosURL = new URLSearchParams(window.location.search);
+
+        if (parametrosURL.has('categoria')) {
+            menuCategoria.textContent = parametrosURL.get('categoria');
+        }
+        if (parametrosURL.has('condicion')) {
+            menuCondicion.textContent = parametrosURL.get('condicion');
+        }
+        if (parametrosURL.has('almacen')) {
+            menuLocalizacion.textContent = parametrosURL.get('almacen');
+        }
+
+        if (parametrosURL.has('orden_condicion')) {
+            menuOrdenarCondicion.textContent = parametrosURL.get('orden_condicion') === 'Mayor' ? 'Mejor condición' : 'Peor condición';
+        }
+        if (parametrosURL.has('orden_valoracion')) {
+            menuOrdenarValoracion.textContent = parametrosURL.get('orden_valoracion') === 'Mayor' ? 'Mayor valoración' : 'Menor valoración';
+        }
+
+    }
+
+    document.addEventListener('DOMContentLoaded', modificarTextoFiltros);
+</script>
 
 
 {% endblock %}

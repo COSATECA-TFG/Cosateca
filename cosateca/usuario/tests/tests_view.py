@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from usuario.models import Usuario, Preferencia
 from datetime import date
 from django.urls import reverse
-from objeto.models import Objeto
+from objeto.models import Objeto, ListaDeseos
 from almacen.models import Almacen, Localizacion
 from django.contrib.messages import get_messages
 
@@ -67,7 +67,6 @@ class UsuarioViewsTest(TestCase):
         categoria='Herramientas',
         condicion='Bueno',
         huella_carbono=10.00,
-        usuario=self.user2,
         almacen=self.almacen
         )
 
@@ -79,6 +78,11 @@ class UsuarioViewsTest(TestCase):
         condicion='Bueno',
         huella_carbono=10.00,
         almacen=self.almacen
+        )
+
+        self.lista_deseos = ListaDeseos.objects.create(
+        usuario=self.user2,
+        objeto=self.objeto
         )
 
         self.registro_url = reverse('registro')
@@ -94,6 +98,7 @@ class UsuarioViewsTest(TestCase):
         self.agregar_objeto_lista_deseos_url_2 = reverse('agregar_objeto', args=[self.objeto.id])
         self.consultar_huella_carbono_reducida_url = reverse('huella_carbono_reducida')
         self.consultar_amonestaciones_url = reverse('consultar_amonestaciones')
+        self.catalogo_url = reverse('catalogo')
 
     def test_registro_valido(self):
         data = {
@@ -250,7 +255,7 @@ class UsuarioViewsTest(TestCase):
 
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(messages[0].message, "El objeto no se encuentra en la lista de deseos.")
+        self.assertEqual(messages[0].message, "El objeto no está en tu lista de deseos.")
 
         objetos_deseados = response2.context['objetos_deseados']
         self.assertEqual(len(objetos_deseados), 1)
@@ -324,7 +329,7 @@ class UsuarioViewsTest(TestCase):
         
         response = self.client.get(self.agregar_objeto_lista_deseos_url)
         
-        self.assertRedirects(response, self.lista_deseos_url)
+        self.assertRedirects(response, self.catalogo_url)
 
         response2 = self.client.get(self.lista_deseos_url)
 
@@ -336,13 +341,13 @@ class UsuarioViewsTest(TestCase):
         
         response = self.client.get(self.agregar_objeto_lista_deseos_url_2)
         
-        self.assertRedirects(response, self.lista_deseos_url)
+        self.assertRedirects(response, self.catalogo_url)
 
         response2 = self.client.get(self.lista_deseos_url)
 
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(messages[0].message, "El objeto ya está en la lista de deseos.")
+        self.assertEqual(messages[0].message, "El objeto ya está en tu lista de deseos.")
 
         objetos_deseados = response2.context['objetos_deseados']
         self.assertEqual(len(objetos_deseados), 1)

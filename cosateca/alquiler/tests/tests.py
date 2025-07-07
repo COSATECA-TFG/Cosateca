@@ -61,7 +61,6 @@ class alquilerViewTest(TestCase):
             categoria='Herramientas',
             condicion='Bueno',
             huella_carbono=10.00,
-            usuario=self.usuario,
             almacen=self.almacen
         )
         
