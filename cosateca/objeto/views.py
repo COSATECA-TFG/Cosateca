@@ -297,54 +297,57 @@ def gestion_objetos_gestor(request):
 
 @gestor_required
 def eliminar_articulo_catalogo_gestor(request, objeto_id):
-    objeto = Objeto.objects.filter(id=objeto_id).first()
-    if not objeto:
-        messages.error(request, 'El objeto no existe.')
+    try:
+        objeto = Objeto.objects.get(id=objeto_id)
+
+        if request.method == 'POST':
+            objeto.delete()
+            messages.success(request, 'Objeto eliminado correctamente.')
+        else:
+            messages.error(request, 'Método no permitido.')
         return redirect('gestion_objetos_gestor')
 
-    if request.method == 'POST':
-        objeto.delete()
-        messages.success(request, 'Objeto eliminado correctamente.')
+    except Objeto.DoesNotExist:
+        messages.error(request, 'El objeto no existe.')
         return redirect('gestion_objetos_gestor')
     
     
 @gestor_required
 def editar_articulo_catalogo_gestor(request, objeto_id):
-    objeto_a_modificar = Objeto.objects.filter(id=objeto_id).first()
-    if not objeto_a_modificar:
+    try:
+        objeto_a_modificar = Objeto.objects.get(id=objeto_id)
+        if request.method == 'POST':
+            nombre = request.POST.get('nombre')
+            descripcion = request.POST.get('descripcion')
+            categoria = request.POST.get('categoria')
+            condicion = request.POST.get('condicion')
+            huella_carbono = request.POST.get('huella_carbono')
+            almacen_id = request.POST.get('almacen')
+            imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
+            
+            
+            
+
+            if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
+                messages.error(request, 'Todos los campos son obligatorios.')
+                return redirect('gestion_objetos_gestor')
+
+            objeto_a_modificar.nombre = nombre
+            objeto_a_modificar.descripcion = descripcion
+            objeto_a_modificar.categoria = categoria
+            objeto_a_modificar.condicion = condicion
+            huella_carbono = huella_carbono.replace(',', '.')
+            objeto_a_modificar.huella_carbono = float(huella_carbono)
+            objeto_a_modificar.almacen = Almacen.objects.get(id=almacen_id)
+            if imagen:
+                objeto_a_modificar.imagen = imagen
+            objeto_a_modificar.save()
+
+            messages.success(request, 'Objeto actualizado correctamente.')
+            return redirect('gestion_objetos_gestor')
+    except Objeto.DoesNotExist:
         messages.error(request, 'El objeto no existe.')
         return redirect('gestion_objetos_gestor')
-
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion')
-        categoria = request.POST.get('categoria')
-        condicion = request.POST.get('condicion')
-        huella_carbono = request.POST.get('huella_carbono')
-        almacen_id = request.POST.get('almacen')
-        imagen = request.FILES.get('imagen') #Añadir validador para comprobar que sea una imagen, no un pdf o video ....
-        
-        
-        
-
-        if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
-            messages.error(request, 'Todos los campos son obligatorios.')
-            return redirect('/')
-
-        objeto_a_modificar.nombre = nombre
-        objeto_a_modificar.descripcion = descripcion
-        objeto_a_modificar.categoria = categoria
-        objeto_a_modificar.condicion = condicion
-        huella_carbono = huella_carbono.replace(',', '.')
-        objeto_a_modificar.huella_carbono = float(huella_carbono)
-        objeto_a_modificar.almacen = Almacen.objects.get(id=almacen_id)
-        if imagen:
-            objeto_a_modificar.imagen = imagen
-        objeto_a_modificar.save()
-
-        messages.success(request, 'Objeto actualizado correctamente.')
-        return redirect('gestion_objetos_gestor')
-    
 
 @gestor_required
 def crear_articulo_catalogo_gestor(request):
@@ -361,7 +364,7 @@ def crear_articulo_catalogo_gestor(request):
 
         if not nombre or not descripcion or not categoria or not condicion or not huella_carbono or not almacen_id:
             messages.error(request, 'Todos los campos son obligatorios.')
-            return redirect('/')
+            return redirect('gestion_objetos_gestor')
 
         nuevo_objeto = Objeto(
             nombre=nombre,
