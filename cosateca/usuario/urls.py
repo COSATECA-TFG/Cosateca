@@ -19,6 +19,9 @@ urlpatterns = [
 
     path('amonestar_usuario/<int:usuario_id>', views.amonestar_usuario, name='amonestar_usuario'),
 
+    path('gestion_usuarios_administrador', views.gestion_usuarios_administrador, name='gestion_usuarios_administrador'),
+
+
     
     
 

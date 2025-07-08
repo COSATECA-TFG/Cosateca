@@ -10,7 +10,7 @@ def usuario_required(view_func):
     """
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated or request.user.is_staff:
             return redirect('home')
         
         try:
