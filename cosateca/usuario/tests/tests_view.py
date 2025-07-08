@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from usuario.models import Usuario, Preferencia
+from usuario.models import Usuario, Preferencia, Gestor
 from datetime import date
 from django.urls import reverse
 from objeto.models import Objeto, ListaDeseos
@@ -24,6 +24,7 @@ class UsuarioViewsTest(TestCase):
         )
 
         self.user2 = Usuario.objects.create_user(
+        id=20,
         username='usuario_test2',
         password='test12345',
         email='test2@example.com',
@@ -34,6 +35,8 @@ class UsuarioViewsTest(TestCase):
         telefono='800000000',
         dni='12345679X'
         )
+
+
 
         self.cuestionario_preferencias = Preferencia.objects.create(
         usuario=self.user2,
@@ -58,6 +61,21 @@ class UsuarioViewsTest(TestCase):
             nombre="Almacen test 1",
             descripcion="Descripción del almacén de prueba 1",
             localizacion = self.localizacion_prueba
+        )
+
+
+        self.gestor = Gestor.objects.create_user(
+        username='gestor_test',
+        password='test12345',
+        email='testGestor@example.com',
+        first_name='Test',
+        last_name='User',
+        fecha_nacimiento=date(1990, 1, 1),
+        sexo='NB',
+        telefono='600000001',
+        dni='12345674X',
+        almacen=self.almacen
+
         )
 
         self.objeto = Objeto.objects.create(
@@ -99,6 +117,11 @@ class UsuarioViewsTest(TestCase):
         self.consultar_huella_carbono_reducida_url = reverse('huella_carbono_reducida')
         self.consultar_amonestaciones_url = reverse('consultar_amonestaciones')
         self.catalogo_url = reverse('catalogo')
+        
+        self.amonestar_usuario_url = lambda usuario_id: reverse('amonestar_usuario', kwargs={'usuario_id': usuario_id})
+
+        self.gestion_reservas_gestor_url = reverse('gestion_reserva_gestor')
+
 
     def test_registro_valido(self):
         data = {
@@ -376,3 +399,78 @@ class UsuarioViewsTest(TestCase):
     def test_consultar_amonestaciones_invalido(self):
         response = self.client.get(self.consultar_amonestaciones_url)
         self.assertEqual(response.status_code, 302)
+
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Tests relacionados con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+    def test_amonestar_usuario_valido(self):
+        self.client.login(username='gestor_test', password='test12345')
+
+        data = {
+            'motivo': 'Motivo de prueba',
+            'severidad': 'Leve'
+        }
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        
+        self.assertRedirects(response, self.gestion_reservas_gestor_url)
+        
+        amonestaciones = self.user2.amonestaciones_recibidas.all()
+        self.assertEqual(len(amonestaciones), 1)
+        self.assertEqual(amonestaciones[0].motivo, 'Motivo de prueba')
+        self.assertEqual(amonestaciones[0].severidad, 'Leve')
+
+    def test_amonestar_usuario_invalido(self):
+
+        data = {
+            'motivo': 'Motivo de prueba',
+            'severidad': 'Leve'
+        }
+
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+
+        self.client.login(username='gestor_test', password='test12345')
+
+        data = {
+            'motivo': '',
+            'severidad': ''
+        }
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Por favor, completa todos los campos." in str(m) for m in mensajes))
+        
+
+        data = {
+            'motivo': '',
+            'severidad': ''
+        }
+        response = self.client.get(self.amonestar_usuario_url(usuario_id=20), data)
+
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método de solicitud no válido." in str(m) for m in mensajes))
+        
+
+        data = {
+            'motivo': 'Prueba de amonestación',
+            'severidad': 'Leve'
+        }
+        response = self.client.get(self.amonestar_usuario_url(usuario_id=200000), data)
+
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Usuario no encontrado." in str(m) for m in mensajes))
+        
+
+
+
+
+
