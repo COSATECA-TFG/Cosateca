@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from objeto.models import Objeto, ObjetoValoracion
 from django.urls import reverse
-from usuario.models import Usuario, Preferencia
+from usuario.models import Usuario, Preferencia, Gestor
 from almacen.models import Almacen, Localizacion
 from datetime import date
 from django.contrib.messages import get_messages
@@ -72,6 +72,21 @@ class ObjetoViewTest(TestCase):
             localizacion = self.localizacion_prueba
         )
 
+
+        self.gestor = Gestor.objects.create_user(
+        username='gestor_test',
+        password='test12345',
+        email='testGestor@example.com',
+        first_name='Test',
+        last_name='User',
+        fecha_nacimiento=date(1990, 1, 1),
+        sexo='NB',
+        telefono='600000001',
+        dni='12345674X',
+        almacen=self.almacen
+
+        )
+
         self.almacen2 = Almacen.objects.create(
             id=2,
             nombre="Almacen test 2",
@@ -114,6 +129,11 @@ class ObjetoViewTest(TestCase):
         self.denunciar_valoracion_objeto_url = reverse('denunciar_valoracion_objeto', args=[self.valoracion.id])
         self.eliminar_valoracion_objeto_url = reverse('eliminar_valoracion_objeto', args=[self.valoracion.id])
         self.lista_objetos_recomendados_url = reverse('recomendaciones_personalizadas')
+
+        self.gestion_objetos_gestor_url = reverse('gestion_objetos_gestor')
+        self.eliminar_articulo_catalogo_gestor_url =  lambda objeto_id: reverse('eliminar_articulo_catalogo_gestor', kwargs={'objeto_id': objeto_id})
+        self.test_editar_articulo_catalogo_gestor_url = lambda objeto_id: reverse('editar_articulo_catalogo_gestor', kwargs={'objeto_id': objeto_id})
+        self.crear_articulo_catalogo_gestor_url = reverse('crear_articulo_catalogo_gestor')
 
     def test_catalogo_valido(self):
         self.client.login(username='usuario_test2', password='test12345')
@@ -269,3 +289,204 @@ class ObjetoViewTest(TestCase):
     def test_lista_objetos_recomendados_invalido(self):
         response = self.client.get(self.lista_objetos_recomendados_url)
         self.assertEqual(response.status_code, 302)
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Tests relacionados con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+    def test_catalogo_gestor_valido(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.gestion_objetos_gestor_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'catalogo_gestor.html')
+        self.assertEqual(len(response.context['herramientas']), 2)
+
+    def test_catalogo_gestor_valido_con_recomendaciones_destacadas(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.gestion_objetos_gestor_url, {'recomendaciones_destacadas': True})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'catalogo_gestor.html')
+        self.assertEqual(len(response.context['herramientas']), 2)
+        self.assertEqual(response.context['herramientas'][0].nombre, 'Objeto de prueba') # Al tener una valoración de 5 estrellas, su valoración media es 5, y debería aparecer primero
+        self.assertEqual(response.context['herramientas'][1].nombre, 'Objeto de prueba 2') # Al no tener valoraciones, su valoración media es 0, y debería aparecer segundo
+
+    def test_catalogo_gestor_valido_con_filtros(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.gestion_objetos_gestor_url, {'categoria': 'Bricolaje'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'catalogo_gestor.html')
+        self.assertEqual(len(response.context['herramientas']), 1)
+        self.assertEqual(response.context['herramientas'][0].categoria, 'Bricolaje')
+
+    def test_catalogo_gestor_valido_con_busqueda(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.gestion_objetos_gestor_url, {'nombre_herramienta': 'Objeto de prueba'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'catalogo_gestor.html')
+        self.assertEqual(len(response.context['herramientas']), 2)
+        self.assertEqual(response.context['herramientas'][0].nombre, 'Objeto de prueba')
+        self.assertEqual(response.context['herramientas'][1].nombre, 'Objeto de prueba 2')
+
+    def test_catalogo_gestor_invalido(self):
+        response = self.client.get(self.gestion_objetos_gestor_url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_eliminar_articulo_catalogo_gestor_valido(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.eliminar_articulo_catalogo_gestor_url(self.objeto.id))
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Objeto eliminado correctamente." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.gestion_objetos_gestor_url)
+
+        self.assertEqual(Objeto.objects.count(), 1)
+
+
+    def test_eliminar_articulo_catalogo_gestor_invalido(self):
+        response = self.client.post(self.eliminar_articulo_catalogo_gestor_url(self.objeto.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.eliminar_articulo_catalogo_gestor_url(self.objeto.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.eliminar_articulo_catalogo_gestor_url(objeto_id=10000000))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("El objeto no existe." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.gestion_objetos_gestor_url)
+
+        response = self.client.get(self.eliminar_articulo_catalogo_gestor_url(self.objeto2.id))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método no permitido." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.gestion_objetos_gestor_url)
+
+
+    def test_editar_articulo_catalogo_gestor_valido(self):
+        self.client.login(username='gestor_test', password='test12345')
+        
+        datos_editar = {
+            'nombre': 'Objeto de prueba editado',
+            'descripcion': 'Descripción del objeto de prueba editado',
+            'categoria': 'Herramientas',
+            'condicion': 'Bueno',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': 'https://i.blogs.es/f7234d/imagen/1200_800.webp'
+        }
+        
+        response = self.client.post(self.test_editar_articulo_catalogo_gestor_url(objeto_id=self.objeto.id), datos_editar)
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Objeto actualizado correctamente.' in str(m) for m in mensajes))
+        self.assertRedirects(response, self.gestion_objetos_gestor_url)
+
+        self.objeto.refresh_from_db()
+        self.assertEqual(self.objeto.nombre, 'Objeto de prueba editado')
+        self.assertEqual(self.objeto.descripcion, 'Descripción del objeto de prueba editado')
+        self.assertEqual(self.objeto.categoria, 'Herramientas')
+        self.assertEqual(self.objeto.condicion, 'Bueno')
+        self.assertEqual(self.objeto.huella_carbono, 5.00)
+
+    def test_editar_articulo_catalogo_gestor_invalido(self):
+
+        datos_editar = {
+            'nombre': 'Objeto de prueba editado',
+            'descripcion': 'Descripción del objeto de prueba editado',
+            'categoria': 'Herramientas',
+            'condicion': 'Bueno',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': 'https://i.blogs.es/f7234d/imagen/1200_800.webp'
+        }
+        response = self.client.post(self.eliminar_articulo_catalogo_gestor_url(self.objeto.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.test_editar_articulo_catalogo_gestor_url(objeto_id=self.objeto.id), datos_editar)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        datos_editar = {
+            'nombre': 'Objeto de prueba editado',
+            'descripcion': 'Descripción del objeto de prueba editado',
+            'categoria': 'Herramientas',
+            'condicion': '',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': ''
+        }
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.test_editar_articulo_catalogo_gestor_url(objeto_id=self.objeto.id), datos_editar)
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Todos los campos son obligatorios.' in str(m) for m in mensajes))
+
+        response = self.client.post(self.test_editar_articulo_catalogo_gestor_url(objeto_id=10000000000), datos_editar)
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('El objeto no existe.' in str(m) for m in mensajes))
+
+    def test_crear_articulo_catalogo_gestor(self):
+        self.client.login(username='gestor_test', password='test12345')
+        
+        datos_crear = {
+            'nombre': 'Nuevo Objeto',
+            'descripcion': 'Descripción del nuevo objeto',
+            'categoria': 'Herramientas',
+            'condicion': 'Bueno',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': 'https://i.blogs.es/f7234d/imagen/1200_800.webp'
+        }
+        
+        response = self.client.post(self.crear_articulo_catalogo_gestor_url, datos_crear)
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Objeto creado correctamente.' in str(m) for m in mensajes))
+        self.assertRedirects(response, self.gestion_objetos_gestor_url)
+
+        self.assertEqual(Objeto.objects.count(), 3)
+        nuevo_objeto = Objeto.objects.last()
+        self.assertEqual(nuevo_objeto.nombre, 'Nuevo Objeto')
+        self.assertEqual(nuevo_objeto.descripcion, 'Descripción del nuevo objeto')
+        self.assertEqual(nuevo_objeto.categoria, 'Herramientas')
+        self.assertEqual(nuevo_objeto.condicion, 'Bueno')
+        self.assertEqual(nuevo_objeto.huella_carbono, 5.00)
+
+    def test_crear_articulo_catalogo_gestor_invalido(self):
+        datos_crear_correctos = {
+            'nombre': 'Nuevo Objeto',
+            'descripcion': 'Descripción del nuevo objeto',
+            'categoria': 'Herramientas',
+            'condicion': 'Bueno',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': 'https://i.blogs.es/f7234d/imagen/1200_800.webp'
+        }
+
+        response = self.client.post(self.crear_articulo_catalogo_gestor_url, datos_crear_correctos)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.crear_articulo_catalogo_gestor_url, datos_crear_correctos)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+
+        self.client.login(username='gestor_test', password='test12345')
+        
+        datos_crear = {
+            'nombre': '',
+            'descripcion': 'Descripción del nuevo objeto',
+            'categoria': 'Herramientas',
+            'condicion': 'Bueno',
+            'huella_carbono': 5.00,
+            'almacen': self.almacen.id,
+            'imagen': ''
+        }
+        
+        response = self.client.post(self.crear_articulo_catalogo_gestor_url, datos_crear)
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any('Todos los campos son obligatorios.' in str(m) for m in mensajes))
