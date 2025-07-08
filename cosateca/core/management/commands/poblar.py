@@ -247,7 +247,7 @@ class Command(BaseCommand):
                     condicion=obj['condicion'],
                     huella_carbono=obj['huella_carbono'],
                     almacen=almacen,
-                    imagen= 'https://tatica.org/wp-content/plugins/gutenverse/assets/img/img-placeholder.jpg'
+                    imagen= 'https://res.cloudinary.com/cosateca/image/upload/v1751389089/placeholder_oiztci.png'
                 )
 
         

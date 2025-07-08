@@ -3,17 +3,19 @@ from django.contrib.auth.decorators import login_required
 from .models import Almacen, AlmacenValoracion, ObjetoValoracionDenuncia
 from django.db.models import Avg
 from core.models import BaseValoracionDenuncia
+from core.decorators import usuario_required
+
 
 @login_required
 def obtener_almacenes(request):
-
+    usuario = request.user
     filtro = request.GET.get('busqueda_almacen', '')
     almacenes = Almacen.objects.all()
     if filtro:
         almacenes = almacenes.filter(nombre__icontains=filtro) | almacenes.filter(localizacion__ciudad__icontains=filtro)
-    return render(request, 'almacenes.html', {'almacenes': almacenes,})
+    return render(request, 'almacenes.html', {'almacenes': almacenes, 'usuario': usuario})
 
-@login_required
+@usuario_required
 def obtener_almacen(request, almacen_id):
     if almacen_id:
         try:
@@ -25,7 +27,7 @@ def obtener_almacen(request, almacen_id):
     else:
         return render(request, 'almacen_valoracion.html', {'error': 'ID de almacén no proporcionado'})
     
-@login_required
+@usuario_required
 def obtener_comentarios(request, almacen_id):
     if almacen_id:
         try:
@@ -56,7 +58,7 @@ def obtener_comentarios(request, almacen_id):
     else:
         return render(request, 'comentarios_almacen.html', {'error': 'ID de almacén no proporcionado'})
     
-@login_required
+@usuario_required
 def valorar_almacen(request, almacen_id):
     try:
         almacen = Almacen.objects.get(id=almacen_id)
@@ -95,7 +97,7 @@ def valorar_almacen(request, almacen_id):
     except Almacen.DoesNotExist:
         return render(request, 'almacenes.html', {'error': 'Almacén no encontrado'})
 
-@login_required
+@usuario_required
 def eliminar_valoracion_almacen(request, comentario_id):
     try:
         comentario = AlmacenValoracion.objects.get(id=comentario_id, usuario=request.user)
@@ -104,7 +106,7 @@ def eliminar_valoracion_almacen(request, comentario_id):
         return redirect('comentarios', almacen_id=almacen_id)
     except AlmacenValoracion.DoesNotExist:
         return redirect('menu')
-@login_required
+@usuario_required
 def denunciar_valoracion_almacen(request, comentario_id):
     try:
         comentario = AlmacenValoracion.objects.get(id=comentario_id)

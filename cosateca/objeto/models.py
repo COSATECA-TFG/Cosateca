@@ -1,4 +1,6 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+
 from core.models import BaseValoracion, BaseValoracionDenuncia
 class Objeto(models.Model):
     ENUM_TAREA_TIPO= [('Bricolaje', 'Bricolaje'), ('Jardín', 'Jardín'), ('Cocina', 'Cocina'), ('Electrónica', 'Electrónica'), ('Herramientas', 'Herramientas'), ('Limpieza', 'Limpieza'), ('Otros', 'Otros')]
@@ -6,13 +8,12 @@ class Objeto(models.Model):
 
     nombre = models.CharField(max_length=100, blank=False, null=False)
     descripcion = models.TextField(max_length=500, blank=False, null=False)
-    imagen = models.ImageField(upload_to='imagenes/', blank=True, null=True)
+    imagen = CloudinaryField('imagen', blank=False, null=False, default='https://res.cloudinary.com/cosateca/image/upload/v1751389089/placeholder_oiztci.png')
     categoria = models.CharField(choices=ENUM_TAREA_TIPO, blank=False, null=False)
     condicion = models.CharField(choices=ENUM_CONDICION, blank=False, null=False)
     huella_carbono = models.DecimalField(max_digits=7, decimal_places=2, blank=False, null=False)
 
     almacen = models.ForeignKey('almacen.Almacen', on_delete=models.CASCADE, related_name='objetos', blank=False, null=False)
-    usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='objetos_deseados', blank=True, null=True)
 
     def __str__(self):
         return f"Objeto: {self.nombre}"
@@ -45,3 +46,14 @@ class ObjetoValoracionDenuncia(BaseValoracionDenuncia):
 
     def __str__(self):
         return f"Denuncia de {self.usuario.username} para valoración de {self.valoracion.objeto.nombre}"
+    
+class ListaDeseos(models.Model):
+    usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='listas_deseos', blank=False, null=False)
+    objeto = models.ForeignKey('objeto.Objeto', on_delete=models.CASCADE, related_name='listas_deseos', blank=False, null=False)
+
+    def __str__(self):
+        return f"Lista de deseos de {self.usuario.username}"
+    
+    class Meta:
+        verbose_name = 'Lista de Deseos'
+        verbose_name_plural = 'Listas de Deseos'

@@ -5,6 +5,17 @@
 
 {% include "header.html" %}
 
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 
 
 <main class="ms-5 me-5 mt-4 mb-5">
@@ -70,7 +81,6 @@
                                 <div class="acciones-reserva">
                                     
                                     {% if not ya_denunciado %}
-                                    <!-- Botón para abrir el modal de denuncia -->
                                     <button
                                         type="button"
                                         class="btn btn-link p-0 editar-icono"

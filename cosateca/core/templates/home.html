@@ -31,7 +31,9 @@
         <p>Comparte objetos, reduce tu huella de carbono</p>
 
         <div class="botonera_inicio w-100">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.gestor %}
+            <a href="/gestion_reservas_gestor" class="btn boton_inicio me-4">Comenzar</a>
+            {% elif user.is_authenticated %}
             <a href="/menu" class="btn boton_inicio me-4">Comenzar</a>
             {% else %}
             <a href="/inicio_sesion" class="btn boton_inicio me-4">Comenzar</a>

@@ -6,10 +6,14 @@ from django.http import JsonResponse
 from datetime import timedelta
 from django.contrib import messages
 from django.http import JsonResponse
+from usuario.models import Amonestacion
+from core.decorators import usuario_required, gestor_required
 
 
 
-@login_required
+
+
+@usuario_required
 def historial_reservas(request):
     usuario = request.user
     filtro = request.GET.get('filtro', '')
@@ -33,7 +37,7 @@ def historial_reservas(request):
     })
 
 
-@login_required
+@usuario_required
 def cancelar_reserva(request, reserva_id):
     try:
         reserva = Alquiler.objects.get(id=reserva_id, usuario=request.user)
@@ -49,7 +53,7 @@ def cancelar_reserva(request, reserva_id):
     return redirect('mis_reservas')
 
 
-@login_required
+@usuario_required
 def editar_reserva(request, reserva_id):
     if request.method == 'POST':
         try:
@@ -70,7 +74,7 @@ def editar_reserva(request, reserva_id):
     return redirect('mis_reservas')
 
 
-@login_required
+@usuario_required
 def reservas_ocupadas(request, objeto_id):
     reserva_id = request.GET.get('reserva_id')
     hoy = timezone.now().date()
@@ -102,3 +106,42 @@ def reservas_ocupadas(request, objeto_id):
     eventos = eventos_pasados + eventos_reservas
 
     return JsonResponse({"reservas": eventos})
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el gestor
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+@gestor_required
+def gestion_reserva_gestor(request):
+    reservas = Alquiler.objects.filter(fecha_entrega__isnull=True, objeto__almacen = request.user.gestor.almacen).order_by('fecha_inicio')
+    amonestaciones_choices = Amonestacion.ENUM_SEVERIDAD
+    return render(request, 'gestion_reserva_gestor.html', {'reservas': reservas, 'amonestaciones_choices': amonestaciones_choices})
+
+@gestor_required
+def confirmar_recogida(request, reserva_id):
+    try:
+        reserva = Alquiler.objects.get(id=reserva_id)
+        if reserva.fecha_recogida is None:
+            reserva.fecha_recogida = timezone.now()
+            reserva.save()
+    except Alquiler.DoesNotExist:
+        messages.error(request, "Reserva no encontrada.")
+
+    return redirect('gestion_reserva_gestor')
+
+@gestor_required
+def confirmar_devolucion(request, reserva_id):
+    try:
+        reserva = Alquiler.objects.get(id=reserva_id)
+        if reserva.fecha_entrega is None:
+            reserva.fecha_entrega = timezone.now()
+            reserva.save()
+
+    except Alquiler.DoesNotExist:
+        messages.error(request, "Reserva no encontrada.")
+
+    return redirect('gestion_reserva_gestor')
+
+

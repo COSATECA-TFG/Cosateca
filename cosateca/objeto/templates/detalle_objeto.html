@@ -6,11 +6,22 @@
 
 {% include "header.html" %}
 
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <div class="row">
   <section class="col-3 titulo-imagen">
     <div class="ms-5">
       <div class="imagen_detalle_objeto position-relative">
-        <img src="{{objeto.imagen}}" alt="imagen de {{objeto.nombre}}" class="">
+        <img src="{{objeto.imagen.url}}" alt="imagen de {{objeto.nombre}}" class="">
         <span class="texto_imagen">
           <img src="../static/img/huella_carbono.png" alt="icono" style="width: 1.5em; vertical-align: middle;">
           {{objeto.huella_carbono}} Kg CO2
