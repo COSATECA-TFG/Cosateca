@@ -88,6 +88,10 @@ body {
   width: 10% !important;
 }
 
+.user_icon_admin {
+  width: 8% !important;
+}
+
 a:focus {
     outline: none !important;
 }

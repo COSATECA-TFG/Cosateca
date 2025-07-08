@@ -62,8 +62,12 @@ def inicio_sesion(request):
             nombre_usuario = form.cleaned_data['nombre_usuario']
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
+
+            if(usuario_autenticado is not None and usuario_autenticado.is_staff):
+                login(request, usuario_autenticado)
+                return redirect('gestion_usuarios_administrador')
             
-            if usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
+            elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
                 try:
                     usuario_autenticado.preferencia
                     login(request, usuario_autenticado)
@@ -74,6 +78,8 @@ def inicio_sesion(request):
             elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
                 login(request, usuario_autenticado)
                 return redirect('gestion_reserva_gestor')
+            
+            
 
     else:
         form = InicioSesionForm()
@@ -168,6 +174,9 @@ def eliminar_objeto_lista_deseos(request, objeto_id):
 @login_required
 def detalles_usuario(request):
     usuario = request.user
+
+    if request.user.is_staff:
+        return redirect('home')
 
 
     if request.method == 'POST':
@@ -328,3 +337,12 @@ def amonestar_usuario(request, usuario_id):
         messages.error(request, "Usuario no encontrado.")
 
     return redirect('gestion_reserva_gestor')
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+def gestion_usuarios_administrador(request):
+    return render(request, 'gestion_usuarios_administrador.html')
