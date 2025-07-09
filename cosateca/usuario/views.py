@@ -345,6 +345,31 @@ def amonestar_usuario(request, usuario_id):
 #------------------------------------------------------------------------------------------------------------------------------------
 
 def gestion_usuarios_administrador(request):
-    usuarios = Usuario.objects.all()
-    
-    return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios})
+    usuarios = Usuario.objects.filter(is_active = True)
+    usuarios_a_suspender = []
+    for u in usuarios:
+        amonestaciones = u.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        if total_amonestaciones >= 10:
+            usuarios_a_suspender.append(u)
+    return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios_a_suspender})
+
+def consultar_amonestaciones_administrador(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        amonestaciones = usuario.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+        return redirect('gestion_usuarios_administrador')
+
+def suspender_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = False
+        usuario.save()
+        messages.success(request, f"Usuario {usuario.first_name} {usuario.last_name} suspendido exitosamente.")
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+    return redirect('gestion_usuarios_administrador')
