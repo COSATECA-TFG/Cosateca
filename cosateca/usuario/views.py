@@ -345,4 +345,6 @@ def amonestar_usuario(request, usuario_id):
 #------------------------------------------------------------------------------------------------------------------------------------
 
 def gestion_usuarios_administrador(request):
-    return render(request, 'gestion_usuarios_administrador.html')
+    usuarios = Usuario.objects.all()
+    
+    return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios})

@@ -61,7 +61,6 @@ section > form > div:first-child{
     border-top: 2px solid rgb(216, 216, 216) !important;
     width: 70% !important;
     margin: 2rem auto !important;
-
 }
 
 .boton_registro, .boton_inicio_sesion{
@@ -518,5 +517,40 @@ section > form > div:first-child{
 
 }
 
+/* gestion usuarios admin */
+
+.gestion_usuarios_admin{
+  background-color: white;
+  border-radius: 0.625rem !important;
+  border: 2px solid rgb(216, 216, 216) ;
+  padding-top: 2% !important;
+  padding-right: 4% !important;
+  padding-bottom: 2% !important;
+  padding-left: 4% !important; 
+     width: 75% !important;
+}
+
+.usuario_a_suspender{
+  color: #244E47 !important;
+  font-weight: bold !important;
+  font-size: 2rem !important;
+}
+
+.separacion_horizontal {
+    border-top: 2px solid rgb(216, 216, 216) !important;
+    width: 100% !important;
+    margin: 1rem auto !important;
+}
+
+.boton_suspender{
+  background-color: #bc6c6c !important;
+  border-color: black !important;
+  color: white !important;
+  font-size: 1.25rem !important;
+}
+.boton_suspender:hover {
+  background-color: #883b3b !important;
+
+}
 
 
