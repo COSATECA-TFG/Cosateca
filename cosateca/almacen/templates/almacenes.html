@@ -89,8 +89,16 @@
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
-      L.marker([lat, lng]).addTo(map);
+      
+      var marker = L.marker([lat, lng]).addTo(map);
+      marker.on('click', function() {
+        var url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+        window.open(url, '_blank');
+      });
+
     });
   });
 </script>
+
+
 {% endblock %}
