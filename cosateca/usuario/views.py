@@ -62,23 +62,27 @@ def inicio_sesion(request):
             nombre_usuario = form.cleaned_data['nombre_usuario']
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
-
-            if(usuario_autenticado is not None and usuario_autenticado.is_staff):
-                login(request, usuario_autenticado)
-                return redirect('gestion_usuarios_administrador')
-            
-            elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
-                try:
-                    usuario_autenticado.preferencia
+            usuario_suspendido = Usuario.objects.filter(username=nombre_usuario).first().is_active
+            if usuario_suspendido:
+                if(usuario_autenticado is not None and usuario_autenticado.is_staff):
                     login(request, usuario_autenticado)
-                    return redirect('menu')
-                except Preferencia.DoesNotExist:
-                    request.session['usuario_id'] = usuario_autenticado.id
-                    return redirect('cuestionario_preferencias')
-            elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
-                login(request, usuario_autenticado)
-                return redirect('gestion_reserva_gestor')
-            
+                    return redirect('gestion_usuarios_administrador')
+                
+                elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
+                    try:
+                        usuario_autenticado.preferencia
+                        login(request, usuario_autenticado)
+                        return redirect('menu')
+                    except Preferencia.DoesNotExist:
+                        request.session['usuario_id'] = usuario_autenticado.id
+                        return redirect('cuestionario_preferencias')
+                elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
+                    login(request, usuario_autenticado)
+                    return redirect('gestion_reserva_gestor')
+            else:
+                messages.error(request, 'El usuario ha sido suspendido de la plataforma')
+                return redirect('inicio_sesion')
+                
             
 
     else:
