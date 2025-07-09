@@ -4,12 +4,13 @@ from django.contrib import messages
 from almacen.models import Almacen, Horario
 from alquiler.models import Alquiler
 from core.models import BaseValoracionDenuncia
-from django.db.models import Q, F, ExpressionWrapper, FloatField, OuterRef, Exists
+from django.db.models import Q, F, ExpressionWrapper, FloatField, OuterRef, Exists, Count
 from django.utils.timezone import now 
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 from core.decorators import usuario_required, gestor_required
+from almacen.models import AlmacenValoracion
 
 
 CONDICIONES_POR_EXPERIENCIA = {
@@ -381,4 +382,72 @@ def crear_articulo_catalogo_gestor(request):
         return redirect('gestion_objetos_gestor')
 
 
+#------------------------------------------------------------------------------------------------------------------------------------
 
+#Funcionalidades relacionadas con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+def gestion_denuncias_administrador(request):
+    valoraciones_objeto_denunciadas = ObjetoValoracion.objects.annotate(
+        num_denuncias=Count('denuncias_recibidas_objeto')
+    ).filter(num_denuncias__gt=2)
+
+    valoraciones_almacen_denunciadas = AlmacenValoracion.objects.annotate(
+        num_denuncias=Count('denuncias_recibidas_almacen')
+    ).filter(num_denuncias__gt=2)
+
+
+    return render(request, 'gestion_denuncias_administrador.html', {'valoraciones_objeto_denunciadas': valoraciones_objeto_denunciadas, 'valoraciones_almacen_denunciadas': valoraciones_almacen_denunciadas})
+
+def eliminar_denuncias_valoracion_objeto_administrador(request, valoracion_id):
+    try:
+        valoracion = ObjetoValoracion.objects.get(id=valoracion_id)
+        if request.method == 'POST':
+            valoracion.denuncias_recibidas_objeto.all().delete()
+            messages.success(request, 'Denuncias eliminadas correctamente.')
+        else:
+            messages.error(request, 'Método no permitido.')
+        return redirect('gestion_denuncias_administrador')
+    except ObjetoValoracion.DoesNotExist:
+        messages.error(request, 'La valoración no existe.')
+        return redirect('gestion_denuncias_administrador')
+    
+def eliminar_valoracion_objeto_administrador(request, valoracion_id):
+    try:
+        valoracion = ObjetoValoracion.objects.get(id=valoracion_id)
+        if request.method == 'POST':
+            valoracion.delete()
+            messages.success(request, 'Valoración eliminada correctamente.')
+        else:
+            messages.error(request, 'Método no permitido.')
+        return redirect('gestion_denuncias_administrador')
+    except ObjetoValoracion.DoesNotExist:
+        messages.error(request, 'La valoración no existe.')
+        return redirect('gestion_denuncias_administrador')
+    
+def eliminar_denuncias_valoracion_almacen_administrador(request, valoracion_id):
+    try:
+        valoracion = AlmacenValoracion.objects.get(id=valoracion_id)
+        if request.method == 'POST':
+            valoracion.denuncias_recibidas_almacen.all().delete()
+            messages.success(request, 'Denuncias eliminadas correctamente.')
+        else:
+            messages.error(request, 'Método no permitido.')
+        return redirect('gestion_denuncias_administrador')
+    except AlmacenValoracion.DoesNotExist:
+        messages.error(request, 'La valoración no existe.')
+        return redirect('gestion_denuncias_administrador')
+    
+def eliminar_valoracion_almacen_administrador(request, valoracion_id):
+    try:
+        valoracion = AlmacenValoracion.objects.get(id=valoracion_id)
+        if request.method == 'POST':
+            valoracion.delete()
+            messages.success(request, 'Valoración eliminada correctamente.')
+        else:
+            messages.error(request, 'Método no permitido.')
+        return redirect('gestion_denuncias_administrador')
+    except AlmacenValoracion.DoesNotExist:
+        messages.error(request, 'La valoración no existe.')
+        return redirect('gestion_denuncias_administrador')
