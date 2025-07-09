@@ -278,7 +278,6 @@ class Command(BaseCommand):
         amonestacion1.usuario = usuario1
         amonestacion1.gestor = gestor1 
         amonestacion1.save()
-        self.stdout.write(self.style.SUCCESS("¡Población exitosa!"))
         
         
         #Relaciones horarios
@@ -294,4 +293,8 @@ class Command(BaseCommand):
         valoracion_denuncia1.valoracion = valoracion_almacen1
         valoracion_denuncia1.usuario = usuario1
         valoracion_denuncia1.save()
+        
+        
+        self.stdout.write(self.style.SUCCESS("¡Población exitosa!"))
+
 

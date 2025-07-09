@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Mis amonestaciones{% endblock %}
 
+
+
+
 {% block content %}
 
-  {% include "header.html" %}
+{% if user.is_staff %}
+    {% include "header_admin.html" %}
+{% else %}
+    {% include "header.html" %}
+{% endif %}
+
+
 
   {% if messages %}
 <div class="container mt-3">

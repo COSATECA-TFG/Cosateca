@@ -72,15 +72,6 @@
 
 
 
-
-<script>
-    console.log("Objetos: {{ objetos_alquilados|safe }}");
-    console.log("Objetos: {{ n_obj_alquilados }}");
-    console.log("tipo cantidad: {{ obj_tipo_cantidad|safe }}")
-    console.log("huella de carbono ahorrada: {{ cantidad_huella_ahorrada }}");
-    console.log("huella de carbono reducida: {{ huella_por_mes|safe }}");
-</script>
-
 {{ obj_tipo_cantidad|json_script:"objTipoCantidad" }}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
