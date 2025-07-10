@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
+from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm, RegistroGestorForm
 from django.contrib import messages
 from .models import Usuario, Preferencia, Gestor, Amonestacion
 from objeto.models import Objeto, ListaDeseos
@@ -346,3 +346,51 @@ def amonestar_usuario(request, usuario_id):
 
 def gestion_usuarios_administrador(request):
     return render(request, 'gestion_usuarios_administrador.html')
+
+def registro_gestor(request):
+    almacenes = Almacen.objects.all()
+    
+    if request.method == 'POST':
+        form = RegistroGestorForm(request.POST)
+        almacen_seleccionado_id = request.POST.get('almacen_seleccionado')
+        
+        if form.is_valid() and almacen_seleccionado_id:
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+            sexo = form.cleaned_data['sexo']
+            correo_electronico = form.cleaned_data['correo_electronico']
+            telefono = form.cleaned_data['telefono']
+            dni = form.cleaned_data['dni']
+            nombre_usuario = form.cleaned_data['nombre_usuario']
+            contraseña = form.cleaned_data['contraseña']
+
+            try:
+                almacen_seleccionado = Almacen.objects.get(id=almacen_seleccionado_id)
+                
+                nuevo_gestor = Gestor(
+                    first_name=nombre,
+                    last_name=apellido,
+                    fecha_nacimiento=fecha_nacimiento,
+                    sexo=sexo,
+                    email=correo_electronico,
+                    telefono=telefono,
+                    dni=dni,
+                    username=nombre_usuario,
+                    almacen=almacen_seleccionado
+                )
+                
+                nuevo_gestor.set_password(contraseña)
+                nuevo_gestor.save()
+                
+                messages.success(request, 'Gestor registrado exitosamente.')
+                return redirect('registro_gestor')
+            except Almacen.DoesNotExist:
+                messages.error(request, 'Por favor, selecciona un almacén válido.')
+        else:
+            if not almacen_seleccionado_id:
+                messages.error(request, 'Por favor, selecciona un almacén.')
+    else:
+        form = RegistroForm()
+
+    return render(request, 'registro_gestor.html', {'form': form, 'almacenes': almacenes})
