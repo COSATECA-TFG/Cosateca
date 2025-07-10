@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Comentarios de almacén{% endblock %}
+
+{% block content %}
+
+{% if user.is_staff %}
+{% include "header_admin.html" %}
+
+{% else %}
+{% include "header.html" %}
+
+{% endif %}
+
+{% load static %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
+
+<div class="container d-flex justify-content-center align-items-center mt-4 mb-4">
+    <form method="get" class="flex-grow-1 me-3">
+        <input type="text" name="busqueda_almacen" class="form-control input-buscar" placeholder="Buscar">
+    </form>
+    <a href="#" class="btn btn-link editar-borrar-icono-gestor align-self-center" data-bs-toggle="modal"
+        data-bs-target="#modalCrearAlmacen">
+        <i class="bi bi-plus-circle-fill" style="font-size: 50px"></i>
+    </a>
+</div>
+
+
+<div class="modal fade" id="modalCrearAlmacen" tabindex="-1" aria-labelledby="modalCrearAlmacen" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form method="post" action="{% url 'crear_articulo_catalogo_gestor' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditarLabel{{ h.id }}"><strong>Añadir nuevo
+                            almacén</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="ps-5 pe-5">
+                            <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
+                            <input type="text" class="form-control mb-3" name="nombre" id="nombre"
+                                    placeholder="Nombre del objeto" required>
+
+                            <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
+                            <textarea class="form-control mb-3" name="descripcion" id="descripcion" placeholder="Descripción del objeto" rows="2" required></textarea>
+                        </div>
+                        <div class="row ps-5 pe-5 ">
+                            <div class="col-3">
+                                <label for="latitud" class="label_catalogo_gestor">Latitud:</label>
+                                <input type="text" class="form-control mb-3" name="latitud" id="latitud"
+                                        placeholder="Latitud del almacén" required>
+
+                                <label for="pais" class="label_catalogo_gestor">País:</label>
+                                <input type="text" class="form-control mb-3" name="pais" id="pais"
+                                        placeholder="Pais perteneciente al almacén" required>         
+                            </div>
+
+                            <div class="col-3">
+                                <label for="longitud" class="label_catalogo_gestor">Longitud:</label>
+                                <input type="text" class="form-control mb-3" name="longitud" id="longitud"
+                                        placeholder="Longitud del almacén" required>
+
+                                <label for="ciudad" class="label_catalogo_gestor">Ciudad:</label>
+                                <input type="text" class="form-control mb-3" name="ciudad" id="ciudad"
+                                        placeholder="Ciudad perteneciente al almacén" required>         
+                            </div>
+
+                            <div class="col-3">
+                                <label for="codigo_postal" class="label_catalogo_gestor">Código postal:</label>
+                                <input type="text" class="form-control mb-3" name="codigo_postal" id="codigo_postal"
+                                        placeholder="Código postal" required>
+
+                                <label for="calle" class="label_catalogo_gestor"> Calle:</label>
+                                <input type="text" class="form-control mb-3" name="calle" id="calle"
+                                        placeholder="calle perteneciente al almacén" required>         
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary boton_editar_crear">Crear</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container mt-4">
+    {% for almacen in almacenes %}
+    <div class="card mb-4 shadow-sm">
+        <div class="row g-0">
+
+            <div class="col-md-4">
+                <div id="map-{{ almacen.id }}" class="map-container" data-lat="{{ almacen.localizacion.latitud }}"
+                    data-lng="{{ almacen.localizacion.longitud }}"></div>
+                {% if not usuario.gestor %}
+                <div class="d-flex justify-content-center align-items-center mb-1 mt-2">
+                    <a href="" id="editar" class="btn  btn-valorar me-3"><i class="bi bi-pencil"
+                            style="color: white;"></i></a>
+                    <a href="" id="eliminar" class="btn  btn-valorar"><i class="bi bi-trash"
+                            style="color: white;"></i></a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4 d-flex flex-column p-3 border-start">
+                <div class="details-section mb-3">
+                    <h2 class="card-title text-center mb-3">{{ almacen.nombre }} ({{ almacen.localizacion.ciudad }})
+                    </h2>
+                    <p class="card-text text-center">{{ almacen.descripcion }}</p>
+                </div>
+
+            </div>
+
+            <div class="col-md-4 d-flex flex-column p-3 border-start">
+                <div class="horarios-section">
+                    <div class="d-flex justify-content-center  mb-3">
+                        <h3 class="card-title mb-0 me-3">Horarios</h3>
+                    </div>
+
+
+                    <ul class="list-unstyled text-center">
+                        {% if almacen.horarios.count == 0 %}
+                        <li class="card-text">No hay horarios disponibles.</li>
+                        {% else %}
+                        {% for horario in almacen.horarios.all %}
+                        <li>
+                            <span class="dia-semana">{{ horario.dia_semana }}</span>:
+                            {{ horario.hora_inicio }} - {{ horario.hora_fin }}
+                        </li>
+                        {% endfor %}
+                        {% endif %}
+                    </ul>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-warning text-center mt-4" role="alert">
+        No se encontraron almacenes disponibles.
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.map-container').forEach(function (el) {
+            var lat = parseFloat(el.dataset.lat);
+            var lng = parseFloat(el.dataset.lng);
+            var map = L.map(el.id).setView([lat, lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([lat, lng]).addTo(map);
+        });
+    });
+</script>
+
+
+
+
+
+
+{% endblock %}

@@ -8,4 +8,7 @@ urlpatterns = [
     path('crear_valoracion_almacen/<int:almacen_id>', views.valorar_almacen, name='valoracion_almacen'),
     path('eliminar_valoracion_almacen/<int:comentario_id>', views.eliminar_valoracion_almacen, name='eliminar_valoracion_almacen'),
     path('denunciar_valoracion_almacen/<int:comentario_id>', views.denunciar_valoracion_almacen, name='denunciar_valoracion_almacen'),
+
+    path('gestion_almacenes_administrador', views.obtener_almacenes, name='almacenes_administrador')
+
 ]

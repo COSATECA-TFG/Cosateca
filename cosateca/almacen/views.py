@@ -13,7 +13,10 @@ def obtener_almacenes(request):
     almacenes = Almacen.objects.all()
     if filtro:
         almacenes = almacenes.filter(nombre__icontains=filtro) | almacenes.filter(localizacion__ciudad__icontains=filtro)
-    return render(request, 'almacenes.html', {'almacenes': almacenes, 'usuario': usuario})
+    if usuario.is_staff:
+        return render(request, 'gestion_almacen_administrador.html', {'almacenes': almacenes})
+    else:
+        return render(request, 'almacenes.html', {'almacenes': almacenes, 'usuario': usuario})
 
 @usuario_required
 def obtener_almacen(request, almacen_id):
@@ -125,3 +128,12 @@ def denunciar_valoracion_almacen(request, comentario_id):
         return redirect('comentarios', almacen_id=comentario.almacen.id)
     except AlmacenValoracion.DoesNotExist:
         return render(request, 'comentarios_almacen.html', {'error': 'Comentario no encontrado o no autorizado'})
+    
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+
