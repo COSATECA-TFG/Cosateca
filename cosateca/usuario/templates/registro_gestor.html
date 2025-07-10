@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}Registro de gestor{% endblock %}
+
+{% block content %}
+
+{% include "header_admin.html" %}
+
+
+<section class="lista_deseos">
+
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+
+
+<section>
+    <div class="formulario_registro">
+        <form method="post">
+            
+
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+                                <h3 class="text-center mb-3 mt-4 card-title">Registro de gestor</h3>
+
+
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-4 d-flex flex-column align-items-center ">
+                    {{ form.nombre}}
+                    {{ form.apellido}}
+                    {{ form.fecha_nacimiento }}
+                    {{ form.sexo }}
+                    {{ form.correo_electronico }}
+
+                </div>
+
+                <div class="col-1 d-flex justify-content-center align-items-stretch contenedor_separacion_vertical">
+                    <div class="separacion-vertical"></div>
+                </div>
+
+                <div class="col-4 d-flex flex-column align-items-center">
+                    {{ form.telefono }}
+                    {{ form.dni }}
+                    {{ form.nombre_usuario }}
+                    {{ form.contraseña }}
+                    {{ form.confirmar_contraseña }}
+                    {{ form.terminos_condiciones }}
+                </div>
+
+
+
+            </div>
+
+                    <div class="separacion_horizontal_registro"> </div>
+
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3 class="text-center mb-3 card-title">Almacenes disponibles</h3>
+                    <div id="map-almacenes" class="map-container" style="height: 400px; width: 100%;"></div>
+                    
+                    <div id="almacenes-data" style="display: none;">
+                        {% for almacen in almacenes %}
+                        <div class="almacen-info" 
+                             data-id="{{ almacen.id }}"
+                             data-nombre="{{ almacen.nombre }}"
+                             data-lat="{{ almacen.localizacion.latitud }}"
+                             data-lng="{{ almacen.localizacion.longitud }}"
+                             data-direccion="{{ almacen.localizacion.direccion }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary mt-3 mb-3 boton_envio_formulario">Registrar gestor</button>
+            </div>
+        </form>
+        
+    </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const almacenesData = document.querySelectorAll('#almacenes-data .almacen-info');
+    let map; 
+    
+    if (almacenesData.length > 0) {
+      const firstAlmacen = almacenesData[0];
+      const defaultLat = parseFloat(firstAlmacen.dataset.lat) || 37.3891; // Sevilla por defecto
+      const defaultLng = parseFloat(firstAlmacen.dataset.lng) || -5.9845;
+      
+      map = L.map('map-almacenes').setView([defaultLat, defaultLng], 10);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      
+      const markersGroup = L.featureGroup();
+      
+      almacenesData.forEach(function (almacenInfo) {
+        const lat = parseFloat(almacenInfo.dataset.lat);
+        const lng = parseFloat(almacenInfo.dataset.lng);
+        const nombre = almacenInfo.dataset.nombre;
+        const direccion = almacenInfo.dataset.direccion;
+        const id = almacenInfo.dataset.id;
+        
+        if (!isNaN(lat) && !isNaN(lng)) {
+          const marker = L.marker([lat, lng]).bindPopup(`
+            <div style="text-align: center;">
+              <h6><strong>${nombre}</strong></h6>
+              <p style="margin: 5px 0;">${direccion}</p>
+              <button type="button" class="btn btn-sm btn-primary" onclick="seleccionarAlmacen(${id}, '${nombre}')">
+                Seleccionar este almacén
+              </button>
+            </div>
+          `);
+          
+          marker.addTo(map);
+          markersGroup.addLayer(marker);
+        }
+      });
+      
+      if (markersGroup.getLayers().length > 0) {
+        setTimeout(function() {
+          if (markersGroup.getLayers().length === 1) {
+            const bounds = markersGroup.getBounds();
+            map.setView(bounds.getCenter(), 13);
+          } else {
+            map.fitBounds(markersGroup.getBounds(), { 
+              padding: [50, 50],
+              maxZoom: 15 
+            });
+          }
+        }, 100);
+      }
+    }
+    
+    window.mapInstance = map;
+  });
+  
+  function seleccionarAlmacen(almacenId, nombreAlmacen) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    let inputAlmacen = document.getElementById('almacen_seleccionado');
+    if (!inputAlmacen) {
+      inputAlmacen = document.createElement('input');
+      inputAlmacen.type = 'hidden';
+      inputAlmacen.name = 'almacen_seleccionado';
+      inputAlmacen.id = 'almacen_seleccionado';
+      document.querySelector('form').appendChild(inputAlmacen);
+    }
+    inputAlmacen.value = almacenId;
+
+    const botonEnvio = document.querySelector('.boton_envio_formulario');
+    botonEnvio.textContent = `Registrar gestor para ${nombreAlmacen}`;
+    botonEnvio.classList.add('btn-success');
+    botonEnvio.classList.remove('btn-primary');
+    
+    if (window.mapInstance) {
+      window.mapInstance.closePopup();
+    }
+  }
+</script>
+
+
+
+{% endblock %}

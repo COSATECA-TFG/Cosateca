@@ -20,6 +20,7 @@ urlpatterns = [
     path('amonestar_usuario/<int:usuario_id>', views.amonestar_usuario, name='amonestar_usuario'),
 
     path('gestion_usuarios_administrador', views.gestion_usuarios_administrador, name='gestion_usuarios_administrador'),
+    path('registro_gestor', views.registro_gestor, name='registro_gestor'),
 
 
     
