@@ -4,17 +4,22 @@ from .models import Almacen, AlmacenValoracion, ObjetoValoracionDenuncia
 from django.db.models import Avg
 from core.models import BaseValoracionDenuncia
 from core.decorators import usuario_required
+from almacen.models import Horario, Almacen, Localizacion
+from django.contrib import messages
+
 
 
 @login_required
 def obtener_almacenes(request):
+    dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+
     usuario = request.user
     filtro = request.GET.get('busqueda_almacen', '')
     almacenes = Almacen.objects.all()
     if filtro:
         almacenes = almacenes.filter(nombre__icontains=filtro) | almacenes.filter(localizacion__ciudad__icontains=filtro)
     if usuario.is_staff:
-        return render(request, 'gestion_almacen_administrador.html', {'almacenes': almacenes})
+        return render(request, 'gestion_almacen_administrador.html', {'almacenes': almacenes, 'dias_semana':dias_semana})
     else:
         return render(request, 'almacenes.html', {'almacenes': almacenes, 'usuario': usuario})
 
@@ -135,5 +140,137 @@ def denunciar_valoracion_almacen(request, comentario_id):
 #Funcionalidades relacionadas con el administrador
 
 #------------------------------------------------------------------------------------------------------------------------------------
+
+
+def crear_almacen(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        latitud = request.POST.get('latitud')
+        pais = request.POST.get('pais')
+        longitud = request.POST.get('longitud')
+        ciudad = request.POST.get('ciudad')
+        codigo_postal = request.POST.get('codigo_postal')
+        calle = request.POST.get('calle')
+        numero = request.POST.get('numero_calle')
+        
+        if not nombre or not descripcion or not latitud or not longitud or not pais or not ciudad or not codigo_postal or not calle or not numero:
+            messages.error("Todos los campos son obligatorios.")
+            return redirect('almacenes')
+        
+        try:
+            latitud = float(latitud.replace(',', '.'))
+            longitud = float(longitud.replace(',', '.'))
+        except ValueError:
+            messages.error("Latitud y longitud deben ser números válidos.")
+            return redirect('almacenes')
+        
+        try:
+            codigo_postal = int(codigo_postal)
+        except ValueError:
+            messages.error("El código postal debe ser un número entero.")
+            return redirect('almacenes')
+        
+
+        nueva_localizacion = Localizacion.objects.create(
+            latitud=latitud,
+            longitud=longitud,
+            pais=pais,
+            ciudad=ciudad,
+            codigo_postal=codigo_postal,
+            calle=calle,
+            numero=numero
+        )
+
+        nuevo_almacen = Almacen.objects.create(
+            nombre=nombre,
+            descripcion=descripcion,
+            localizacion=nueva_localizacion
+        )
+
+
+
+        dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+        for dia in dias_semana:
+            hora_inicio = request.POST.get(f'horario_{dia}_inicio')
+            hora_fin = request.POST.get(f'horario_{dia}_fin')
+
+            if hora_inicio and hora_fin:
+                Horario.objects.create(
+                    almacen=nuevo_almacen,
+                    dia_semana=dia,
+                    hora_inicio=hora_inicio,
+                    hora_fin=hora_fin
+                )
+
+        return redirect('almacenes')
+    
+
+def editar_almacen(request, almacen_id):
+    almacen_editar = Almacen.objects.get(id=almacen_id)
+    dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        latitud = request.POST.get('latitud')
+        longitud = request.POST.get('longitud')
+        pais = request.POST.get('pais')
+        ciudad = request.POST.get('ciudad')
+        codigo_postal = request.POST.get('codigo_postal')
+        calle = request.POST.get('calle')
+        numero = request.POST.get('numero_calle')
+
+        if not nombre or not descripcion or not latitud or not longitud or not pais or not ciudad or not codigo_postal or not calle or not numero:
+            messages.error("Todos los campos son obligatorios.")
+            return redirect('almacenes_administrador')
+
+        try:
+            latitud = float(latitud.replace(',', '.'))
+            longitud = float(longitud.replace(',', '.'))
+        except ValueError:
+            messages.error("Latitud y longitud deben ser números válidos.")
+            return redirect('almacenes_administrador')
+
+        try:
+            codigo_postal = int(codigo_postal)
+        except ValueError:
+            messages.error("El código postal debe ser un número entero.")
+            return redirect('almacenes_administrador')
+
+        almacen_editar.nombre = nombre
+        almacen_editar.descripcion = descripcion
+        almacen_editar.localizacion.latitud = latitud
+        almacen_editar.localizacion.longitud = longitud
+        almacen_editar.localizacion.pais = pais
+        almacen_editar.localizacion.ciudad = ciudad
+        almacen_editar.localizacion.codigo_postal = codigo_postal
+        almacen_editar.localizacion.calle = calle
+        almacen_editar.localizacion.numero = numero
+
+        almacen_editar.localizacion.save()
+        almacen_editar.save()
+
+        for dia in dias_semana:
+            hora_inicio = request.POST.get(f'horario_{dia}_inicio')
+            hora_fin = request.POST.get(f'horario_{dia}_fin')
+            if hora_inicio and hora_fin:
+
+                Horario.objects.update_or_create(
+                    almacen=almacen_editar,
+                    dia_semana=dia,
+                    defaults={'hora_inicio': hora_inicio, 'hora_fin': hora_fin}
+                )
+
+        return redirect('almacenes_administrador')
+    
+
+def eliminar_almacen(request, almacen_id):
+    almacen_a_ekiminar = Almacen.objects.get(id=almacen_id)
+    almacen_a_ekiminar.delete()
+    messages.success(request, "Almacén eliminado correctamente.")
+    return redirect('almacenes_administrador')
+
+
+
 
 

@@ -42,11 +42,10 @@
 <div class="modal fade" id="modalCrearAlmacen" tabindex="-1" aria-labelledby="modalCrearAlmacen" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <form method="post" action="{% url 'crear_articulo_catalogo_gestor' %}">
+            <form method="post" action="{% url 'crear_almacen' %}">
                 {% csrf_token %}
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditarLabel{{ h.id }}"><strong>Añadir nuevo
-                            almacén</strong>
+                    <h5 class="modal-title"><strong>Añadir nuevo almacén</strong>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
@@ -90,6 +89,17 @@
                                 <input type="text" class="form-control mb-3" name="calle" id="calle"
                                         placeholder="calle perteneciente al almacén" required>         
                             </div>
+                            <div class="col-3">
+                                <label for="numero_calle" class="label_catalogo_gestor">Número:</label>
+                                <input type="text" class="form-control mb-3" name="numero_calle" id="numero_calle"
+                                        placeholder="Número calle" required>        
+                            </div>
+                            <div class="submodal-backdrop" id="submodalBackdrop"></div>
+
+
+                            <a href="#" class="btn boton_añadir_horarios mx-auto d-block" id="abrirModalHorarios">
+                                   Añadir horarios
+                            </a>
                         </div>
 
                     </div>
@@ -101,7 +111,42 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary boton_editar_crear">Crear</button>
                 </div>
+                <div id="contenedorHorarios"></div>
+            </form>
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalHorarios" tabindex="-1" aria-labelledby="modalHorarios" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title">Asignar horarios por día</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+    <div class="modal-content">
+
+    <div class="modal-body">
+    <div id="dias-horario" class="container">
+        {% for dia in dias_semana %}
+        <div class="row mb-2 align-items-center">
+        <div class="col-2"><strong>{{ dia }}</strong></div>
+        <div class="col-4">
+            <input type="time" class="form-control hora-inicio"  data-dia="{{ dia }}" placeholder="Inicio">
+        </div>
+        <div class="col-4">
+            <input type="time" class="form-control hora-fin"  data-dia="{{ dia }}" placeholder="Fin">
+        </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="button" class="btn btn-primary" id="guardarHorarios">Guardar horarios</button>
+    </div>
+    </div>
     </div>
 </div>
 
@@ -109,6 +154,8 @@
 
 <div class="container mt-4">
     {% for almacen in almacenes %}
+
+
     <div class="card mb-4 shadow-sm">
         <div class="row g-0">
 
@@ -117,13 +164,176 @@
                     data-lng="{{ almacen.localizacion.longitud }}"></div>
                 {% if not usuario.gestor %}
                 <div class="d-flex justify-content-center align-items-center mb-1 mt-2">
-                    <a href="" id="editar" class="btn  btn-valorar me-3"><i class="bi bi-pencil"
+                    <a data-bs-toggle="modal" data-bs-target="#modalEditarAlmacen{{ almacen.id }}" id="editar" class="btn  btn-valorar me-3"><i class="bi bi-pencil"
                             style="color: white;"></i></a>
-                    <a href="" id="eliminar" class="btn  btn-valorar"><i class="bi bi-trash"
+                    <a data-bs-toggle="modal" data-bs-target="#modalEliminar{{ almacen.id }}" id="eliminar" class="btn  btn-valorar"><i class="bi bi-trash"
                             style="color: white;"></i></a>
                 </div>
                 {% endif %}
             </div>
+
+
+            <div class="modal fade" id="modalEliminar{{ almacen.id }}" tabindex="-1"
+                        aria-labelledby="modalEliminarLabel{{ almacen.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{%url 'eliminar_almacen' almacen.id%}">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalEliminarLabel{{ almacen.id }}">Confirmar eliminación
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ¿Estás seguro de que deseas eliminar <strong>{{ almacen.nombre }}</strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+            <!-- Modal edición -->
+
+
+
+            <div class="modal fade" id="modalEditarAlmacen{{ almacen.id }}" tabindex="-1" aria-labelledby="modalEditarAlmacen{{ almacen.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <form method="post" action="{% url 'editar_almacen' almacen.id %}">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h5 class="modal-title"><strong>Editar el almacén con nombre: {{ almacen.nombre }}</strong>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="ps-5 pe-5">
+                                        <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
+                                        <input type="text" class="form-control mb-3" name="nombre" id="nombre" value="{{ almacen.nombre }}"
+                                                placeholder="Nombre del objeto" required>
+
+                                        <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
+                                        <textarea class="form-control mb-3"  name="descripcion" id="descripcion" placeholder="Descripción del objeto" rows="2" required>{{ almacen.descripcion }} </textarea>
+                                    </div>
+                                    <div class="row ps-5 pe-5 ">
+                                        <div class="col-3">
+                                            <label for="latitud" class="label_catalogo_gestor">Latitud:</label>
+                                            <input type="text" class="form-control mb-3" name="latitud" id="latitud"
+                                                    placeholder="Latitud del almacén" value="{{almacen.localizacion.latitud}}" required>
+
+                                            <label for="pais" class="label_catalogo_gestor">País:</label>
+                                            <input type="text" class="form-control mb-3" name="pais" id="pais"
+                                                    placeholder="Pais perteneciente al almacén" value="{{almacen.localizacion.pais}}" required>         
+                                        </div>
+
+                                        <div class="col-3">
+                                            <label for="longitud" class="label_catalogo_gestor">Longitud:</label>
+                                            <input type="text" class="form-control mb-3" name="longitud" id="longitud"
+                                                    placeholder="Longitud del almacén" value="{{almacen.localizacion.longitud}}" required>
+
+                                            <label for="ciudad" class="label_catalogo_gestor">Ciudad:</label>
+                                            <input type="text" class="form-control mb-3" name="ciudad" id="ciudad"
+                                                    placeholder="Ciudad perteneciente al almacén" value="{{almacen.localizacion.ciudad}}" required>         
+                                        </div>
+
+                                        <div class="col-3">
+                                            <label for="codigo_postal" class="label_catalogo_gestor">Código postal:</label>
+                                            <input type="text" class="form-control mb-3" name="codigo_postal" id="codigo_postal"
+                                                    placeholder="Código postal" value="{{almacen.localizacion.codigo_postal}}" required>
+
+                                            <label for="calle" class="label_catalogo_gestor"> Calle:</label>
+                                            <input type="text" class="form-control mb-3" name="calle" id="calle"
+                                                    placeholder="calle perteneciente al almacén" value="{{almacen.localizacion.calle}}" required>         
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="numero_calle" class="label_catalogo_gestor">Número:</label>
+                                            <input type="text" class="form-control mb-3" name="numero_calle" id="numero_calle"
+                                                    placeholder="Número calle" value="{{almacen.localizacion.numero}}" required>        
+                                        </div>
+                                        <div class="submodal-backdrop" id="submodalBackdrop"></div>
+
+
+                                        <a href="#" class="btn boton_añadir_horarios mx-auto d-block" id="abrirModalHorarios{{almacen.id}}">
+                                            Añadir horarios
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary boton_editar_crear">Editar</button>
+                            </div>
+                            <div id="contenedorHorarios{{almacen.id}}"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalHorarios{{almacen.id}}" tabindex="-1" aria-labelledby="modalHorarios{{almacen.id}}" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Asignar horarios por día</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-content">
+
+                <div class="modal-body">
+                <div id="dias-horario" class="container">
+
+                    {% for dia in dias_semana %}
+
+                    <div class="row mb-2 align-items-center">
+                    <div class="col-2"><strong>{{ dia }}</strong></div>
+                    <div class="col-4">
+                        <input type="time" class="form-control hora-inicio" {% for horario in almacen.horarios.all %} {% if horario.dia_semana == dia %} value="{{horario.hora_inicio }}" {% endif %} {% endfor %} data-dia="{{ dia }}" placeholder="Inicio">
+                    </div>
+                    <div class="col-4">
+                        <input type="time" class="form-control hora-fin"  {% for horario in almacen.horarios.all %} {% if horario.dia_semana == dia %} value="{{horario.hora_fin }}" {% endif %} {% endfor %} data-dia="{{ dia }}" placeholder="Fin">
+                    </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarHorarios{{almacen.id}}">Guardar horarios</button>
+                </div>
+                </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+            <!-- Fin modal edicion -->
+
+
+
+
+            
+
+
+
 
             <div class="col-md-4 d-flex flex-column p-3 border-start">
                 <div class="details-section mb-3">
@@ -167,6 +377,57 @@
     {% endfor %}
 </div>
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Modal de crear (único)
+    const btnAbrirHorarios = document.getElementById('abrirModalHorarios');
+    const modalHorariosEl = document.getElementById('modalHorarios');
+    const backdrop = document.getElementById('submodalBackdrop');
+
+    if (btnAbrirHorarios && modalHorariosEl) {
+        const modalHorarios = new bootstrap.Modal(modalHorariosEl, {
+            backdrop: false
+        });
+
+        btnAbrirHorarios.addEventListener('click', function () {
+            backdrop.style.display = 'block';
+            modalHorarios.show();
+        });
+
+        modalHorariosEl.addEventListener('hidden.bs.modal', function () {
+            backdrop.style.display = 'none';
+        });
+    }
+
+    // Modales de edición (varios)
+    document.querySelectorAll('[id^="abrirModalHorarios"]').forEach(function(btn) {
+        // Evita el botón de crear (sin id numérico)
+        if (btn.id === 'abrirModalHorarios') return;
+        const almacenId = btn.id.replace('abrirModalHorarios', '');
+        const modalHorarioEditar = document.getElementById('modalHorarios' + almacenId);
+        const backdropEditar = document.getElementById('submodalBackdrop');
+
+        if (btn && modalHorarioEditar) {
+            const modalEditar = new bootstrap.Modal(modalHorarioEditar, {
+                backdrop: false
+            });
+
+            btn.addEventListener('click', function () {
+                backdropEditar.style.display = 'block';
+                modalEditar.show();
+            });
+
+            modalHorarioEditar.addEventListener('hidden.bs.modal', function () {
+                backdropEditar.style.display = 'none';
+            });
+        }
+    });
+});
+</script>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.map-container').forEach(function (el) {
@@ -180,6 +441,56 @@
         });
     });
 </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Guardar horarios en el modal de crear
+    const guardarHorariosCrear = document.getElementById('guardarHorarios');
+    if (guardarHorariosCrear) {
+        guardarHorariosCrear.addEventListener('click', function () {
+            const contenedor = document.getElementById('contenedorHorarios');
+            contenedor.innerHTML = '';
+            const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            dias.forEach(dia => {
+                const horaInicio = document.querySelector(`#modalHorarios .hora-inicio[data-dia="${dia}"]`).value;
+                const horaFin = document.querySelector(`#modalHorarios .hora-fin[data-dia="${dia}"]`).value;
+                if (horaInicio && horaFin) {
+                    contenedor.innerHTML += `<input type="hidden" name="horario_${dia}_inicio" value="${horaInicio}">`;
+                    contenedor.innerHTML += `<input type="hidden" name="horario_${dia}_fin" value="${horaFin}">`;
+                }
+            });
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalHorarios'));
+            modal.hide();
+        });
+    }
+
+    // Guardar horarios en los modales de edición (uno por cada almacén)
+    document.querySelectorAll('[id^="guardarHorarios"]').forEach(function(btn) {
+        // Evita el botón de crear (sin id numérico)
+        if (btn.id === 'guardarHorarios') return;
+        const almacenId = btn.id.replace('guardarHorarios', '');
+        btn.addEventListener('click', function () {
+            const contenedor = document.getElementById('contenedorHorarios' + almacenId);
+            contenedor.innerHTML = '';
+            const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            dias.forEach(dia => {
+                const horaInicio = document.querySelector(`#modalHorarios${almacenId} .hora-inicio[data-dia="${dia}"]`).value;
+                const horaFin = document.querySelector(`#modalHorarios${almacenId} .hora-fin[data-dia="${dia}"]`).value;
+                if (horaInicio && horaFin) {
+                    contenedor.innerHTML += `<input type="hidden" name="horario_${dia}_inicio" value="${horaInicio}">`;
+                    contenedor.innerHTML += `<input type="hidden" name="horario_${dia}_fin" value="${horaFin}">`;
+                }
+            });
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalHorarios' + almacenId));
+            modal.hide();
+        });
+    });
+});
+</script>
+
+
+
 
 
 
