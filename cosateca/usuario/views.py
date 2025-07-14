@@ -400,6 +400,10 @@ def registro_gestor(request):
 def gestion_usuarios_administrador(request):
     usuarios = Usuario.objects.filter(is_active = True)
     usuarios_a_suspender = []
+    
+    filtro = request.GET.get('busqueda_usuario', '')
+    if filtro:
+        usuarios = usuarios.filter(first_name__icontains=filtro) | usuarios.filter(last_name__icontains=filtro) | usuarios.filter(username__icontains=filtro)    
     for u in usuarios:
         amonestaciones = u.amonestaciones_recibidas.all()
         total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
