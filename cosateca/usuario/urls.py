@@ -18,9 +18,10 @@ urlpatterns = [
     path('usuario/amonestaciones', views.consultar_amonestaciones, name='consultar_amonestaciones'),
 
     path('amonestar_usuario/<int:usuario_id>', views.amonestar_usuario, name='amonestar_usuario'),
+  
 
     path('gestion_usuarios_administrador', views.gestion_usuarios_administrador, name='gestion_usuarios_administrador'),
+    path('registro_gestor', views.registro_gestor, name='registro_gestor'),
     path('suspender_usuario/<int:usuario_id>', views.suspender_usuario, name='suspender_usuario'),
-    path('consultar_amonestaciones_administrador/<int:usuario_id>', views.consultar_amonestaciones_administrador, name='consultar_amonestaciones_administrador'),
-    
+    path('consultar_amonestaciones_administrador/<int:usuario_id>', views.consultar_amonestaciones_administrador, name='consultar_amonestaciones_administrador'),    
 ]
