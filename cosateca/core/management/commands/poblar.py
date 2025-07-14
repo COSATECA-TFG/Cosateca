@@ -290,8 +290,9 @@ class Command(BaseCommand):
         valoracion_almacen1.save()
         
         # Relaciones valoracion denuncia
+        usuario2 = Usuario.objects.get(username='usuario2')
         valoracion_denuncia1.valoracion = valoracion_almacen1
-        valoracion_denuncia1.usuario = usuario1
+        valoracion_denuncia1.usuario = usuario2
         valoracion_denuncia1.save()
         
         

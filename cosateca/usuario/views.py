@@ -8,7 +8,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 from objeto.views import objetos_recomendados
-from core.decorators import usuario_required, gestor_required, acceso_desde_login_requerido
+from core.decorators import usuario_required, gestor_required, acceso_desde_login_requerido, admin_required
 
 
 
@@ -62,8 +62,8 @@ def inicio_sesion(request):
             nombre_usuario = form.cleaned_data['nombre_usuario']
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
-            usuario_suspendido = Usuario.objects.filter(username=nombre_usuario).first().is_active
-            if usuario_suspendido:
+            usuario_no_suspendido = Usuario.objects.filter(username=nombre_usuario).first().is_active
+            if usuario_no_suspendido:
                 if(usuario_autenticado is not None and usuario_autenticado.is_staff):
                     login(request, usuario_autenticado)
                     return redirect('gestion_usuarios_administrador')
@@ -348,7 +348,7 @@ def amonestar_usuario(request, usuario_id):
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
-
+@admin_required
 def registro_gestor(request):
     almacenes = Almacen.objects.all()
     
@@ -397,6 +397,7 @@ def registro_gestor(request):
 
     return render(request, 'registro_gestor.html', {'form': form, 'almacenes': almacenes})
 
+@admin_required
 def gestion_usuarios_administrador(request):
     usuarios = Usuario.objects.filter(is_active = True)
     usuarios_a_suspender = []
@@ -407,6 +408,7 @@ def gestion_usuarios_administrador(request):
             usuarios_a_suspender.append(u)
     return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios_a_suspender})
 
+@admin_required
 def consultar_amonestaciones_administrador(request, usuario_id):
     try:
         usuario = Usuario.objects.get(id=usuario_id)
@@ -417,6 +419,7 @@ def consultar_amonestaciones_administrador(request, usuario_id):
         messages.error(request, "Usuario no encontrado.")
         return redirect('gestion_usuarios_administrador')
 
+@admin_required
 def suspender_usuario(request, usuario_id):
     try:
         usuario = Usuario.objects.get(id=usuario_id)

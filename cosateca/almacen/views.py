@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Almacen, AlmacenValoracion, ObjetoValoracionDenuncia
 from django.db.models import Avg
 from core.models import BaseValoracionDenuncia
-from core.decorators import usuario_required
+from core.decorators import usuario_required, admin_required
 from almacen.models import Horario, Almacen, Localizacion
 from django.contrib import messages
 
@@ -141,7 +141,7 @@ def denunciar_valoracion_almacen(request, comentario_id):
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
-
+@admin_required
 def crear_almacen(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -205,7 +205,7 @@ def crear_almacen(request):
 
         return redirect('almacenes')
     
-
+@admin_required
 def editar_almacen(request, almacen_id):
     almacen_editar = Almacen.objects.get(id=almacen_id)
     dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -263,7 +263,7 @@ def editar_almacen(request, almacen_id):
 
         return redirect('almacenes_administrador')
     
-
+@admin_required
 def eliminar_almacen(request, almacen_id):
     almacen_a_ekiminar = Almacen.objects.get(id=almacen_id)
     almacen_a_ekiminar.delete()
