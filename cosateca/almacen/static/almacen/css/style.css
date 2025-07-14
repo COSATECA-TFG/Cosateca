@@ -160,5 +160,23 @@
     font-size: 2rem !important;
 }
 
+.boton_añadir_horarios{
+  color: white !important;
+  background-color: #244E47 !important;
+  width: 25% !important;
+}
+
+
+.submodal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1055; /* justo encima del primer modal (1050) */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* oscurecido */
+    backdrop-filter: blur(3px); /* efecto desenfoque */
+    display: none;
+}
 
 
