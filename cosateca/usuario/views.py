@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm
+from .forms import RegistroForm, InicioSesionForm, CuestionarioForm, editarPerfilForm, RegistroGestorForm
 from django.contrib import messages
 from .models import Usuario, Preferencia, Gestor, Amonestacion
 from objeto.models import Objeto, ListaDeseos
@@ -8,7 +8,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, IntegerField, Value, Avg
 from objeto.views import objetos_recomendados
-from core.decorators import usuario_required, gestor_required, acceso_desde_login_requerido
+from core.decorators import usuario_required, gestor_required, acceso_desde_login_requerido, admin_required
 
 
 
@@ -62,18 +62,28 @@ def inicio_sesion(request):
             nombre_usuario = form.cleaned_data['nombre_usuario']
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
-            
-            if usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
-                try:
-                    usuario_autenticado.preferencia
+            usuario_no_suspendido = Usuario.objects.filter(username=nombre_usuario).first().is_active
+            if usuario_no_suspendido:
+                if(usuario_autenticado is not None and usuario_autenticado.is_staff):
                     login(request, usuario_autenticado)
-                    return redirect('menu')
-                except Preferencia.DoesNotExist:
-                    request.session['usuario_id'] = usuario_autenticado.id
-                    return redirect('cuestionario_preferencias')
-            elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
-                login(request, usuario_autenticado)
-                return redirect('gestion_reserva_gestor')
+                    return redirect('gestion_usuarios_administrador')
+                
+                elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
+                    try:
+                        usuario_autenticado.preferencia
+                        login(request, usuario_autenticado)
+                        return redirect('menu')
+                    except Preferencia.DoesNotExist:
+                        request.session['usuario_id'] = usuario_autenticado.id
+                        return redirect('cuestionario_preferencias')
+                elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
+                    login(request, usuario_autenticado)
+                    return redirect('gestion_reserva_gestor')
+            else:
+                messages.error(request, 'El usuario ha sido suspendido de la plataforma')
+                return redirect('inicio_sesion')
+                
+            
 
     else:
         form = InicioSesionForm()
@@ -168,6 +178,9 @@ def eliminar_objeto_lista_deseos(request, objeto_id):
 @login_required
 def detalles_usuario(request):
     usuario = request.user
+
+    if request.user.is_staff:
+        return redirect('home')
 
 
     if request.method == 'POST':
@@ -328,3 +341,95 @@ def amonestar_usuario(request, usuario_id):
         messages.error(request, "Usuario no encontrado.")
 
     return redirect('gestion_reserva_gestor')
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Funcionalidades relacionadas con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+@admin_required
+def registro_gestor(request):
+    almacenes = Almacen.objects.all()
+    
+    if request.method == 'POST':
+        form = RegistroGestorForm(request.POST)
+        almacen_seleccionado_id = request.POST.get('almacen_seleccionado')
+        
+        if form.is_valid() and almacen_seleccionado_id:
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            fecha_nacimiento = form.cleaned_data['fecha_nacimiento']
+            sexo = form.cleaned_data['sexo']
+            correo_electronico = form.cleaned_data['correo_electronico']
+            telefono = form.cleaned_data['telefono']
+            dni = form.cleaned_data['dni']
+            nombre_usuario = form.cleaned_data['nombre_usuario']
+            contraseña = form.cleaned_data['contraseña']
+
+            try:
+                almacen_seleccionado = Almacen.objects.get(id=almacen_seleccionado_id)
+                
+                nuevo_gestor = Gestor(
+                    first_name=nombre,
+                    last_name=apellido,
+                    fecha_nacimiento=fecha_nacimiento,
+                    sexo=sexo,
+                    email=correo_electronico,
+                    telefono=telefono,
+                    dni=dni,
+                    username=nombre_usuario,
+                    almacen=almacen_seleccionado
+                )
+                
+                nuevo_gestor.set_password(contraseña)
+                nuevo_gestor.save()
+                
+                messages.success(request, 'Gestor registrado exitosamente.')
+                return redirect('registro_gestor')
+            except Almacen.DoesNotExist:
+                messages.error(request, 'Por favor, selecciona un almacén válido.')
+        else:
+            if not almacen_seleccionado_id:
+                messages.error(request, 'Por favor, selecciona un almacén.')
+    else:
+        form = RegistroForm()
+
+    return render(request, 'registro_gestor.html', {'form': form, 'almacenes': almacenes})
+
+@admin_required
+def gestion_usuarios_administrador(request):
+    usuarios = Usuario.objects.filter(is_active = True)
+    usuarios_a_suspender = []
+    
+    filtro = request.GET.get('busqueda_usuario', '')
+    if filtro:
+        usuarios = usuarios.filter(first_name__icontains=filtro) | usuarios.filter(last_name__icontains=filtro) | usuarios.filter(username__icontains=filtro)    
+    for u in usuarios:
+        amonestaciones = u.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        if total_amonestaciones >= 10:
+            usuarios_a_suspender.append(u)
+    return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios_a_suspender})
+
+@admin_required
+def consultar_amonestaciones_administrador(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        amonestaciones = usuario.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+        return redirect('gestion_usuarios_administrador')
+
+@admin_required
+def suspender_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = False
+        usuario.save()
+        messages.success(request, f"Usuario {usuario.first_name} {usuario.last_name} suspendido exitosamente.")
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+    return redirect('gestion_usuarios_administrador')

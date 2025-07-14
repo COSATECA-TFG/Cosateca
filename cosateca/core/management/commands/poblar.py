@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from usuario.models import Usuario, Gestor, Preferencia, Amonestacion
-from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, ObjetoValoracionDenuncia
+from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, AlmacenValoracionDenuncia
 from objeto.models import Objeto
 from django.utils import timezone
 from datetime import date
@@ -160,7 +160,7 @@ class Command(BaseCommand):
         )
         
         
-        valoracion_denuncia1 = ObjetoValoracionDenuncia(
+        valoracion_denuncia1 = AlmacenValoracionDenuncia(
             categoria="Opinión falsa",
             contexto="El usuario ha publicado una opinión falsa sobre el servicio.",
         )
@@ -278,7 +278,6 @@ class Command(BaseCommand):
         amonestacion1.usuario = usuario1
         amonestacion1.gestor = gestor1 
         amonestacion1.save()
-        self.stdout.write(self.style.SUCCESS("¡Población exitosa!"))
         
         
         #Relaciones horarios
@@ -291,7 +290,12 @@ class Command(BaseCommand):
         valoracion_almacen1.save()
         
         # Relaciones valoracion denuncia
+        usuario2 = Usuario.objects.get(username='usuario2')
         valoracion_denuncia1.valoracion = valoracion_almacen1
-        valoracion_denuncia1.usuario = usuario1
+        valoracion_denuncia1.usuario = usuario2
         valoracion_denuncia1.save()
+        
+        
+        self.stdout.write(self.style.SUCCESS("¡Población exitosa!"))
+
 

@@ -127,6 +127,7 @@ class ObjetoViewTest(TestCase):
         self.valorar_objeto_url = reverse('valorar_objeto', args=[self.objeto.id])
         self.obtener_comentarios_objeto_url = reverse('comentarios_obj', args=[self.objeto.id])
         self.denunciar_valoracion_objeto_url = reverse('denunciar_valoracion_objeto', args=[self.valoracion.id])
+        self.denunciar_valoracion_objeto_url2 = reverse('denunciar_valoracion_objeto', args=[0]) # Valoración no existente
         self.eliminar_valoracion_objeto_url = reverse('eliminar_valoracion_objeto', args=[self.valoracion.id])
         self.lista_objetos_recomendados_url = reverse('recomendaciones_personalizadas')
 
@@ -242,6 +243,8 @@ class ObjetoViewTest(TestCase):
     def test_obtener_comentarios_objeto_invalido(self):
         response = self.client.get(self.obtener_comentarios_objeto_url)
         self.assertEqual(response.status_code, 302)
+
+    
     
     def test_denunciar_valoracion_objeto_valido(self):
         self.client.login(username='usuario_test', password='test12345')
@@ -249,20 +252,24 @@ class ObjetoViewTest(TestCase):
             'categoria': 'Otra',
             'contexto': 'Contexto de prueba'
         })
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(self.valoracion.denuncias_recibidas_objeto.count(), 1)
         denuncia = self.valoracion.denuncias_recibidas_objeto.first()
         self.assertEqual(denuncia.contexto, 'Contexto de prueba')
 
     def test_denunciar_valoracion_objeto_invalido(self):
+        response = self.client.get(self.denunciar_valoracion_objeto_url2)
+        self.assertEqual(response.status_code, 302, "El usuario al no estar logueado debe de ser redirigido")   
         self.client.login(username='usuario_test', password='test12345')
-        response = self.client.post(self.denunciar_valoracion_objeto_url, {
+        datos_denuncia = {
             'categoria': '',
             'contexto': ''
-        })
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(messages[0].message,  'Debe seleccionar una categoría y proporcionar un contexto para la denuncia.')
+        }
+        response = self.client.post(self.denunciar_valoracion_objeto_url2, datos_denuncia)
         self.assertTemplateUsed(response, 'comentarios_objeto.html')
+        self.assertEqual(response.context['error'], 'Comentario no encontrado o no autorizado', "El mensaje de error no es el esperado")
+
+
 
     def test_eliminar_valoracion_objeto_valido(self):
         self.client.login(username='usuario_test2', password='test12345')
