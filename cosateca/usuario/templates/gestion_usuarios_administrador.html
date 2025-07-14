@@ -4,4 +4,44 @@
 
 {% include "header_admin.html" %}
 
+
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+<section class="mt-2 mb-4 d-flex align-items-center flex-column">
+    <div>
+        Barra de busqueda provisional
+    </div>
+    <div class="gestion_usuarios_admin">
+        {% for usuario in usuarios %}
+            <a href="{% url 'consultar_amonestaciones_administrador' usuario.id %}" style="text-decoration: none; color: inherit;">
+                <div class="usuario_a_suspender mt-2 mb-2">
+                    {{ usuario.first_name }} {{ usuario.last_name }}
+                    <a href="{% url 'suspender_usuario' usuario.id %}" class="btn boton_suspender float-end"><i class="bi bi-person-fill-slash"></i> Suspender </a>
+                </div>
+            </a>
+            {% if not forloop.last %}
+            <div class="separacion_horizontal"></div>
+            {% endif %}
+        {%endfor%}
+        
+
+    </div>
+</section>
+
+
+
+<script>
+    console.log("{{ usuarios }}")
+</script>
+
 {% endblock %}

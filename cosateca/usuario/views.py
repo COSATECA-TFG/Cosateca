@@ -62,23 +62,27 @@ def inicio_sesion(request):
             nombre_usuario = form.cleaned_data['nombre_usuario']
             contraseña = form.cleaned_data['contraseña']
             usuario_autenticado = authenticate(request, username=nombre_usuario, password=contraseña)
-
-            if(usuario_autenticado is not None and usuario_autenticado.is_staff):
-                login(request, usuario_autenticado)
-                return redirect('gestion_usuarios_administrador')
-            
-            elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
-                try:
-                    usuario_autenticado.preferencia
+            usuario_suspendido = Usuario.objects.filter(username=nombre_usuario).first().is_active
+            if usuario_suspendido:
+                if(usuario_autenticado is not None and usuario_autenticado.is_staff):
                     login(request, usuario_autenticado)
-                    return redirect('menu')
-                except Preferencia.DoesNotExist:
-                    request.session['usuario_id'] = usuario_autenticado.id
-                    return redirect('cuestionario_preferencias')
-            elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
-                login(request, usuario_autenticado)
-                return redirect('gestion_reserva_gestor')
-            
+                    return redirect('gestion_usuarios_administrador')
+                
+                elif usuario_autenticado is not None and not hasattr(usuario_autenticado, 'gestor'):
+                    try:
+                        usuario_autenticado.preferencia
+                        login(request, usuario_autenticado)
+                        return redirect('menu')
+                    except Preferencia.DoesNotExist:
+                        request.session['usuario_id'] = usuario_autenticado.id
+                        return redirect('cuestionario_preferencias')
+                elif(usuario_autenticado is not None and hasattr(usuario_autenticado, 'gestor')):
+                    login(request, usuario_autenticado)
+                    return redirect('gestion_reserva_gestor')
+            else:
+                messages.error(request, 'El usuario ha sido suspendido de la plataforma')
+                return redirect('inicio_sesion')
+                
             
 
     else:
@@ -344,8 +348,6 @@ def amonestar_usuario(request, usuario_id):
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
-def gestion_usuarios_administrador(request):
-    return render(request, 'gestion_usuarios_administrador.html')
 
 def registro_gestor(request):
     almacenes = Almacen.objects.all()
@@ -394,3 +396,33 @@ def registro_gestor(request):
         form = RegistroForm()
 
     return render(request, 'registro_gestor.html', {'form': form, 'almacenes': almacenes})
+
+def gestion_usuarios_administrador(request):
+    usuarios = Usuario.objects.filter(is_active = True)
+    usuarios_a_suspender = []
+    for u in usuarios:
+        amonestaciones = u.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        if total_amonestaciones >= 10:
+            usuarios_a_suspender.append(u)
+    return render(request, 'gestion_usuarios_administrador.html', {'usuarios': usuarios_a_suspender})
+
+def consultar_amonestaciones_administrador(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        amonestaciones = usuario.amonestaciones_recibidas.all()
+        total_amonestaciones = amonestaciones.filter(severidad='Grave').count() * 3 + amonestaciones.filter(severidad='Media').count() * 2 + amonestaciones.filter(severidad='Leve').count()
+        return render(request, 'consultar_amonestaciones.html', {'amonestaciones': amonestaciones, 'total_amonestaciones': total_amonestaciones})
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+        return redirect('gestion_usuarios_administrador')
+
+def suspender_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = False
+        usuario.save()
+        messages.success(request, f"Usuario {usuario.first_name} {usuario.last_name} suspendido exitosamente.")
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario no encontrado.")
+    return redirect('gestion_usuarios_administrador')
