@@ -17,4 +17,10 @@ urlpatterns = [
     path('eliminar_articulo_gestor/<int:objeto_id>', views.eliminar_articulo_catalogo_gestor, name='eliminar_articulo_catalogo_gestor'),
     path('editar_articulo_gestor/<int:objeto_id>', views.editar_articulo_catalogo_gestor, name='editar_articulo_catalogo_gestor'),
     path('crear_articulo_gestor', views.crear_articulo_catalogo_gestor, name='crear_articulo_catalogo_gestor'),
+
+    path('gestion_denuncias_administrador', views.gestion_denuncias_administrador, name='gestion_denuncias_administrador'),
+    path('eliminar_denuncias_valoracion_objeto_administrador/<int:valoracion_id>', views.eliminar_denuncias_valoracion_objeto_administrador, name='eliminar_denuncias_valoracion_objeto_administrador'),
+    path('eliminar_valoracion_objeto_administrador/<int:valoracion_id>', views.eliminar_valoracion_objeto_administrador, name='eliminar_valoracion_objeto_administrador'),
+    path('eliminar_denuncias_valoracion_almacen_administrador/<int:valoracion_id>', views.eliminar_denuncias_valoracion_almacen_administrador, name='eliminar_denuncias_valoracion_almacen_administrador'),
+    path('eliminar_valoracion_almacen_administrador/<int:valoracion_id>', views.eliminar_valoracion_almacen_administrador, name='eliminar_valoracion_almacen_administrador'),
 ]
