@@ -18,8 +18,10 @@
 
 
 <section class="mt-2 mb-4 d-flex align-items-center flex-column">
-    <div>
-        Barra de busqueda provisional
+    <div class="container d-flex justify-content-center align-items-center mt-4 mb-4">
+        <form method="get" class="flex-grow-1 me-3">
+            <input type="text" name="busqueda_usuario" class="form-control input-buscar" placeholder="Buscar">
+        </form>
     </div>
     <div class="gestion_usuarios_admin">
         {% for usuario in usuarios %}
@@ -32,6 +34,12 @@
             {% if not forloop.last %}
             <div class="separacion_horizontal"></div>
             {% endif %}
+
+            {% empty %}
+            <div class="alert alert-warning text-center mt-4" role="alert">
+                No hay usuarios con una cantidad de amonestaciones superior a 10
+            </div>
+
         {%endfor%}
         
 
