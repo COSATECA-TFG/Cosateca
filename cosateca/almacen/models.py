@@ -55,7 +55,7 @@ class AlmacenValoracion(BaseValoracion):
         return f"Valoración de {self.usuario.username} para {self.almacen.nombre}: {self.estrellas} estrellas"
 
 
-class ObjetoValoracionDenuncia(BaseValoracionDenuncia):
+class AlmacenValoracionDenuncia(BaseValoracionDenuncia):
     valoracion = models.ForeignKey(AlmacenValoracion, on_delete=models.CASCADE, related_name='denuncias_recibidas_almacen', blank=False, null=False)
     usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='denuncias_impuestas_valoracion_almacen', blank=False, null=False)
 

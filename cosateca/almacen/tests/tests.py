@@ -1,5 +1,5 @@
 from django.test import TestCase
-from almacen.models import Almacen, Localizacion, AlmacenValoracion, ObjetoValoracionDenuncia
+from almacen.models import Almacen, Localizacion, AlmacenValoracion, AlmacenValoracionDenuncia
 from usuario.models import Usuario, Preferencia
 from django.urls import reverse
 from datetime import date
@@ -62,7 +62,7 @@ class almacenViewTest(TestCase):
             comentario = "Comentario de prueba para el almacén",
         )
         
-        self.denuncia_valoracion_almacen = ObjetoValoracionDenuncia.objects.create(
+        self.denuncia_valoracion_almacen = AlmacenValoracionDenuncia.objects.create(
             valoracion = self.valoracion_almacen,
             usuario = self.usuario,
             categoria = "Otra",

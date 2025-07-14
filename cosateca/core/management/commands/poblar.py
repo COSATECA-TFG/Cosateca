@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from usuario.models import Usuario, Gestor, Preferencia, Amonestacion
-from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, ObjetoValoracionDenuncia
+from almacen.models import Almacen, Localizacion, Horario, AlmacenValoracion, AlmacenValoracionDenuncia
 from objeto.models import Objeto
 from django.utils import timezone
 from datetime import date
@@ -160,7 +160,7 @@ class Command(BaseCommand):
         )
         
         
-        valoracion_denuncia1 = ObjetoValoracionDenuncia(
+        valoracion_denuncia1 = AlmacenValoracionDenuncia(
             categoria="Opinión falsa",
             contexto="El usuario ha publicado una opinión falsa sobre el servicio.",
         )

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Almacen, AlmacenValoracion, ObjetoValoracionDenuncia
+from .models import Almacen, AlmacenValoracion, AlmacenValoracionDenuncia
 from django.db.models import Avg
 from core.models import BaseValoracionDenuncia
 from core.decorators import usuario_required, admin_required
@@ -47,7 +47,7 @@ def obtener_comentarios(request, almacen_id):
             # Añadir información de denuncia para cada comentario
             comentarios_info = []
             for comentario in comentarios:
-                ya_denunciado = ObjetoValoracionDenuncia.objects.filter(
+                ya_denunciado = AlmacenValoracionDenuncia.objects.filter(
                     valoracion=comentario, usuario=request.user
                 ).exists()
                 comentarios_info.append({
@@ -118,7 +118,7 @@ def eliminar_valoracion_almacen(request, comentario_id):
 def denunciar_valoracion_almacen(request, comentario_id):
     try:
         comentario = AlmacenValoracion.objects.get(id=comentario_id)
-        denuncia_existente = ObjetoValoracionDenuncia.objects.filter(valoracion=comentario, usuario=request.user).first()
+        denuncia_existente = AlmacenValoracionDenuncia.objects.filter(valoracion=comentario, usuario=request.user).first()
         if denuncia_existente:
             denuncia_existente.categoria = request.POST.get('categoria', '')
             denuncia_existente.contexto = request.POST.get('contexto', '')
