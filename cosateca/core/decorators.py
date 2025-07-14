@@ -45,7 +45,19 @@ def acceso_desde_login_requerido(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if 'usuario_id' not in request.session:
-            return redirect('inicio_sesion')  # nombre de tu URL de login
+            return redirect('inicio_sesion')  
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+def admin_required(view_func):
+    """
+    Decorador que requiere que el usuario sea un administrador.
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return redirect('home')
+        return view_func(request, *args, **kwargs)
+    
+    return wrapper
 

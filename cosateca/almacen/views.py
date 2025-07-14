@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Almacen, AlmacenValoracion, ObjetoValoracionDenuncia
+from .models import Almacen, AlmacenValoracion, AlmacenValoracionDenuncia
 from django.db.models import Avg
 from core.models import BaseValoracionDenuncia
-from core.decorators import usuario_required
+from core.decorators import usuario_required, admin_required
 from almacen.models import Horario, Almacen, Localizacion
 from django.contrib import messages
 
@@ -47,7 +47,7 @@ def obtener_comentarios(request, almacen_id):
             # Añadir información de denuncia para cada comentario
             comentarios_info = []
             for comentario in comentarios:
-                ya_denunciado = ObjetoValoracionDenuncia.objects.filter(
+                ya_denunciado = AlmacenValoracionDenuncia.objects.filter(
                     valoracion=comentario, usuario=request.user
                 ).exists()
                 comentarios_info.append({
@@ -118,7 +118,7 @@ def eliminar_valoracion_almacen(request, comentario_id):
 def denunciar_valoracion_almacen(request, comentario_id):
     try:
         comentario = AlmacenValoracion.objects.get(id=comentario_id)
-        denuncia_existente = ObjetoValoracionDenuncia.objects.filter(valoracion=comentario, usuario=request.user).first()
+        denuncia_existente = AlmacenValoracionDenuncia.objects.filter(valoracion=comentario, usuario=request.user).first()
         if denuncia_existente:
             denuncia_existente.categoria = request.POST.get('categoria', '')
             denuncia_existente.contexto = request.POST.get('contexto', '')
@@ -141,7 +141,7 @@ def denunciar_valoracion_almacen(request, comentario_id):
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
-
+@admin_required
 def crear_almacen(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -205,7 +205,7 @@ def crear_almacen(request):
 
         return redirect('almacenes')
     
-
+@admin_required
 def editar_almacen(request, almacen_id):
     almacen_editar = Almacen.objects.get(id=almacen_id)
     dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -263,7 +263,7 @@ def editar_almacen(request, almacen_id):
 
         return redirect('almacenes_administrador')
     
-
+@admin_required
 def eliminar_almacen(request, almacen_id):
     almacen_a_ekiminar = Almacen.objects.get(id=almacen_id)
     almacen_a_ekiminar.delete()
