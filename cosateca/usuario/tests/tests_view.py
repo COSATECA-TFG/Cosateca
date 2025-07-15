@@ -24,7 +24,6 @@ class UsuarioViewsTest(TestCase):
         )
 
         self.user2 = Usuario.objects.create_user(
-        id=20,
         username='usuario_test2',
         password='test12345',
         email='test2@example.com',
@@ -34,6 +33,19 @@ class UsuarioViewsTest(TestCase):
         sexo='NB',
         telefono='800000000',
         dni='12345679X'
+        )
+
+        self.admin = Usuario.objects.create_user(
+        username='admin_test',
+        password='test12345',
+        email='testadmin@example.com',
+        first_name='Testadmin',
+        last_name='Useradmin',
+        fecha_nacimiento=date(1990, 1, 1),
+        sexo='NB',
+        telefono='800000002',
+        dni='12345679A',
+        is_staff=True
         )
 
 
@@ -65,16 +77,16 @@ class UsuarioViewsTest(TestCase):
 
 
         self.gestor = Gestor.objects.create_user(
-        username='gestor_test',
-        password='test12345',
-        email='testGestor@example.com',
-        first_name='Test',
-        last_name='User',
-        fecha_nacimiento=date(1990, 1, 1),
-        sexo='NB',
-        telefono='600000001',
-        dni='12345674X',
-        almacen=self.almacen
+            username='gestor_test',
+            password='test12345',
+            email='testGestor@example.com',
+            first_name='Test',
+            last_name='User',
+            fecha_nacimiento=date(1990, 1, 1),
+            sexo='NB',
+            telefono='600000001',
+            dni='12345674X',
+            almacen=self.almacen
 
         )
 
@@ -119,8 +131,12 @@ class UsuarioViewsTest(TestCase):
         self.catalogo_url = reverse('catalogo')
         
         self.amonestar_usuario_url = lambda usuario_id: reverse('amonestar_usuario', kwargs={'usuario_id': usuario_id})
-
         self.gestion_reservas_gestor_url = reverse('gestion_reserva_gestor')
+
+        self.gestion_usuarios_administrador_url = reverse('gestion_usuarios_administrador')
+        self.registro_gestor_url = reverse('registro_gestor')
+        self.suspender_usuario_url = lambda usuario_id: reverse('suspender_usuario', kwargs={'usuario_id': usuario_id})
+        self.consultar_amonestaciones_administrador_url = lambda usuario_id: reverse('consultar_amonestaciones_administrador', kwargs={'usuario_id': usuario_id})
 
 
     def test_registro_valido(self):
@@ -414,7 +430,7 @@ class UsuarioViewsTest(TestCase):
             'motivo': 'Motivo de prueba',
             'severidad': 'Leve'
         }
-        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=self.user2.id), data)
         
         self.assertRedirects(response, self.gestion_reservas_gestor_url)
         
@@ -430,11 +446,11 @@ class UsuarioViewsTest(TestCase):
             'severidad': 'Leve'
         }
 
-        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=self.user2.id), data)
         self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
 
         self.client.login(username='usuario_test2', password='test12345')
-        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=self.user2.id), data)
         self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
 
 
@@ -444,7 +460,7 @@ class UsuarioViewsTest(TestCase):
             'motivo': '',
             'severidad': ''
         }
-        response = self.client.post(self.amonestar_usuario_url(usuario_id=20), data)
+        response = self.client.post(self.amonestar_usuario_url(usuario_id=self.user2.id), data)
 
         mensajes = list(get_messages(response.wsgi_request))
         self.assertTrue(any("Por favor, completa todos los campos." in str(m) for m in mensajes))
@@ -454,7 +470,7 @@ class UsuarioViewsTest(TestCase):
             'motivo': '',
             'severidad': ''
         }
-        response = self.client.get(self.amonestar_usuario_url(usuario_id=20), data)
+        response = self.client.get(self.amonestar_usuario_url(usuario_id=self.user2.id), data)
 
         mensajes = list(get_messages(response.wsgi_request))
         self.assertTrue(any("Método de solicitud no válido." in str(m) for m in mensajes))
@@ -470,6 +486,112 @@ class UsuarioViewsTest(TestCase):
         self.assertTrue(any("Usuario no encontrado." in str(m) for m in mensajes))
         
 
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Tests relacionados con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+    def test_registro_gestor_valido(self):
+        data = {'nombre_usuario': 'gestorUser',
+            'contraseña': 'gestorUser',
+            'confirmar_contraseña': 'gestorUser',
+            'correo_electronico': 'testgestorUser@example.es',
+            'nombre': 'gestorUser',
+            'apellido': 'gestorUser',
+            'fecha_nacimiento': '1990-01-01',
+            'sexo': 'NB',
+            'telefono': '600000095',
+            'dni': '12345608Z',
+            'almacen_seleccionado': self.almacen.id
+
+        }
+        self.client.login(username='admin_test', password='test12345')
+
+        response = self.client.post(self.registro_gestor_url, data)
+        
+        self.assertRedirects(response, self.registro_gestor_url)
+        
+        self.assertTrue(Gestor.objects.filter(username='gestorUser').exists())
+        
+        gestor = Gestor.objects.get(username='gestorUser')
+        self.assertEqual(gestor.first_name, 'gestorUser')
+        self.assertEqual(gestor.last_name, 'gestorUser')
+        self.assertEqual(gestor.email, 'testgestorUser@example.es')
+
+    def test_registro_gestor_invalido(self):
+        data = {'nombre_usuario': 'gestorUser2',
+            'contraseña': 'gestorUser',
+            'confirmar_contraseña': 'gestorUser',
+            'correo_electronico': 'testgestorUser2@example.es',
+            'nombre': 'gestorUser2',
+            'apellido': 'gestorUser2',
+            'fecha_nacimiento': '1990-01-01',
+            'sexo': 'NB',
+            'telefono': '600000795',
+            'dni': '12345508Z',
+
+        }
+        self.client.login(username='admin_test', password='test12345')
+
+        response = self.client.post(self.registro_gestor_url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Por favor, selecciona un almacén.')
+
+    def test_gestion_usuarios_administrador_valido(self):
+        self.client.login(username='admin_test', password='test12345')
+        response = self.client.get(self.gestion_usuarios_administrador_url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'gestion_usuarios_administrador.html')
+        usuarios = response.context['usuarios']
+        self.assertNotIn(self.user, usuarios)
+        self.assertNotIn(self.user2, usuarios)
+        self.assertNotIn(self.admin, usuarios)
+        self.assertNotIn(self.gestor, usuarios) #No hay usuarios en la lista porque ninguno tiene las amonestaciones necesarias para aparecer
+
+    def test_gestion_usuarios_administrador_invalido(self):
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.gestion_usuarios_administrador_url)
+        self.assertEqual(response.status_code, 302)
+    
+    def test_suspender_usuario_valido(self):
+        self.client.login(username='admin_test', password='test12345')
+        
+        response = self.client.get(self.suspender_usuario_url(self.user2.id))
+        
+        self.assertRedirects(response, self.gestion_usuarios_administrador_url)
+        
+        user = Usuario.objects.get(id=self.user2.id)
+        self.assertFalse(user.is_active)
+    
+    def test_suspender_usuario_invalido(self):
+        self.client.login(username='admin_test', password='test12345')
+        
+        response = self.client.get(self.suspender_usuario_url(150000))
+        
+        self.assertRedirects(response, self.gestion_usuarios_administrador_url)
+
+    def test_consultar_amonestaciones_administrador_valido(self):
+        self.client.login(username='admin_test', password='test12345')
+        
+        response = self.client.get(self.consultar_amonestaciones_administrador_url(self.user2.id))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'consultar_amonestaciones.html')
+        amonestaciones = response.context['amonestaciones']
+        self.assertEqual(len(amonestaciones), 0)
+
+    def test_consultar_amonestaciones_administrador_invalido(self):
+        self.client.login(username='admin_test', password='test12345')
+        
+        response = self.client.get(self.consultar_amonestaciones_administrador_url(150000))
+        
+        self.assertRedirects(response, self.gestion_usuarios_administrador_url)
+
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.consultar_amonestaciones_administrador_url(self.user2.id))
+        self.assertEqual(response.status_code, 302)
 
 
 
