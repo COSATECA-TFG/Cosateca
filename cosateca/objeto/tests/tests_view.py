@@ -1,8 +1,8 @@
 from django.test import TestCase, Client
-from objeto.models import Objeto, ObjetoValoracion
+from objeto.models import Objeto, ObjetoValoracion, ObjetoValoracionDenuncia
 from django.urls import reverse
 from usuario.models import Usuario, Preferencia, Gestor
-from almacen.models import Almacen, Localizacion
+from almacen.models import Almacen, Localizacion, AlmacenValoracionDenuncia, AlmacenValoracion
 from datetime import date
 from django.contrib.messages import get_messages
 
@@ -35,6 +35,19 @@ class ObjetoViewTest(TestCase):
         sexo='NB',
         telefono='800000000',
         dni='12345679X'
+        )
+        
+        self.admin = Usuario.objects.create_user(
+        username='admin',
+        password='test12345',
+        is_staff=True,
+        email='admin@example.com',
+        first_name='admin',
+        last_name='admin',
+        fecha_nacimiento=date(1990, 1, 1),
+        sexo='NB',
+        telefono='800000010',
+        dni='12345697W'
         )
 
         self.cuestionario_preferencias = Preferencia.objects.create(
@@ -119,7 +132,31 @@ class ObjetoViewTest(TestCase):
             usuario=self.user2, 
             estrellas=5, 
             comentario="Comentario de prueba"
-            )
+        )
+        
+        self.denuncia1 = ObjetoValoracionDenuncia.objects.create(
+            categoria="Acoso",
+            contexto="Comentario de prueba",
+            valoracion=self.valoracion,
+            usuario=self.user
+        )
+        
+        
+        self.valoracion_almacen = AlmacenValoracion.objects.create(
+            almacen=self.almacen,
+            usuario=self.user2,
+            estrellas=5, 
+            comentario="Comentario de prueba"
+            
+        )
+        
+        
+        self.denuncia_almacen = AlmacenValoracionDenuncia.objects.create(
+            categoria="Acoso",
+            contexto="Comentario de prueba",
+            valoracion=self.valoracion_almacen,
+            usuario=self.user
+        )
 
         self.catalogo_url = reverse('catalogo')
         self.detalle_objeto_url = reverse('detalle_objeto', args=[self.objeto.id])
@@ -136,6 +173,12 @@ class ObjetoViewTest(TestCase):
         self.test_editar_articulo_catalogo_gestor_url = lambda objeto_id: reverse('editar_articulo_catalogo_gestor', kwargs={'objeto_id': objeto_id})
         self.crear_articulo_catalogo_gestor_url = reverse('crear_articulo_catalogo_gestor')
 
+        self.test_gestion_denuncias_administrador_url = reverse('gestion_denuncias_administrador')
+        self.test_eliminar_denuncias_valoracion_objeto_administrador_url = lambda valoracion_id: reverse('eliminar_denuncias_valoracion_objeto_administrador', kwargs={'valoracion_id': valoracion_id})
+        self.test_eliminar_valoracion_objeto_administrador_url = lambda valoracion_id: reverse('eliminar_valoracion_objeto_administrador', kwargs={'valoracion_id': valoracion_id})
+        self.test_eliminar_denuncias_valoracion_almacen_administrador_url = lambda valoracion_id: reverse('eliminar_denuncias_valoracion_almacen_administrador', kwargs={'valoracion_id': valoracion_id})
+        self.test_eliminar_valoracion_almacen_administrador_url = lambda valoracion_id: reverse('eliminar_valoracion_almacen_administrador', kwargs={'valoracion_id': valoracion_id})
+    
     def test_catalogo_valido(self):
         self.client.login(username='usuario_test2', password='test12345')
         response = self.client.get(self.catalogo_url)
@@ -497,3 +540,178 @@ class ObjetoViewTest(TestCase):
         
         mensajes = list(get_messages(response.wsgi_request))
         self.assertTrue(any('Todos los campos son obligatorios.' in str(m) for m in mensajes))
+        
+        
+        
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Tests relacionados con el administrador
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+
+    def test_gestion_denuncias_administrador_valido(self):
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        
+        self.assertEqual(len(response.context['valoraciones_objeto_denunciadas']),0, "No se deben encontrar denuncias de valoraciones de objetos")
+        self.assertEqual(len(response.context['valoraciones_almacen_denunciadas']),0, "No se deben encontrar denuncias de valoraciones de almacenes")
+        self.assertTemplateUsed(response, 'gestion_denuncias_administrador.html', "La plantilla usada no es la correcta")
+        
+    def test_gestion_denuncias_administrador_invalido(self):
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+ 
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 200, "El código de estado de la respuesta no es 200, se esperaba una respuesta exitosa")        
+
+    def test_eliminar_denuncias_valoracion_objeto_administrador_valido(self):
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        
+        self.assertEqual(ObjetoValoracionDenuncia.objects.count(), 0, "La denuncia no se ha eliminado correctamente")
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Denuncias eliminadas correctamente." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+    
+    def test_eliminar_denuncias_valoracion_objeto_administrador_invalido(self):
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.get(self.test_gestion_denuncias_administrador_url)
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+ 
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_objeto_administrador_url(valoracion_id=920000000))
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("La valoración no existe" in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+
+        response = self.client.get(self.test_eliminar_denuncias_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método no permitido." in str(m) for m in mensajes))
+    
+    def test_eliminar_valoracion_objeto_administrador_valido(self):
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        
+        self.assertEqual(ObjetoValoracion.objects.count(), 0, "La denuncia no se ha eliminado correctamente")
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Valoración eliminada correctamente." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+    
+    def test_eliminar_valoracion_objeto_administrador_invalido(self):
+        response = self.client.post(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+ 
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=9100000000))
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("La valoración no existe" in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+
+        response = self.client.get(self.test_eliminar_valoracion_objeto_administrador_url(valoracion_id=self.valoracion.id))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método no permitido." in str(m) for m in mensajes))
+    
+    
+    def test_eliminar_denuncias_valoracion_almacen_administrador_valido(self):
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        
+        self.assertEqual(AlmacenValoracionDenuncia.objects.count(), 0, "La denuncia no se ha eliminado correctamente")
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Denuncias eliminadas correctamente." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+    
+    def test_eliminar_denuncias_valoracion_almacen_administrador_invalido(self):
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+ 
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=80000000000))
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("La valoración no existe" in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+
+        response = self.client.get(self.test_eliminar_denuncias_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método no permitido." in str(m) for m in mensajes))
+    
+    
+    def test_eliminar_valoracion_almacen_administrador_valido(self):
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        
+        self.assertEqual(AlmacenValoracion.objects.count(), 0, "La denuncia no se ha eliminado correctamente")
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Valoración eliminada correctamente." in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+    
+    def test_eliminar_valoracion_almacen_administrador_invalido(self):
+        response = self.client.post(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='usuario_test2', password='test12345')
+        response = self.client.post(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+
+        self.client.login(username='gestor_test', password='test12345')
+        response = self.client.post(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        self.assertEqual(response.status_code, 302, "El código de estado de la respuesta no es 302, se esperaba redirección")
+ 
+        log = self.client.login(username='admin', password='test12345')
+        self.assertTrue(log, "El usuario no pudo iniciar sesión")
+        response = self.client.post(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=80000000000))
+        
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("La valoración no existe" in str(m) for m in mensajes))
+        self.assertRedirects(response, self.test_gestion_denuncias_administrador_url)
+
+        response = self.client.get(self.test_eliminar_valoracion_almacen_administrador_url(valoracion_id=self.valoracion_almacen.id))
+        mensajes = list(get_messages(response.wsgi_request))
+        self.assertTrue(any("Método no permitido." in str(m) for m in mensajes))
+    
