@@ -553,3 +553,53 @@ section > form > div:first-child{
 }
 
 
+@media (max-width: 576px) {
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+      width: 40% !important;
+      font-size: 10px !important;
+      background-size: 12% !important;
+      background-position: 5px center !important;
+    }
+
+
+
+}
+
+@media (max-width: 768px) {
+  .formulario_inicio_sesion{ 
+    max-width: 100%;
+}
+
+
+  .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+    font-size: 10px !important;
+    width: 40% !important;
+
+  } 
+
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    width: 29%;
+    background-size: 10%;
+    background-position: 10px center;
+  } 
+
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+  /* estilos para escritorio grande */
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+      width: 40%;
+      font-size: 16px ;
+    }
+}
+
+
