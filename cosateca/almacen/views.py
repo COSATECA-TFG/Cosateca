@@ -155,20 +155,20 @@ def crear_almacen(request):
         numero = request.POST.get('numero_calle')
         
         if not nombre or not descripcion or not latitud or not longitud or not pais or not ciudad or not codigo_postal or not calle or not numero:
-            messages.error("Todos los campos son obligatorios.")
+            messages.error(request,"Todos los campos son obligatorios.")
             return redirect('almacenes')
         
         try:
             latitud = float(latitud.replace(',', '.'))
             longitud = float(longitud.replace(',', '.'))
         except ValueError:
-            messages.error("Latitud y longitud deben ser números válidos.")
+            messages.error(request,"Latitud y longitud deben ser números válidos.")
             return redirect('almacenes')
         
         try:
             codigo_postal = int(codigo_postal)
         except ValueError:
-            messages.error("El código postal debe ser un número entero.")
+            messages.error(request,"El código postal debe ser un número entero.")
             return redirect('almacenes')
         
 
@@ -221,20 +221,20 @@ def editar_almacen(request, almacen_id):
         numero = request.POST.get('numero_calle')
 
         if not nombre or not descripcion or not latitud or not longitud or not pais or not ciudad or not codigo_postal or not calle or not numero:
-            messages.error("Todos los campos son obligatorios.")
+            messages.error(request,"Todos los campos son obligatorios.")
             return redirect('almacenes_administrador')
 
         try:
             latitud = float(latitud.replace(',', '.'))
             longitud = float(longitud.replace(',', '.'))
         except ValueError:
-            messages.error("Latitud y longitud deben ser números válidos.")
+            messages.error(request,"Latitud y longitud deben ser números válidos.")
             return redirect('almacenes_administrador')
 
         try:
             codigo_postal = int(codigo_postal)
         except ValueError:
-            messages.error("El código postal debe ser un número entero.")
+            messages.error(request,"El código postal debe ser un número entero.")
             return redirect('almacenes_administrador')
 
         almacen_editar.nombre = nombre
@@ -265,8 +265,11 @@ def editar_almacen(request, almacen_id):
     
 @admin_required
 def eliminar_almacen(request, almacen_id):
-    almacen_a_ekiminar = Almacen.objects.get(id=almacen_id)
-    almacen_a_ekiminar.delete()
+    almacen_a_eliminar = Almacen.objects.filter(id=almacen_id).first()
+    if not almacen_a_eliminar:
+        messages.error(request, "Almacén no encontrado.")
+        return redirect('almacenes_administrador')
+    almacen_a_eliminar.delete()
     messages.success(request, "Almacén eliminado correctamente.")
     return redirect('almacenes_administrador')
 
