@@ -554,12 +554,32 @@ section > form > div:first-child{
 
 
 @media (max-width: 576px) {
-    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
       width: 40% !important;
       font-size: 10px !important;
       background-size: 12% !important;
       background-position: 5px center !important;
     }
+
+
+    .input_formulario::placeholder{
+    font-size: 10px !important;
+  }
+  #select_sexo:invalid {
+    font-size: 14px !important;
+  }
+
+  .formulario_registro label{
+    font-size: 12px !important;
+  }
+
+  .input_formulario{
+    font-size: 12px !important;
+  }
+
+  .imagotipo_registro{
+    width: 40% !important;
+  }
 
 
 
@@ -571,32 +591,44 @@ section > form > div:first-child{
 }
 
 
-  .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+  .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
     font-size: 10px !important;
     width: 40% !important;
 
   } 
 
 
+
 }
 
 /* Escritorio pequeño (hasta 992px) */
 @media (max-width: 992px) {
-    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
     font-size: 10px !important;
     font-weight: 500 !important;
     width: 29%;
     background-size: 10%;
     background-position: 10px center;
-  } 
+  }
+  
+  .input_formulario::placeholder{
+    font-size: 13px ;
+  }
+  #select_sexo:invalid {
+    font-size: 14px;
+  }
+
+    .imagotipo_registro{
+    width: 30%;
+  }
+
 
 
 }
 
 /* Escritorio grande (hasta 1200px) */
 @media (max-width: 1200px) {
-  /* estilos para escritorio grande */
-    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child{
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
       width: 40%;
       font-size: 16px ;
     }

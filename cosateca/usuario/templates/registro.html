@@ -49,11 +49,20 @@
 
 
             <div class="row d-flex justify-content-center">
-                <div class="col-4 d-flex flex-column align-items-center ">
+                <div class="col-4 d-flex flex-column align-items-start ">
+                    {{ form.nombre.label_tag }}
                     {{ form.nombre}}
+                    
+                    {{ form.apellido.label_tag }}
                     {{ form.apellido}}
+                    
+                    {{ form.fecha_nacimiento.label_tag }}
                     {{ form.fecha_nacimiento }}
+                    
+                    {{ form.sexo.label_tag }}
                     {{ form.sexo }}
+
+                    {{ form.correo_electronico.label_tag }}
                     {{ form.correo_electronico }}
 
                 </div>
@@ -62,13 +71,19 @@
                     <div class="separacion-vertical"></div>
                 </div>
 
-                <div class="col-4 d-flex flex-column align-items-center">
+                <div class="col-4 d-flex flex-column align-items-start">
+                    {{ form.telefono.label_tag }}
                     {{ form.telefono }}
+                    {{ form.dni.label_tag }}
                     {{ form.dni }}
+                    {{ form.nombre_usuario.label_tag }}
                     {{ form.nombre_usuario }}
+                    {{ form.contraseña.label_tag }}
                     {{ form.contraseña }}
+                    {{ form.confirmar_contraseña.label_tag }}
                     {{ form.confirmar_contraseña }}
-                    {{ form.terminos_condiciones }}
+
+                    
                 </div>
 
 
