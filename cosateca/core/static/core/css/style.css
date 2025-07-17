@@ -60,9 +60,7 @@ body {
 .boton_inicio{
     background-color: #6CBC9B !important;
     color: #FFFAED !important;
-    font-size: 1.375rem !important;
-    width: 20% !important;
-    height: 3.125rem !important;
+    width: 25% !important;
     border-radius: 0.625rem !important;
     margin-top: 5%;
 }
@@ -94,4 +92,46 @@ body {
 
 a:focus {
     outline: none !important;
+}
+
+@media (max-width: 576px) {
+    .boton_header_inicio {
+        font-size: 1rem !important;
+    }
+
+
+}
+
+@media (max-width: 768px) {
+    .contenedor_texto_inicio {
+        padding-left: 7% !important;
+      }
+    .texto_inicio {
+        font-size: 50px !important;
+        margin-top: 0%;
+      }
+
+    .contenedor_texto_inicio > p {
+        font-size: 1rem !important;
+      }
+    .img_wrapper {
+        width: 100%;
+    }
+    
+    .boton_inicio{
+    width: 33% !important;
+}
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+      .img_wrapper {
+        width: 90%;
+    }
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+  /* estilos para escritorio grande */
 }
