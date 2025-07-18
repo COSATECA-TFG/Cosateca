@@ -78,7 +78,7 @@ body {
 }
 
 .user_icon {
-  width: 8% !important;
+  width: 8%;
   height: 10% !important;
 }
 
@@ -98,6 +98,21 @@ a:focus {
     .boton_header_inicio {
         font-size: 1rem !important;
     }
+
+
+    .boton_cabecera_movil{
+     color: #244E47 !important;   
+    }
+
+    .offcanvas{
+        --bs-offcanvas-width: 250px !important;
+    }
+
+    .user_icon{
+        width: 30px !important ;
+    }
+
+
 
 
 }
@@ -122,6 +137,9 @@ a:focus {
     width: 33% !important;
 }
 
+
+
+
 }
 
 /* Escritorio pequeño (hasta 992px) */
@@ -129,6 +147,10 @@ a:focus {
       .img_wrapper {
         width: 90%;
     }
+        .user_icon{
+        width: 40px ;
+    }
+
 }
 
 /* Escritorio grande (hasta 1200px) */
