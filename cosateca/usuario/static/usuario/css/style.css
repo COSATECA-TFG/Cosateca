@@ -581,6 +581,18 @@ section > form > div:first-child{
     width: 40% !important;
   }
 
+  .titulo_cuestionario{
+    font-size: 23px !important;
+  }
+
+  .preguntas_cuestionario strong{
+    font-size: 15px !important;
+  }
+
+  .formulario_cuestionario{
+    max-width: 85% !important;
+  }
+
 
 
 }
