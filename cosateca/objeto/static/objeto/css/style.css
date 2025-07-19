@@ -201,3 +201,43 @@
   border-color: #244E47 !important;
 }
 
+
+.formulario_catalogo{
+  width: 100%;
+}
+
+.boton_filtrado_ordenacion{
+  background-color: none !important;
+  border-color: none !important;
+  color: #244E47 !important;
+}
+
+@media (max-width: 576px) {
+
+
+
+}
+
+@media (max-width: 768px) {
+
+
+
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+
+
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+
+  .formulario_catalogo{
+    width: 75% !important;
+  }
+}
+
+

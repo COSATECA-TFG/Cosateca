@@ -593,6 +593,10 @@ section > form > div:first-child{
     max-width: 85% !important;
   }
 
+  .titulos_menu {
+    font-size: 1.65rem !important;
+  }
+
 
 
 }
