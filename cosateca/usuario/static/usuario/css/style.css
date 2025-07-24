@@ -613,6 +613,10 @@ section > form > div:first-child{
 
   } 
 
+  .imagen_detalle_objeto{
+    max-width: 60% !important;
+  }
+
 
 
 }
