@@ -272,14 +272,6 @@ section > form > div:first-child{
 
 /* Detalle de objeto */
 
-.imagen_detalle_objeto {
-    margin-top: 20% !important;
-    aspect-ratio: 1/1;
-    border-radius: 0.725rem !important;
-    border: 0.3rem solid rgb(216, 216, 216) ; 
-    overflow: hidden;
-    
-}
 
 
 
@@ -332,15 +324,6 @@ section > form > div:first-child{
 
 .tipo {
   background-color: #244E47 !important;
-}
-
-
-
-.reserva{
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
 }
 
 .reserva-fechas{
@@ -599,6 +582,7 @@ section > form > div:first-child{
 
 
 
+
 }
 
 @media (max-width: 768px) {
@@ -613,9 +597,12 @@ section > form > div:first-child{
 
   } 
 
-  .imagen_detalle_objeto{
+  .imagen_objeto_deseado{
     max-width: 60% !important;
   }
+
+
+
 
 
 

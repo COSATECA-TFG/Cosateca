@@ -63,6 +63,21 @@
 /* Detalle de objeto */
 
 .imagen_detalle_objeto {
+    aspect-ratio: 1/1;
+    border-radius: 0.725rem !important;
+    border: 0.3rem solid rgb(216, 216, 216) ; 
+    overflow: hidden;
+    max-width: 100%;
+    
+}
+
+.imagen_detalle_objeto img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.imagen_objeto_deseado {
     margin-top: 20% !important;
     aspect-ratio: 1/1;
     border-radius: 0.725rem !important;
@@ -71,7 +86,7 @@
     
 }
 
-.imagen_detalle_objeto img {
+.imagen_objeto_deseado img {
   width: 100%;
   height: 100%;
   object-fit: fill;
@@ -127,6 +142,7 @@
   color: white !important;
   padding: 2% !important;
   border-radius: 0.625rem !important;
+  font-size: 20px;
 }
 
 .tipo {
@@ -137,17 +153,13 @@
   background-color: #e4bf44 ;
 }
 
-.reserva{
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-}
+
 
 .reserva-fechas{
   background-color: white !important;
   border-radius: 0.625rem !important;
   border: 3px solid #244E47 !important;
+  border-radius: 12px;
 }
 
 .input_fecha{
@@ -220,6 +232,12 @@
 
 @media (max-width: 768px) {
 
+  .imagen_detalle_objeto {
+    max-width: 60% !important;
+  }
+
+  
+
 
 
 
@@ -228,6 +246,9 @@
 /* Escritorio pequeño (hasta 992px) */
 @media (max-width: 992px) {
 
+    .imagen_detalle_objeto {
+    max-width: 40%;
+  }
 
 
 }
