@@ -112,6 +112,10 @@ a:focus {
         width: 30px !important ;
     }
 
+    .user_icon_gestor {
+        width: 30px !important;
+    }
+
 
 
 
@@ -150,7 +154,9 @@ a:focus {
         .user_icon{
         width: 40px ;
     }
-
+    .user_icon_gestor {
+        width: 40px !important;
+    }
 }
 
 /* Escritorio grande (hasta 1200px) */
