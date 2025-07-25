@@ -224,6 +224,11 @@
   color: #244E47 !important;
 }
 
+
+.boton_crear_obj{
+  font-size: 3.125rem !important;
+}
+
 @media (max-width: 576px) {
 
 
@@ -240,6 +245,13 @@
 
 
 
+
+}
+
+@media(max-width: 830px){
+  .boton_crear_obj{
+    font-size: 2rem !important;
+  }
 
 }
 
