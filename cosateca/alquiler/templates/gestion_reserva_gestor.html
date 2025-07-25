@@ -20,21 +20,21 @@
 
   {% for reserva in reservas %}
 
-  <div class="card shadow-sm mx-auto" style="width: 60%;">
+  <div class="card shadow-sm mx-auto mb-3" style="width: 60%;">
     <div class="card-body">
-      <div class="d-flex">
-        <div class="me-4" style="width: 250px">
+      <div class="d-flex flex-column flex-md-row align-items-center">
+        <div class="me-md-4 me-0">
 
           <div class="contenedor_imagen">
-          <img src="{{ reserva.objeto.imagen.url }}" alt="{{ reserva.objeto.nombre }}">
+            <img src="{{ reserva.objeto.imagen.url }}" alt="{{ reserva.objeto.nombre }}">
           </div>
-          <p class="card-title fs-5 mt-4">{{ reserva.objeto.nombre }}</p>
+          <p class="card-title fs-5 fs mt-4">{{ reserva.objeto.nombre }}</p>
 
         </div>
 
         <div class="flex-grow-1">
           <div class="d-flex align-items-center mb-4">
-            <h5 class="mb-0 card-title fs-2 me-2">{{ reserva.usuario.get_full_name }}</h5>
+            <h5 class="mb-0 card-title fs-md-2 fs-4 me-2">{{ reserva.usuario.get_full_name }}</h5>
             <button type="button" class="btn btn-link p-0 text-warning ms-5" data-bs-toggle="modal"
               data-bs-target="#amonestarModal-{{ reserva.usuario.id }}" title="Amonestar usuario">
               <i class="bi bi-exclamation-triangle-fill fs-4"></i>

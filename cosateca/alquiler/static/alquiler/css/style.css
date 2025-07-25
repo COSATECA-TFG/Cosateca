@@ -208,6 +208,8 @@
 
   .contenedor_imagen{
     height: 150px !important;
+    width: 100%;
+    max-width: 250px;
   }
 
   .contenedor_imagen img {
