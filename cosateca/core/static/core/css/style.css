@@ -78,16 +78,15 @@ body {
 }
 
 .user_icon {
-  width: 8%;
-  height: 10% !important;
+  width: 50px;
 }
 
 .user_icon_gestor {
-  width: 10% !important;
+  width: 50px;
 }
 
 .user_icon_admin {
-  width: 8% !important;
+  width: 50px ;
 }
 
 a:focus {
@@ -108,11 +107,8 @@ a:focus {
         --bs-offcanvas-width: 250px !important;
     }
 
-    .user_icon{
-        width: 30px !important ;
-    }
 
-    .user_icon_gestor {
+    .user_icon_admin, .user_icon_gestor, .user_icon {
         width: 30px !important;
     }
 
@@ -141,6 +137,10 @@ a:focus {
     width: 33% !important;
 }
 
+    .boton_header_inicio {
+        font-size: 1rem !important;
+    }
+
 
 
 
@@ -151,15 +151,18 @@ a:focus {
       .img_wrapper {
         width: 90%;
     }
-        .user_icon{
-        width: 40px ;
+
+    .user_icon_gestor, .user_icon_admin, .user_icon {
+        width: 40px;
     }
-    .user_icon_gestor {
-        width: 40px !important;
-    }
+
 }
 
 /* Escritorio grande (hasta 1200px) */
 @media (max-width: 1200px) {
   /* estilos para escritorio grande */
+
+
+
+
 }

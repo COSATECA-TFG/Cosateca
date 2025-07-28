@@ -629,6 +629,10 @@ section > form > div:first-child{
     width: 30%;
   }
 
+  .formulario_registro{
+    max-width: 100% !important;
+  }
+
 
 
 }
