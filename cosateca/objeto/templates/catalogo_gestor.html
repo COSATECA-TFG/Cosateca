@@ -105,11 +105,9 @@
                             </li>
                         </ul>
                     </div>
+                        <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
                 </div>
-
-
             </div>
-
         </div>
 
         <div class="col-xl-9 col-12">
@@ -181,6 +179,8 @@
 
                         </ul>
                     </div>
+                    <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
+
             </div>
 
 
@@ -213,6 +213,7 @@
                             <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Menor' %}">Menor valoración</a></li>
                         </ul>
                     </div>
+                        <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
 
                 </div>
             </div>
@@ -517,6 +518,17 @@
     }
 
     document.addEventListener('DOMContentLoaded', modificarTextoFiltros);
+
+    function eliminarFiltros() {
+        const parametrosURL = new URLSearchParams(window.location.search);
+        parametrosURL.delete('categoria');
+        parametrosURL.delete('condicion');
+        parametrosURL.delete('almacen');
+        parametrosURL.delete('orden_condicion');
+        parametrosURL.delete('orden_valoracion');
+
+        window.location.search = parametrosURL.toString();
+    }
 
 </script>
 

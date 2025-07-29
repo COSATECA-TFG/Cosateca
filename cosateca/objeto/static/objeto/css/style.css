@@ -29,9 +29,9 @@
 }
 
 .botonera_filtros a{
-    background-color: transparent !important;
+    background-color: transparent ;
     border-radius: 1rem !important;
-    border-color: rgb(216, 216, 216) !important;
+    border-color: rgb(216, 216, 216) ;
     border-width: 3px !important;
     width: 60%;
     margin-top: 3%;
@@ -41,6 +41,11 @@
     color: rgb(164, 163, 163);
     font-size: 1.2rem;
 }
+
+.botonera_filtros a:hover{
+    border-color: rgb(216, 216, 216) ;
+    background-color: transparent !important;
+  }
 
 .input-buscar {
     background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
@@ -227,6 +232,11 @@
 
 .boton_crear_obj{
   font-size: 3.125rem !important;
+}
+
+.btn_eliminar_filtros{
+  border-color: rgb(175, 89, 89) !important;
+  color: rgb(175, 89, 89) !important;
 }
 
 @media (max-width: 576px) {
