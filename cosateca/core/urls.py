@@ -6,4 +6,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('leer_mas', views.leer_mas, name='home'),
+    
 ]
