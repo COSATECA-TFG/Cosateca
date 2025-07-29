@@ -125,6 +125,21 @@ a:focus {
 }
 
 
+.carousel-inner {
+    width: 100%;
+    height: 375px; /* Ajusta la altura según lo que necesites */
+}
+
+.carousel-inner .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* O usa 'contain' si prefieres que no recorte */
+}
+
+.imagen_carrusel{
+    border-radius: 50px;
+}
+
 
 @media (max-width: 576px) {
     .boton_header_inicio {
