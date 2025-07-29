@@ -2,7 +2,7 @@
 {% block title %}Cuestionario de preferencias{% endblock %}
 {% block content %}
 
-<div class="container formulario_registro">
+<div class="container formulario_registro formulario_cuestionario">
   <h2 class="titulo_cuestionario">Cuestionario de preferencias</h2>
 
   <form method="post">
@@ -10,7 +10,7 @@
     <div class ="preguntas_cuestionario">
 
         <div class="mb-4">
-        <label class="form-label" for="select_tipo">
+        <label class="form-label subtitulo_cuestionario" for="select_tipo">
             <strong>¿Qué tipo de productos estás buscando?</strong>
         </label>
         {% for radio in form.tarea_tipo %}
@@ -21,8 +21,8 @@
         {% endfor %}
         </div>
 
-        <div class="mb-4">
-        <label class="form-label" for="select_frecuencia">
+        <div class="mb-4 subtitulo_cuestionario">
+        <label class="form-label subtitulo_cuestionario" for="select_frecuencia">
             <strong>¿Con qué frecuencia planeas usar los productos?</strong>
         </label>
         {% for radio in form.frecuencia_uso %}
@@ -33,8 +33,8 @@
         {% endfor %}
         </div>
 
-        <div class="mb-4">
-        <label class="form-label" for="select_experiencia">
+        <div class="mb-4 subtitulo_cuestionario">
+        <label class="form-label subtitulo_cuestionario" for="select_experiencia">
             <strong>¿Cuál es tu nivel de experiencia usando herramientas?</strong>
         </label>
         {% for radio in form.experiencia %}
@@ -45,8 +45,8 @@
         {% endfor %}
         </div>
 
-        <div class="mb-4">
-        <label class="form-label" for="select_franja">
+        <div class="mb-4 subtitulo_cuestionario">
+        <label class="form-label subtitulo_cuestionario" for="select_franja">
             <strong>¿En qué franja prefieres realizar las reservas?</strong>
         </label>
         {% for radio in form.franja_horaria %}

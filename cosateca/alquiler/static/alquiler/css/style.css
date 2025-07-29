@@ -4,9 +4,6 @@
 }
 
 .filtros-reserva {
-  position: absolute;
-  top: 1rem;
-  left: 2rem;
   width: 300px;
 }
 
@@ -20,6 +17,7 @@
 #sidebar-filtros {
   border-radius: 0.625rem !important;
   border: 2px solid rgb(216, 216, 216); 
+  background-color: white !important;
 }
 
 #sidebar-filtros .list-group-item {
@@ -27,7 +25,7 @@
   padding: 0.75rem 1rem;
   border: none;
   color: #2f4f4f;   
-  background-color: white;
+  
   transition: background-color 0.2s;
 }
 
@@ -41,12 +39,18 @@
   font-weight: 600;
 }
 
+.list-group-item-action{
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
 .reserva-card {
   border-radius: 0.625rem !important;
   border: 2px solid rgb(216, 216, 216); 
   min-height: 160px;           
   padding-top: 1.5rem;        
-  padding-bottom: 1.5rem;      
+  padding-bottom: 1.5rem;    
+  width: 100%;  
 }
 
 .reserva-card .objeto-imagen {
@@ -204,6 +208,8 @@
 
   .contenedor_imagen{
     height: 150px !important;
+    width: 100%;
+    max-width: 250px;
   }
 
   .contenedor_imagen img {
@@ -211,5 +217,53 @@
     height: 100% !important;
     object-fit: fill !important;
   }
+
+
+
+
+@media (max-width: 576px) {
+    .badge-estado-programada,
+  .badge-estado-retrasada,
+  .badge-estado-curso,
+  .badge-estado-finalizada,
+  .badge-estado-cancelada {
+  font-size: 0.5rem !important;
+  
+}
+
+
+}
+
+@media (max-width: 768px) {
+    .badge-estado-programada,
+  .badge-estado-retrasada,
+  .badge-estado-curso,
+  .badge-estado-finalizada,
+  .badge-estado-cancelada {
+  font-size: 0.75rem !important;
+  
+}
+
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+  .badge-estado-programada,
+  .badge-estado-retrasada,
+  .badge-estado-curso,
+  .badge-estado-finalizada,
+  .badge-estado-cancelada {
+  font-size: 1rem !important;
+  
+}
+  
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+
+}
 
 

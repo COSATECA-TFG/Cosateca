@@ -18,8 +18,10 @@
 
 
   <div class="pagina-reservas mt-5">
+    <div class="row justify-content-center">
 
-    <div class="filtros-reserva ms-5">
+    
+    <div class="filtros-reserva ms-5 col-2 d-none d-lg-block">
       <div class="list-group" id="sidebar-filtros">
         <a href="{% url 'mis_reservas' %}?filtro=todas"
            class="list-group-item list-group-item-action
@@ -53,20 +55,72 @@
       </div>
     </div>
 
-    <div class="contenido-reserva">
+    <div class="d-flex justify-content-start ms-5 d-block d-lg-none">
+      <a href="#offcanvasFiltro" class="btn boton_filtrado_ordenacion d-block d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltro">
+        <i class="bi bi-funnel"></i>
+      </a>
+    </div>
+
+
+    <div id="offcanvasFiltro" class="offcanvas offcanvas-start">
+            <div class="offcanvas-header">
+                <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <h5 class="offcanvas-title text-start w-100" >         
+                    Filtros de reserva
+                </h5>
+            </div>
+
+            <div class="offcanvas-body">
+              <a href="{% url 'mis_reservas' %}?filtro=todas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'todas' %}activeFiltro{% endif %}">
+          Todas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=programadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'programadas' %}activeFiltro{% endif %}">
+          Programadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=en_curso"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'en_curso' %}activeFiltro{% endif %}">
+          En curso
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=retrasadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == '' or request.GET.filtro == 'retrasadas' %}activeFiltro{% endif %}">
+          Retrasadas
+        </a>
+        <a href="{% url 'mis_reservas' %}?filtro=canceladas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'canceladas' %}activeFiltro{% endif %}">
+          Canceladas
+        <a href="{% url 'mis_reservas' %}?filtro=finalizadas"
+           class="list-group-item list-group-item-action
+                  {% if request.GET.filtro == 'finalizadas' %}activeFiltro{% endif %}">
+          Finalizadas
+        </a>
+ 
+
+
+        </div>
+      </div>
+
+
+    <div class="contenido-reserva col-12 col-lg-9">
       {% if reservas %}
         {% for reserva in reservas %}
-          <div class="card mb-3 reserva-card">
+          <div class="card mb-3 reserva-card ms-3 me-3">
             <div class="card-body">
-              <div class="row align-items-center justify-content-between">
+              <div class="row d-flex flex-column flex-md-row align-items-center justify-content-between">
 
-                <div class="col-2">
+                <div class="col-md-2 d-flex justify-content-center">
                   <img src="{{ reserva.objeto.imagen.url }}"
                        alt="Imagen {{ reserva.objeto.nombre }}"
                        class="img-fluid objeto-imagen">
                 </div>
 
-                <div class="col-4">
+                <div class="col-md-4 d-flex align-items-center flex-column">
                   <h5 class="card-title mb-1">{{ reserva.objeto.nombre }}</h5>
                   <p class="card-text text-muted mb-0">
                     {{ reserva.fecha_inicio|date:"d M" }} – 
@@ -74,14 +128,14 @@
                   </p>
                 </div>
 
-                <div class="col-2 text-center">
+                <div class="col-md-2 text-center d-flex d-md-block  justify-content-center">
                   <img src="../static/img/huella_carbono.png" alt="Huella de Carbono" class="huella-carbono-img">
                   <p class="card-text mt-2 text-muted mb-0">
                     {{ reserva.objeto.huella_carbono }} kg CO₂
                   </p>
                 </div>
 
-                <div class="col-2">
+                <div class="col-md-2 d-flex justify-content-center">
                   {% if reserva.cancelada %}
                     <span class="badge rounded-pill badge-estado-cancelada">
                       Cancelada
@@ -108,14 +162,14 @@
                 </div>
 
                 {% if reserva.fecha_inicio > timezone.now.date and reserva.cancelada == False %}                  
-                  <div class="col-2 d-flex flex-column acciones-reserva">
+                  <div class="col-md-2 d-flex flex-md-column flex-row acciones-reserva justify-content-center">
                     <a href="{% url 'editar_reserva' reserva.id %}" 
-                       class="btn btn-link p-0 mb-2 editar-icono" 
+                       class="btn btn-link p-0 mb-md-2 me-md-0 me-3 editar-icono" 
                        data-objeto-id="{{ reserva.objeto.id }}" 
                        data-reserva-id="{{ reserva.id }}">
                       <i class="bi bi-pencil-fill"></i>
                     </a>
-                    <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-link p-0 eliminar-icono">
+                    <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-link p-0 ms-md-0 ms-3 eliminar-icono">
                       <i class="bi bi-trash-fill"></i>
                     </a>
                   </div>
@@ -131,6 +185,8 @@
           No tienes reservas en tu historial.
         </div>
       {% endif %}
+    </div>
+
     </div>
 
   </div>

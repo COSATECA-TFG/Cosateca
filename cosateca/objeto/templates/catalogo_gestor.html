@@ -21,7 +21,7 @@
 <section class="catalogo">
     <div class="row">
 
-        <div class="col-3 filtrado_ordenacion">
+        <div class="col-3 filtrado_ordenacion d-none d-xl-block">
             <div class="text-center mb-3 mt-2">
                 <span class="titulo_filtrado_ordenacion"> <b>FILTROS</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
@@ -105,24 +105,119 @@
                             </li>
                         </ul>
                     </div>
+                        <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
                 </div>
-
-
             </div>
-
         </div>
 
-        <div class="col-9">
+        <div class="col-xl-9 col-12">
 
-            <div class="align-items-center d-flex">
-                <form method="get" class="col-10 ps-1">
-                    <input type="text" name="nombre_herramienta" class="form-control mb-3 input-buscar"
-                        placeholder="Buscar">
-                </form>
-                <a href="#" class="btn btn-link pb-3 mb-2 editar-borrar-icono-gestor col-1" data-bs-toggle="modal" data-bs-target="#modalCrear">
-                    <i class="bi bi-plus-circle-fill" style="font-size: 50px"></i>
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="#offcanvasFiltro" class="btn boton_filtrado_ordenacion d-block d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltro">
+                    <i class="bi bi-funnel"></i>
                 </a>
+
+                <a href="#offcanvasOrdenacion" class="btn boton_filtrado_ordenacion d-block d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasOrdenacion">
+                    <i class="bi bi-arrow-down-up"></i>
+                </a>
+                <form method="get" class="formulario_catalogo align-items-center d-flex">
+                        <input type="text" name="nombre_herramienta" class="form-control mb-xl-3 mb-0  input-buscar espaciado_barra_busqueda"
+                            placeholder="Buscar">
+                </form>
+                
+                <a href="#" class="btn btn-link pb-xl-3 pb-0 me-3 mb-2 editar-borrar-icono-gestor boton_crear_obj col-1" data-bs-toggle="modal" data-bs-target="#modalCrear">
+                    <i class="bi bi-plus-circle-fill"></i>
+                </a>
+
+                
+
+
             </div>
+
+            <div id="offcanvasFiltro" class="offcanvas offcanvas-start">
+            <div class="offcanvas-header">
+                <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <h5 class="offcanvas-title text-start w-100" >         
+                    Filtros
+                </h5>
+            </div>
+
+            <div class="offcanvas-body">
+                 <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCategoria">
+                            Categoría
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Bricolaje' %}">Bricolaje</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Jardín' %}">Jardín</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Cocina' %}">Cocina</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Electrónica' %}">Electrónica</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Herramientas' %}">Herramientas</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Limpieza' %}">Limpieza</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Otros' %}">Otros</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCondicion">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Nuevo' %}">Nuevo</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Bueno' %}">Bueno</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Desgastado' %}">Desgastado</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Perdido' %}">Perdido</a></li>
+
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuLocalizacion">
+                            Localización
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            {% for a in almacenes %}
+                                <li><a class="dropdown-item" href="?{% query_transform request almacen=a.nombre %}">{{ a.nombre }}</a></li>
+                            {%endfor%}
+
+                        </ul>
+                    </div>
+                    <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
+
+            </div>
+
+
+            </div>
+            <div id="offcanvasOrdenacion" class="offcanvas offcanvas-end">
+                <div class="offcanvas-header">
+                    <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <h5 class="offcanvas-title text-start w-100">         
+                        Ordenar por
+                    </h5>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarCondicion">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Mayor' %}">Mejor condición</a></li>
+
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Menor' %}">Menor condición</a></li>
+
+                    </div>
+                                        <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarValoracion">
+                            Valoración
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Mayor' %}">Mayor valoración</a></li>
+
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Menor' %}">Menor valoración</a></li>
+                        </ul>
+                    </div>
+                        <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
+
+                </div>
+            </div>
+
 
 
             <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrear" aria-hidden="true">
@@ -140,7 +235,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-lg-6 col-12">
                                             <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
                                             <div class="d-flex justify-content-center mt-2">
                                                 <img id="preview-img-crear" src="" alt="Vista previa"
@@ -158,7 +253,7 @@
 
 
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-lg-6 col-12">
                                             <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
                                             <textarea class="form-control mb-3" name="descripcion" id="descripcion"
                                                 placeholder="Descripción del objeto" rows="2" required></textarea>
@@ -208,7 +303,7 @@
             <div class="container mt-4">
                 <div class="row">
                     {% for h in herramientas %}
-                    <div class="col-md-3 mb-4">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 mb-4">
                         <div class="card h-100">
                             <!-- Imagen del elemento (opcional) -->
                             {% if h.imagen %}
@@ -238,7 +333,6 @@
 
                                     {{ h.huella_carbono }} Kg CO2
                                 </p>
-                                <!-- Puedes añadir más campos aquí -->
                             </div>
                         </div>
                     </div>
@@ -283,7 +377,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-lg-6 col-12">
                                                 <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
                                                 <div class="d-flex justify-content-center mt-2">
                                                 {% if h.imagen %}
@@ -307,7 +401,7 @@
 
                                                     
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-lg-6 col-12">
                                                 <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
                                                 <textarea class="form-control mb-3" name="descripcion" id="descripcion"
                                                     placeholder="Descripción del objeto" rows="2" required> {{ h.descripcion }}</textarea>
@@ -424,6 +518,17 @@
     }
 
     document.addEventListener('DOMContentLoaded', modificarTextoFiltros);
+
+    function eliminarFiltros() {
+        const parametrosURL = new URLSearchParams(window.location.search);
+        parametrosURL.delete('categoria');
+        parametrosURL.delete('condicion');
+        parametrosURL.delete('almacen');
+        parametrosURL.delete('orden_condicion');
+        parametrosURL.delete('orden_valoracion');
+
+        window.location.search = parametrosURL.toString();
+    }
 
 </script>
 
