@@ -93,6 +93,39 @@ a:focus {
     outline: none !important;
 }
 
+/* Leer mas */
+
+.titulos_importantes{
+    color: #244E47;
+    font-size: 50px !important;
+    font-weight: bold;
+}
+
+.descripcion_general_leer_mas{
+    font-size: 20px;
+    font-weight: 400;
+    
+}
+.imagen_equipo{
+    border-radius: 150px;
+    background-color: #244E47;
+    max-width: 260px;
+}
+
+.titulos_menor_tamano{
+    color: #244E47;
+    font-size: 35px !important;
+}
+
+.boton_volver{
+    background-color: #244E47 !important;
+    color: #FFFAED !important;
+    width: 20%;
+    border-radius: 0.625rem !important;
+}
+
+
+
 @media (max-width: 576px) {
     .boton_header_inicio {
         font-size: 1rem !important;
@@ -110,6 +143,10 @@ a:focus {
 
     .user_icon_admin, .user_icon_gestor, .user_icon {
         width: 30px !important;
+    }
+
+    .boton_volver{
+        width: 50% ;
     }
 
 
@@ -140,6 +177,8 @@ a:focus {
     .boton_header_inicio {
         font-size: 1rem !important;
     }
+
+
 
 
 
