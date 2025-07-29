@@ -1,14 +1,22 @@
-<header class="ms-5 me-5 mt-3">
+<header class="ms-4 me-4 mt-3 ms-md-5 me-md-5">
   <!-- ————— Fila 1: logo y saludo ————— -->
   <div class="row justify-content-between align-items-center">
-    <div class="col-4">
-      <div class="img_wrapper">
+    <div class="col-1 d-sm-none">
+               <a class="btn boton_cabecera_movil" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+          <i class="bi bi-list"></i>
+        </a>
+
+    </div>
+
+    <div class="col-3">
+
+      <div class="img_wrapper d-none d-sm-block">
         <a href="/">
           <img src="../static/img/cosateca_imagotipo.png" alt="logo" class="imagotipo">
         </a>
       </div>
     </div>
-    <div class="col-4"></div> <!-- columna vacía para “empujar” el saludo a la derecha -->
+    <div class="col-2"></div>
     <div class="col-4 d-flex justify-content-end align-items-center">
       {% if user.is_authenticated %}
   
@@ -19,7 +27,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="/usuario">Editar perfil</a></li>
           <li><a class="dropdown-item" href="/usuario/huella_carbono">Consular huella de carbono</a></li>
-          <li><a class="dropdown-item" href="/usuario/amonestaciones/{{ user.id }}">Consultar amonestaciones</a></li>
+          <li><a class="dropdown-item" href="/usuario/amonestaciones">Consultar amonestaciones</a></li>
           <li><a class="dropdown-item" href="/cerrar_sesion">Cerrar sesión</a></li>
 
         </ul>
@@ -28,7 +36,7 @@
   </div>
 
   <!-- ————— Fila 2: menú centrado con su propio margen ————— -->
-  <div class="row">
+  <div class="row d-none d-sm-block">
     <div class="col-12 d-flex justify-content-center menu_header">
       <a href="/menu" class="btn boton_header_inicio {% if request.path == '/menu' %}fw-bold{% endif %}">Inicio</a>
       <a href="/mis_reservas" class="btn boton_header_inicio {% if request.path == '/mis_reservas' %}fw-bold{% endif %}">Mis Reservas</a>
@@ -36,4 +44,25 @@
       <a href="/lista_deseos" class="btn boton_header_inicio {% if request.path == '/lista_deseos' %}fw-bold{% endif %}">Lista de deseos</a>
     </div>
   </div>
+
+
+
+
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <h5 class="offcanvas-title">         
+       <img src="../static/img/cosateca_imagotipo.png" alt="logo" class="imagotipo">
+    </h5>
+  </div>
+  <div class="offcanvas-body">
+    <div class="d-flex flex-column align-items-start">
+      <a href="/menu" class="btn boton_header_inicio {% if request.path == '/menu' %}fw-bold{% endif %}">Inicio</a>
+      <a href="/mis_reservas" class="btn boton_header_inicio {% if request.path == '/mis_reservas' %}fw-bold{% endif %}">Mis Reservas</a>
+      <a href="/catalogo" class="btn boton_header_inicio {% if request.path == '/catalogo' %}fw-bold{% endif %}">Catálogo</a>
+      <a href="/lista_deseos" class="btn boton_header_inicio {% if request.path == '/lista_deseos' %}fw-bold{% endif %}">Lista de deseos</a>
+    </div>
+  </div>
+</div>
 </header>

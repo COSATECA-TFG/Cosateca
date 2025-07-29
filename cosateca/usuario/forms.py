@@ -10,7 +10,7 @@ class RegistroForm(forms.Form):
     correo_electronico = forms.EmailField(required=True,label='Correo electrónico', widget=forms.TextInput(attrs={'placeholder': 'Correo electrónico', 'class':'form-control input_formulario'}))
     telefono = forms.CharField(required=True,label='Teléfono',  widget=forms.TextInput(attrs={'placeholder': 'Teléfono', 'class':'form-control input_formulario'}))
     dni = forms.CharField(required=True,label='DNI', widget=forms.TextInput(attrs={'placeholder': 'DNI', 'class':'form-control input_formulario'}))
-    nombre_usuario = forms.CharField(required=True,label='Nombre de usuario', widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario', 'class':'form-control input_formulario'}))
+    nombre_usuario = forms.CharField(required=True,label='Usuario', widget=forms.TextInput(attrs={'placeholder': 'Usuario', 'class':'form-control input_formulario'}))
     contraseña = forms.CharField(required=True,label='Contraseña', widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña', 'class':'form-control input_formulario'}))
     confirmar_contraseña = forms.CharField(required=True,label='Confirmar contraseña', widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar contraseña', 'class':'form-control input_formulario'}))
     

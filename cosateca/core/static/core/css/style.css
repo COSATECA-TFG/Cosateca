@@ -60,9 +60,7 @@ body {
 .boton_inicio{
     background-color: #6CBC9B !important;
     color: #FFFAED !important;
-    font-size: 1.375rem !important;
-    width: 20% !important;
-    height: 3.125rem !important;
+    width: 25% !important;
     border-radius: 0.625rem !important;
     margin-top: 5%;
 }
@@ -80,18 +78,130 @@ body {
 }
 
 .user_icon {
-  width: 8% !important;
-  height: 10% !important;
+  width: 50px;
 }
 
 .user_icon_gestor {
-  width: 10% !important;
+  width: 50px;
 }
 
 .user_icon_admin {
-  width: 8% !important;
+  width: 50px ;
 }
 
 a:focus {
     outline: none !important;
+}
+
+/* Leer mas */
+
+.titulos_importantes{
+    color: #244E47;
+    font-size: 50px !important;
+    font-weight: bold;
+}
+
+.descripcion_general_leer_mas{
+    font-size: 20px;
+    font-weight: 400;
+    
+}
+.imagen_equipo{
+    border-radius: 150px;
+    background-color: #244E47;
+    max-width: 260px;
+}
+
+.titulos_menor_tamano{
+    color: #244E47;
+    font-size: 35px !important;
+}
+
+.boton_volver{
+    background-color: #244E47 !important;
+    color: #FFFAED !important;
+    width: 20%;
+    border-radius: 0.625rem !important;
+}
+
+
+
+@media (max-width: 576px) {
+    .boton_header_inicio {
+        font-size: 1rem !important;
+    }
+
+
+    .boton_cabecera_movil{
+     color: #244E47 !important;   
+    }
+
+    .offcanvas{
+        --bs-offcanvas-width: 250px !important;
+    }
+
+
+    .user_icon_admin, .user_icon_gestor, .user_icon {
+        width: 30px !important;
+    }
+
+    .boton_volver{
+        width: 50% ;
+    }
+
+
+
+
+}
+
+@media (max-width: 768px) {
+    .contenedor_texto_inicio {
+        padding-left: 7% !important;
+      }
+    .texto_inicio {
+        font-size: 50px !important;
+        margin-top: 0%;
+      }
+
+    .contenedor_texto_inicio > p {
+        font-size: 1rem !important;
+      }
+    .img_wrapper {
+        width: 100%;
+    }
+    
+    .boton_inicio{
+    width: 33% !important;
+}
+
+    .boton_header_inicio {
+        font-size: 1rem !important;
+    }
+
+
+
+
+
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+      .img_wrapper {
+        width: 90%;
+    }
+
+    .user_icon_gestor, .user_icon_admin, .user_icon {
+        width: 40px;
+    }
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+  /* estilos para escritorio grande */
+
+
+
+
 }

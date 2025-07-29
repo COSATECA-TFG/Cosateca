@@ -29,9 +29,9 @@
 }
 
 .botonera_filtros a{
-    background-color: transparent !important;
+    background-color: transparent ;
     border-radius: 1rem !important;
-    border-color: rgb(216, 216, 216) !important;
+    border-color: rgb(216, 216, 216) ;
     border-width: 3px !important;
     width: 60%;
     margin-top: 3%;
@@ -41,6 +41,11 @@
     color: rgb(164, 163, 163);
     font-size: 1.2rem;
 }
+
+.botonera_filtros a:hover{
+    border-color: rgb(216, 216, 216) ;
+    background-color: transparent !important;
+  }
 
 .input-buscar {
     background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
@@ -63,6 +68,21 @@
 /* Detalle de objeto */
 
 .imagen_detalle_objeto {
+    aspect-ratio: 1/1;
+    border-radius: 0.725rem !important;
+    border: 0.3rem solid rgb(216, 216, 216) ; 
+    overflow: hidden;
+    max-width: 100%;
+    
+}
+
+.imagen_detalle_objeto img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.imagen_objeto_deseado {
     margin-top: 20% !important;
     aspect-ratio: 1/1;
     border-radius: 0.725rem !important;
@@ -71,7 +91,7 @@
     
 }
 
-.imagen_detalle_objeto img {
+.imagen_objeto_deseado img {
   width: 100%;
   height: 100%;
   object-fit: fill;
@@ -127,6 +147,7 @@
   color: white !important;
   padding: 2% !important;
   border-radius: 0.625rem !important;
+  font-size: 20px;
 }
 
 .tipo {
@@ -137,17 +158,13 @@
   background-color: #e4bf44 ;
 }
 
-.reserva{
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-}
+
 
 .reserva-fechas{
   background-color: white !important;
   border-radius: 0.625rem !important;
   border: 3px solid #244E47 !important;
+  border-radius: 12px;
 }
 
 .input_fecha{
@@ -200,4 +217,70 @@
   background-color: #244E47 !important;
   border-color: #244E47 !important;
 }
+
+
+.formulario_catalogo{
+  width: 100%;
+}
+
+.boton_filtrado_ordenacion{
+  background-color: none !important;
+  border-color: none !important;
+  color: #244E47 !important;
+}
+
+
+.boton_crear_obj{
+  font-size: 3.125rem !important;
+}
+
+.btn_eliminar_filtros{
+  border-color: rgb(175, 89, 89) !important;
+  color: rgb(175, 89, 89) !important;
+}
+
+@media (max-width: 576px) {
+
+
+
+}
+
+@media (max-width: 768px) {
+
+  .imagen_detalle_objeto {
+    max-width: 60% !important;
+  }
+
+  
+
+
+
+
+}
+
+@media(max-width: 830px){
+  .boton_crear_obj{
+    font-size: 2rem !important;
+  }
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+
+    .imagen_detalle_objeto {
+    max-width: 40%;
+  }
+
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+
+  .formulario_catalogo{
+    width: 75% !important;
+  }
+}
+
 

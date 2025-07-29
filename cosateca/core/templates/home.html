@@ -5,13 +5,13 @@
 
 {% block content %}
 
-<section class="row header_inicio justify-content-between pe-5 ps-5 pb-5 pt-2 me-2 ms-2">
+<section class="row header_inicio justify-content-between pe-lg-5 pe-sm-2 ps-lg-5 ps-sm-2 pb-lg-5 pb-sm-2 pt-lg-2 pt-sm-2 me-lg-2 ms-lg-2">
     <div class="col-4 ">
         <div class="img_wrapper">
             <img src="../static/img/cosateca_imagotipo.png" alt="image_inicio" class="imagotipo">
         </div>
     </div>
-    <div class="col-4 d-flex justify-content-end align-items-start botonera_header_inicio">
+    <div class="col-8 d-flex justify-content-end align-items-start botonera_header_inicio">
         {% if user.is_authenticated %}
             <a href="/cerrar_sesion" class="btn boton_header_inicio">Cerrar sesión</a>
         {% else %}
@@ -25,12 +25,16 @@
 
 <section class="row inicio mt-5 me-2 ms-2">
 
-    <div class="col-6  d-flex flex-column align-items-start contenedor_texto_inicio">
+    <div class="col-lg-6 col-sm-12 d-flex flex-column align-items-start contenedor_texto_inicio">
         <h1 class="texto_inicio">Bienvenidos a la <b>Cosateca</b></h1>
+
+        <div class="d-flex d-lg-none justify-content-center">
+            <img src="../static/img/cosateca_inicio.png" alt="image_inicio" class="imagen_inicio">
+        </div>
 
         <p>Comparte objetos, reduce tu huella de carbono</p>
 
-        <div class="botonera_inicio w-100">
+        <div class="botonera_inicio w-100 d-flex justify-content-center d-lg-block w-100">
             {% if user.is_authenticated and user.is_staff %}
             <a href="/gestion_usuarios_administrador" class="btn boton_inicio me-4">Comenzar</a>
             {% elif user.is_authenticated and user.gestor %}
@@ -40,12 +44,12 @@
             {% else %}
             <a href="/inicio_sesion" class="btn boton_inicio me-4">Comenzar</a>
             {% endif %}
-            <a href="" class="btn boton_inicio">Leer más</a>
+            <a href="/leer_mas" class="btn boton_inicio">Leer más</a>
         </div>
 
     </div>
 
-    <div class="col-5 d-flex justify-content-center">
+    <div class="col-5 d-none d-lg-flex justify-content-center">
         <img src="../static/img/cosateca_inicio.png" alt="image_inicio" class="imagen_inicio">
     </div>
 

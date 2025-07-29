@@ -20,8 +20,7 @@
 
 <section class="catalogo">
     <div class="row">
-
-        <div class="col-3 filtrado_ordenacion">
+        <div class="col-3 filtrado_ordenacion d-none d-xl-block">
             <div class="text-center mb-3 mt-2">
                 <span class="titulo_filtrado_ordenacion"> <b>FILTROS</b> </span>
                 <div class="row botonera_filtros d-flex align-items-center flex-column">
@@ -86,23 +85,118 @@
                             <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Menor' %}">Menor valoración</a></li>
                         </ul>
                     </div>
+                        <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
                 </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-9">
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="#offcanvasFiltro" class="btn boton_filtrado_ordenacion d-block d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltro">
+                    <i class="bi bi-funnel"></i>
+                </a>
+                <form method="get" class="formulario_catalogo align-items-center d-flex">
+                    <input type="text" name="nombre_herramienta" class="form-control mb-0 mb-xl-3 input-buscar "
+                        placeholder="Buscar">
+                </form>
+
+                <a href="#offcanvasOrdenacion" class="btn boton_filtrado_ordenacion d-block d-xl-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasOrdenacion">
+                    <i class="bi bi-arrow-down-up"></i>
+                </a>
+            </div>
+
+            <div id="offcanvasFiltro" class="offcanvas offcanvas-start">
+            <div class="offcanvas-header">
+                <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <h5 class="offcanvas-title text-start w-100" >         
+                    Filtros
+                </h5>
+            </div>
+
+            <div class="offcanvas-body">
+                 <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCategoria">
+                            Categoría
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Bricolaje' %}">Bricolaje</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Jardín' %}">Jardín</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Cocina' %}">Cocina</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Electrónica' %}">Electrónica</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Herramientas' %}">Herramientas</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Limpieza' %}">Limpieza</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request categoria='Otros' %}">Otros</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuCondicion">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Nuevo' %}">Nuevo</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Bueno' %}">Bueno</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Desgastado' %}">Desgastado</a></li>
+                            <li><a class="dropdown-item" href="?{% query_transform request condicion='Perdido' %}">Perdido</a></li>
+
+                    </div>
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuLocalizacion">
+                            Localización
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            {% for a in almacenes %}
+                                <li><a class="dropdown-item" href="?{% query_transform request almacen=a.nombre %}">{{ a.nombre }}</a></li>
+                            {%endfor%}
+
+                        </ul>
+                    </div>
+                    <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
 
 
             </div>
 
-        </div>
 
-        <div class="col-9">
-            <form method="get">
-                <input type="text" name="nombre_herramienta" class="form-control mb-3 input-buscar"
-                    placeholder="Buscar">
-            </form>
+            </div>
+            <div id="offcanvasOrdenacion" class="offcanvas offcanvas-end">
+                <div class="offcanvas-header">
+                    <button type="button" class="btn-close me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <h5 class="offcanvas-title text-start w-100">         
+                        Ordenar por
+                    </h5>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarCondicion">
+                            Condición
+                        </a>
+                        <ul class="dropdown-menu w-50">
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Mayor' %}">Mejor condición</a></li>
+
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_condicion='Menor' %}">Menor condición</a></li>
+
+                    </div>
+                                        <div class="dropdown mb-2">
+                        <a class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="menuOrdenarValoracion">
+                            Valoración
+                        </a>
+                        <ul class="dropdown-menu w-75">
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Mayor' %}">Mayor valoración</a></li>
+
+                            <li><a class="dropdown-item" href="?{% query_transform request orden_valoracion='Menor' %}">Menor valoración</a></li>
+                        </ul>
+                    </div>
+                    <a onclick="eliminarFiltros()" class="btn btn_eliminar_filtros">Eliminar filtros</a>
+
+                </div>
+
+            </div>
+
 
             <div class="container mt-4">
                 <div class="row">
                     {% for h in herramientas %}
-                    <div class="col-md-3 mb-4">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 mb-4">
                         <div class="card h-100">
                             <!-- Imagen del elemento (opcional) -->
                             {% if h.imagen %}
@@ -124,7 +218,7 @@
                 <div class="row">
                     {% endif %}
                     {% empty %}
-        <div class="alert alert-warning text-center mt-4" role="alert">
+                    <div class="alert alert-warning text-center mt-4" role="alert">
                         <p>No hay elementos disponibles.</p>
                     </div>
                     {% endfor %}
@@ -174,6 +268,20 @@
     }
 
     document.addEventListener('DOMContentLoaded', modificarTextoFiltros);
+
+
+    function eliminarFiltros() {
+        const parametrosURL = new URLSearchParams(window.location.search);
+        parametrosURL.delete('categoria');
+        parametrosURL.delete('condicion');
+        parametrosURL.delete('almacen');
+        parametrosURL.delete('orden_condicion');
+        parametrosURL.delete('orden_valoracion');
+
+        window.location.search = parametrosURL.toString();
+    }
+
+
 </script>
 
 

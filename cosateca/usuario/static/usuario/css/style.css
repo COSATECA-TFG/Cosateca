@@ -238,19 +238,7 @@ section > form > div:first-child{
   margin-bottom: 10% !important;
 }
 
-.botonera_filtros a{
-    background-color: transparent !important;
-    border-radius: 1rem !important;
-    border-color: rgb(216, 216, 216) !important;
-    border-width: 3px !important;
-    width: 55%;
-    margin-top: 3%;
-    margin-bottom: 3%;
-    padding-top: 4%;
-    padding-bottom: 4%;
-    color: rgb(164, 163, 163);
-    font-size: 1.2rem;
-}
+
 
 .input-buscar {
     background: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/search.svg') no-repeat 1% center;
@@ -272,14 +260,6 @@ section > form > div:first-child{
 
 /* Detalle de objeto */
 
-.imagen_detalle_objeto {
-    margin-top: 20% !important;
-    aspect-ratio: 1/1;
-    border-radius: 0.725rem !important;
-    border: 0.3rem solid rgb(216, 216, 216) ; 
-    overflow: hidden;
-    
-}
 
 
 
@@ -332,15 +312,6 @@ section > form > div:first-child{
 
 .tipo {
   background-color: #244E47 !important;
-}
-
-
-
-.reserva{
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
 }
 
 .reserva-fechas{
@@ -463,8 +434,8 @@ section > form > div:first-child{
 
 .huella-wrapper {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
   margin: auto;
 }
 
@@ -550,6 +521,116 @@ section > form > div:first-child{
 }
 .boton_suspender:hover {
   background-color: #883b3b !important;
+}
+
+
+@media (max-width: 576px) {
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
+      width: 40% !important;
+      font-size: 10px !important;
+      background-size: 12% !important;
+      background-position: 5px center !important;
+    }
+
+
+    .input_formulario::placeholder{
+    font-size: 10px !important;
+  }
+  #select_sexo:invalid {
+    font-size: 14px !important;
+  }
+
+  .formulario_registro label{
+    font-size: 12px !important;
+  }
+
+  .input_formulario{
+    font-size: 12px !important;
+  }
+
+  .imagotipo_registro{
+    width: 40% !important;
+  }
+
+  .titulo_cuestionario{
+    font-size: 23px !important;
+  }
+
+  .preguntas_cuestionario strong{
+    font-size: 15px !important;
+  }
+
+  .formulario_cuestionario{
+    max-width: 85% !important;
+  }
+
+  .titulos_menu {
+    font-size: 1.65rem !important;
+  }
+
+
+
+
+}
+
+@media (max-width: 768px) {
+  .formulario_inicio_sesion{ 
+    max-width: 100%;
+}
+
+
+  .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
+    font-size: 10px !important;
+    width: 40% !important;
+
+  } 
+
+  .imagen_objeto_deseado{
+    max-width: 60% !important;
+  }
+
+
+
+
+
+
+}
+
+/* Escritorio pequeño (hasta 992px) */
+@media (max-width: 992px) {
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    width: 29%;
+    background-size: 10%;
+    background-position: 10px center;
+  }
+  
+  .input_formulario::placeholder{
+    font-size: 13px ;
+  }
+  #select_sexo:invalid {
+    font-size: 14px;
+  }
+
+    .imagotipo_registro{
+    width: 30%;
+  }
+
+  .formulario_registro{
+    max-width: 100% !important;
+  }
+
+
+
+}
+
+/* Escritorio grande (hasta 1200px) */
+@media (max-width: 1200px) {
+    .botonera_inicio_sesión a:first-child, .botonera_inicio_sesión a:last-child, .botonera_registro a:first-child, .botonera_registro a:last-child{
+      width: 40%;
+      font-size: 16px ;
+    }
 }
 
 
