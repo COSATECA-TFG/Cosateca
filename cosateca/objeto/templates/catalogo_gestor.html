@@ -219,87 +219,6 @@
             </div>
 
 
-
-            <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrear" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <form method="post" action="{% url 'crear_articulo_catalogo_gestor' %}"
-                                enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalEditarLabel{{ h.id }}"><strong>Añadir nuevo
-                                            objeto</strong>
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Cerrar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-12">
-                                            <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
-                                            <div class="d-flex justify-content-center mt-2">
-                                                <img id="preview-img-crear" src="" alt="Vista previa"
-                                                    class="img-fluid mb-3" style="max-height: 200px; display:none;">
-
-                                            </div>
-                                            <label for="imagen" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
-                                            <input type="file" class="form-control mb-3" name="imagen" id="imagen"
-                                                placeholder="Imagen del objeto" onchange="previewImage(event, 'crear')">
-
-                                            <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
-                                            <input type="text" class="form-control mb-3" name="nombre" id="nombre"
-                                                placeholder="Nombre del objeto" required>
-
-
-
-                                        </div>
-                                        <div class="col-lg-6 col-12">
-                                            <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
-                                            <textarea class="form-control mb-3" name="descripcion" id="descripcion"
-                                                placeholder="Descripción del objeto" rows="2" required></textarea>
-                                            <label for="categoria" class="label_catalogo_gestor">Selecciona
-                                                categoría:</label>
-                                            <select class="form-select mb-3" name="categoria" id="categoria" required>
-                                                {% for c, v in ENUM_TAREA_TIPO %}
-                                                <option value="{{ c }}">{{ v }}</option>
-                                                {% endfor %}
-                                            </select>
-
-                                            <label for="condición" class="label_catalogo_gestor">Selecciona
-                                                condición:</label>
-                                            <select class="form-select mb-3" name="condicion" id="condicion" required>
-                                                {% for c, v in ENUM_CONDICION %}
-                                                <option value="{{ c }}">{{ v }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="almacen" class="label_catalogo_gestor">Selecciona
-                                                almacén:</label>
-                                            <select class="form-select mb-3" name="almacen" required>
-                                                {% for a in almacenes %}
-                                                <option value="{{ a.id }}">{{ a.nombre }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="huella_carbono" class="label_catalogo_gestor">Huella de
-                                                carbono:</label>
-                                            <input type="text" class="form-control mb-3" name="huella_carbono"
-                                                id="huella_carbono" placeholder="Huella de carbono del objeto (Kg CO2)"
-                                                required>
-
-                                        </div>
-                                    </div>
-
-
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary boton_editar_crear">Crear</button>
-                                </div>
-                        </div>
-                    </div>
-                </div>
-
-
             <div class="container mt-4">
                 <div class="row">
                     {% for h in herramientas %}
@@ -389,43 +308,43 @@
                                                     class="img-fluid mb-3" style="max-height: 200px; display:none;">
                                                 {% endif %}
                                                 </div>
-                                                <label for="imagen" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
-                                                <input type="file" class="form-control mb-3" name="imagen" id="imagen"
+                                                <label for="imagen_{{ h.id }}" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
+                                                <input type="file" class="form-control mb-3" name="imagen" id="imagen_{{ h.id }}"
                                                     placeholder="Imagen del objeto"
                                                     onchange="previewImage(event, '{{ h.id }}')">
                                                 
-                                                <label for="nombre" class="label_catalogo_gestor">Nombre:</label>
-                                                <input type="text" class="form-control mb-3" name="nombre" id="nombre"
+                                                <label for="nombre_{{ h.id }}" class="label_catalogo_gestor">Nombre:</label>
+                                                <input type="text" class="form-control mb-3" name="nombre" id="nombre_{{ h.id }}"
                                                     placeholder="Nombre del objeto" value="{{ h.nombre }}" required>
 
 
                                                     
                                             </div>
                                             <div class="col-lg-6 col-12">
-                                                <label for="descripcion" class="label_catalogo_gestor">Descripción:</label>
-                                                <textarea class="form-control mb-3" name="descripcion" id="descripcion"
+                                                <label for="descripcion_{{ h.id }}" class="label_catalogo_gestor">Descripción:</label>
+                                                <textarea class="form-control mb-3" name="descripcion" id="descripcion_{{ h.id }}"
                                                     placeholder="Descripción del objeto" rows="2" required> {{ h.descripcion }}</textarea>
-                                                <label for="categoria" class="label_catalogo_gestor">Selecciona categoría:</label>
-                                                <select class="form-select mb-3" name="categoria" value="{{ h.categoria }}" id="categoria" required>
+                                                <label for="categoria_{{ h.id }}" class="label_catalogo_gestor">Selecciona categoría:</label>
+                                                <select class="form-select mb-3" name="categoria" value="{{ h.categoria }}" id="categoria_{{ h.id }}" required>
                                                     {% for c, v in ENUM_TAREA_TIPO %}
                                                     <option value="{{ c }}" {% if h.categoria == c %}selected{% endif %}>{{ v }}</option>
                                                     {% endfor %}
                                                 </select>
 
-                                                <label for="condición" class="label_catalogo_gestor">Selecciona condición:</label>
-                                                <select class="form-select mb-3" name="condicion" value="{{ h.condicion }}" id="condicion" required>
+                                                <label for="condicion_{{ h.id }}" class="label_catalogo_gestor">Selecciona condición:</label>
+                                                <select class="form-select mb-3" name="condicion" value="{{ h.condicion }}" id="condicion_{{ h.id }}" required>
                                                     {% for c, v in ENUM_CONDICION %}
                                                     <option value="{{ c }}" {% if h.condicion == c %}selected{% endif %}>{{ v }}</option>
                                                     {% endfor %}
                                                 </select>
-                                                <label for="almacen" class="label_catalogo_gestor">Selecciona almacén:</label>
-                                                <select class="form-select mb-3" name="almacen" value="{{ h.almacen }}" required>
+                                                <label for="almacen_{{ h.id }}" class="label_catalogo_gestor">Selecciona almacén:</label>
+                                                <select class="form-select mb-3" name="almacen" value="{{ h.almacen }}" id="almacen_{{ h.id }}" required>
                                                     {% for a in almacenes %}
                                                     <option value="{{ a.id }}" {% if h.almacen == a %}selected{% endif %}>{{ a.nombre }}</option>
                                                     {% endfor %}
                                                 </select>
-                                                <label for="huella_carbono" class="label_catalogo_gestor">Huella de carbono:</label>
-                                                <input type="text" class="form-control mb-3" name="huella_carbono" id="huella_carbono"
+                                                <label for="huella_carbono_{{ h.id }}" class="label_catalogo_gestor">Huella de carbono:</label>
+                                                <input type="text" class="form-control mb-3" name="huella_carbono" id="huella_carbono_{{ h.id }}"
                                                     placeholder="Huella de carbono del objeto (Kg CO2)"
                                                     value="{{ h.huella_carbono }}" required>
 
@@ -469,6 +388,72 @@
 
 
 </section>
+
+<!-- Modal de creación de objeto -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="modalCrear" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <form method="post" action="{% url 'crear_articulo_catalogo_gestor' %}"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title"><strong>Añadir nuevo objeto</strong></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <span class="label_catalogo_gestor">Previsualización de imagen: <br></span>
+                            <div class="d-flex justify-content-center mt-2">
+                                <img id="preview-img-crear" src="" alt="Vista previa"
+                                    class="img-fluid mb-3" style="max-height: 200px; display:none;">
+                            </div>
+                            <label for="imagen_crear" class="label_catalogo_gestor" style="margin-top: 3.6%">Modificar imagen:</label>
+                            <input type="file" class="form-control mb-3" name="imagen" id="imagen_crear"
+                                placeholder="Imagen del objeto" onchange="previewImage(event, 'crear')">
+
+                            <label for="nombre_crear" class="label_catalogo_gestor">Nombre:</label>
+                            <input type="text" class="form-control mb-3" name="nombre" id="nombre_crear"
+                                placeholder="Nombre del objeto" required>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <label for="descripcion_crear" class="label_catalogo_gestor">Descripción:</label>
+                            <textarea class="form-control mb-3" name="descripcion" id="descripcion_crear"
+                                placeholder="Descripción del objeto" rows="2" required></textarea>
+                            <label for="categoria_crear" class="label_catalogo_gestor">Selecciona categoría:</label>
+                            <select class="form-select mb-3" name="categoria" id="categoria_crear" required>
+                                {% for c, v in ENUM_TAREA_TIPO %}
+                                <option value="{{ c }}">{{ v }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <label for="condicion_crear" class="label_catalogo_gestor">Selecciona condición:</label>
+                            <select class="form-select mb-3" name="condicion" id="condicion_crear" required>
+                                {% for c, v in ENUM_CONDICION %}
+                                <option value="{{ c }}">{{ v }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="almacen_crear" class="label_catalogo_gestor">Selecciona almacén:</label>
+                            <select class="form-select mb-3" name="almacen" id="almacen_crear" required>
+                                {% for a in almacenes %}
+                                <option value="{{ a.id }}">{{ a.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="huella_carbono_crear" class="label_catalogo_gestor">Huella de carbono:</label>
+                            <input type="text" class="form-control mb-3" name="huella_carbono"
+                                id="huella_carbono_crear" placeholder="Huella de carbono del objeto (Kg CO2)" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary boton_editar_crear">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <script>
